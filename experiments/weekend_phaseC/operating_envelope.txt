@@ -1,0 +1,16 @@
+============================================================================================================
+OPERATING ENVELOPE — binary-single (G=4pi^2, masses [1,0.5,0.1], T=100, dt=0.04)
+(a)=SIMON heuristic noNN  (b)=ORACLE encounter-NN upper bound  (c)=ias15  (d)=tsalf resolution fix
+============================================================================================================
+  r_bin gate%(b)    RMS(a-c)    RMS(b-c)  improve%     |dE|a%  |dE|tsalf% tsalf done@yr
+---------------------------------------------------------------------------------------
+   0.01     0.0%    49028.05    49028.05      0.0%   65808.1%   0.000491%         13.05
+   0.03     0.0%    16386.47    16386.47      0.0%   22054.7%   0.000193%         67.63
+   0.05     0.0%     5944.17     5944.17      0.0%    4905.1%   0.000169%        100.00
+    0.1     0.0%     2999.34     2999.34      0.0%    2535.4%    0.00016%        100.00
+    0.2     0.0%      785.21      785.21      0.0%     434.8%   0.000172%        100.00
+    0.4     0.0%       91.03       91.03      0.0%     119.0%   0.000375%        100.00
+
+VERDICT: FOLD — NN (even oracle) improvement null across all r_bin; failure is binary under-resolution (timestep problem), unfixable by any force/encounter correction. Fix = adaptive resolution (tsalf/ias15).
+Constructive: tsalf bounds the binary where the heuristic explodes (see |dE|tsalf vs |dE|a, binary ranges).
+wrote operating_envelope.png

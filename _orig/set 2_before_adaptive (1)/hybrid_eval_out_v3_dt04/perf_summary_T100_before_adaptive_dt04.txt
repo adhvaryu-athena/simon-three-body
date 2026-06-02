@@ -1,0 +1,27 @@
+T_years: 100.0
+n_samples: 5000
+
+Baseline (REBOUND IAS15):
+  total_time_sec: 0.073639
+
+Representative hybrid run (dt_rep=0.04):
+  steps: 2500
+  total_time_sec: 0.048019
+  time_per_step_sec: 1.920748e-05
+  avg_fallback_frac: 0.003732
+  divergence_slope_1_per_yr: 1.712045e-01
+  divergence_fit_window_years: (10.0, 50.0)
+  speedup_vs_ias15: 1.53x
+
+Frontier sweep (hybrid):
+dt	final_err	throughput(samp/s)	time_per_step(s)	total_time(s)	steps	fallback_frac	speedup
+0.005	1.021742e+00	13385.408	1.867706e-05	0.373541	20000	0.003	0.20x
+0.01	1.616999e+02	25721.527	1.943897e-05	0.194390	10000	0.007	0.38x
+0.02	1.021742e+00	52579.221	1.901892e-05	0.095095	5000	0.004	0.77x
+0.04	1.690863e+00	100863.187	1.982884e-05	0.049572	2500	0.004	1.49x
+0.08	1.021742e+00	193643.085	2.065656e-05	0.025821	1250	0.002	2.85x
+
+Notes:
+- final_err is RMS(model - IAS15) at T=100 years.
+- divergence_slope is fitted slope of log d(t) where d(t)=RMS(model-IAS15).
+- speedup = IAS15_total_time / hybrid_total_time.

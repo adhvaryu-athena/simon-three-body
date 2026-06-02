@@ -1,0 +1,104 @@
+{
+  "guard_ok": true,
+  "rows": [
+    {
+      "run": "A_no_adaptive(NN,fixed)",
+      "dt": 0.04,
+      "max_dE_pct": 0.6844852503203277,
+      "rms_short": 0.02236536707272987,
+      "t_short": 12.084592145015105,
+      "rms_final": 1.6915261722878,
+      "rms_timeavg": 1.1937760406921347,
+      "force_evals": 2501,
+      "bounded": true
+    },
+    {
+      "run": "C_no_nn(soft,adaptive)",
+      "dt": 0.04,
+      "max_dE_pct": 1.2396689306119923,
+      "rms_short": 0.02236536707272987,
+      "t_short": 12.084592145015105,
+      "rms_final": 1.6748192805068165,
+      "rms_timeavg": 1.0932124575887334,
+      "force_evals": 2504,
+      "bounded": true
+    },
+    {
+      "run": "D_full_SIMON(NN,adaptive)",
+      "dt": 0.04,
+      "max_dE_pct": 1.3895054425134148,
+      "rms_short": 0.02236536707272987,
+      "t_short": 12.084592145015105,
+      "rms_final": 1.5293298997020015,
+      "rms_timeavg": 1.0840207253100087,
+      "force_evals": 2504,
+      "bounded": true
+    },
+    {
+      "run": "A_no_adaptive(NN,fixed)",
+      "dt": 0.02,
+      "max_dE_pct": 417.2181031953277,
+      "rms_short": 0.014473885302313944,
+      "t_short": 12.084592145015105,
+      "rms_final": 104.76441011987794,
+      "rms_timeavg": 49.273296027663164,
+      "force_evals": 5001,
+      "bounded": false
+    },
+    {
+      "run": "C_no_nn(soft,adaptive)",
+      "dt": 0.02,
+      "max_dE_pct": 1.3112379514467616,
+      "rms_short": 0.014473885302313944,
+      "t_short": 12.084592145015105,
+      "rms_final": 1.584215053208079,
+      "rms_timeavg": 1.2131082993674323,
+      "force_evals": 5010,
+      "bounded": true
+    },
+    {
+      "run": "D_full_SIMON(NN,adaptive)",
+      "dt": 0.02,
+      "max_dE_pct": 1.3004015614223468,
+      "rms_short": 0.014473885302313944,
+      "t_short": 12.084592145015105,
+      "rms_final": 1.709993286612772,
+      "rms_timeavg": 1.2231454934384045,
+      "force_evals": 5014,
+      "bounded": true
+    },
+    {
+      "run": "A_no_adaptive(NN,fixed)",
+      "dt": 0.01,
+      "max_dE_pct": 9253.185580098514,
+      "rms_short": 0.006905988286107558,
+      "t_short": 12.084592145015105,
+      "rms_final": 428.37914669821566,
+      "rms_timeavg": 195.85476963677868,
+      "force_evals": 10001,
+      "bounded": false
+    },
+    {
+      "run": "C_no_nn(soft,adaptive)",
+      "dt": 0.01,
+      "max_dE_pct": 0.18702675119121187,
+      "rms_short": 0.006905988286107558,
+      "t_short": 12.084592145015105,
+      "rms_final": 0.9203163324915936,
+      "rms_timeavg": 0.7735853764182109,
+      "force_evals": 10020,
+      "bounded": true
+    },
+    {
+      "run": "D_full_SIMON(NN,adaptive)",
+      "dt": 0.01,
+      "max_dE_pct": 0.22166719532115442,
+      "rms_short": 0.006905988286107558,
+      "t_short": 12.084592145015105,
+      "rms_final": 0.8730635236596562,
+      "rms_timeavg": 0.8549953795694079,
+      "force_evals": 10034,
+      "bounded": true
+    }
+  ]
+}

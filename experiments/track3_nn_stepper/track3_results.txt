@@ -1,0 +1,17 @@
+HELD-OUT EVAL — equal-accuracy frontier (analytic eta sweep) vs NN-tsalf
+
+IC1: NN-tsalf dE=0.0127% fe=5660 bnd=True
+   analytic frontier (eta,dE%,fe,bnd): (0.2,0.607,670,True), (0.1,0.251,1481,True), (0.05,1.971,2956,True), (0.025,0.012,5707,True), (0.0125,0.004,12922,True)
+   cheapest analytic reaching NN's accuracy: fe=5492.959927828713 -> NN/analytic cost = 1.03x
+
+IC4: NN-tsalf dE=0.0488% fe=5004 bnd=True
+   analytic frontier (eta,dE%,fe,bnd): (0.2,2.743,679,True), (0.1,0.970,1240,True), (0.05,0.223,2513,True), (0.025,0.052,4962,True), (0.0125,0.013,9944,True)
+   cheapest analytic reaching NN's accuracy: fe=5100.145673923008 -> NN/analytic cost = 0.98x
+
+IC6: NN-tsalf dE=0.0008% fe=2227 bnd=True
+   analytic frontier (eta,dE%,fe,bnd): (0.2,0.017,273,True), (0.1,0.010,554,True), (0.05,0.003,1112,True), (0.025,0.001,2227,True), (0.0125,0.000,4454,True)
+   cheapest analytic reaching NN's accuracy: fe=2226.9999999999995 -> NN/analytic cost = 1.00x
+
+======================================================================
+cost ratios NN/analytic@equal-accuracy: {'IC1': 1.0304098472164378, 'IC4': 0.9811484455405657, 'IC6': 1.0000000000000002}
+TRACK 3 VERDICT: NULL — NN ~matches analytic t_dyn criterion; ship analytic (Occam)

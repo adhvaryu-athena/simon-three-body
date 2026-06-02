@@ -1,0 +1,59 @@
+================================================================================================
+IC1  (lambda~0.166)  force-model=soft
+================================================================================================
+method                        param   |dE/E0|max  rms_short  rms_final   bnd force_evals
+----------------------------------------------------------------------------------------
+leapfrog_fixed              dt=0.04      3.8564%     0.0224      1.210  True        2501
+leapfrog_fixed             dt=0.005    128.4197%     0.0030     10.617 False       20001
+leapfrog_adaptive(heur)     dt=0.04      1.2397%     0.0224      1.675  True        2504
+yoshida4                    ds=0.04    921.1910%     0.0244    147.549 False        7501
+yoshida4                    ds=0.02     13.5546%     0.0150     19.747 False       15001
+tsalf                       eta=0.1      0.1559%     0.0152      1.349  True        4375
+tsalf                      eta=0.05      0.0871%     0.0038      2.999  True        8752
+tsalf                      eta=0.02      0.0064%     0.0006      1.358  True       21049
+
+================================================================================================
+IC4  (lambda~0.099)  force-model=soft
+================================================================================================
+method                        param   |dE/E0|max  rms_short  rms_final   bnd force_evals
+----------------------------------------------------------------------------------------
+leapfrog_fixed              dt=0.04     13.7722%     0.0955      1.598  True        2501
+leapfrog_fixed             dt=0.005      0.2592%     0.0025      0.372  True       20001
+leapfrog_adaptive(heur)     dt=0.04     13.7722%     0.0955      1.598  True        2501
+yoshida4                    ds=0.04      4.2910%     0.0965      2.172  True        7501
+yoshida4                    ds=0.02      0.2345%     0.0181      1.439  True       15001
+tsalf                       eta=0.1      4.2903%     0.0366      5.371  True        5911
+tsalf                      eta=0.05      0.2236%     0.0081      1.749  True        7534
+tsalf                      eta=0.02      0.0340%     0.0013      1.831  True       18232
+
+================================================================================================
+IC6  (lambda~0.019)  force-model=soft
+================================================================================================
+method                        param   |dE/E0|max  rms_short  rms_final   bnd force_evals
+----------------------------------------------------------------------------------------
+leapfrog_fixed              dt=0.04      0.0006%     0.0116      0.008  True        2501
+leapfrog_fixed             dt=0.005      0.0000%     0.0016      0.000  True       20001
+leapfrog_adaptive(heur)     dt=0.04      0.0006%     0.0116      0.008  True        2501
+yoshida4                    ds=0.04      0.0000%     0.0133      0.000  True        7501
+yoshida4                    ds=0.02      0.0000%     0.0067      0.000  True       15001
+tsalf                       eta=0.1      0.0103%     0.0901      0.158  True        1663
+tsalf                      eta=0.05      0.0030%     0.0224      0.039  True        3337
+tsalf                      eta=0.02      0.0005%     0.0036      0.006  True        8350
+
+================================================================================================
+TRACK 2 VERDICT
+================================================================================================
+IC1: leapfrog dt=0.04 dE=3.856% bnd=True fe=2501 | dt=0.005 dE=128.420% fe=20001
+     tsalf    best: eta=0.02 dE=0.0064% bnd=True fe=21049
+IC4: leapfrog dt=0.04 dE=13.772% bnd=True fe=2501 | dt=0.005 dE=0.259% fe=20001
+     yoshida4 best: ds=0.02 dE=0.2345% bnd=True fe=15001
+     tsalf    best: eta=0.02 dE=0.0340% bnd=True fe=18232
+IC6: leapfrog dt=0.04 dE=0.001% bnd=True fe=2501 | dt=0.005 dE=0.000% fe=20001
+     yoshida4 best: ds=0.02 dE=0.0000% bnd=True fe=15001
+     tsalf    best: eta=0.02 dE=0.0005% bnd=True fe=8350
+
+HEADLINE CHECKS:
+  IC1 close-encounter: tsalf bounded@eta=0.02 dE=0.006% fe=21049 (vs leapfrog dt=0.04 bnd=True dE=3.86%)
+  IC4 under-resolution: yoshida4 ds=0.02 dE=0.2345% fe=15001 vs leapfrog dt=0.005 dE=0.259% fe=20001 -> cost ratio 0.75x
+
+[wall 3.8s]

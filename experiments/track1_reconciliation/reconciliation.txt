@@ -1,0 +1,36 @@
+==============================================================================
+VERIFICATION GUARD — SIMON (adaptive+NN), dt=0.04, T=100  (toy G=1.0)
+==============================================================================
+  IC1: |dE/E0|max =   1.3895%  (exp ~1.39)  fe=  2504  -> OK
+  IC3: |dE/E0|max =   0.6718%  (exp ~0.67)  fe=  2501  -> OK
+  IC4: |dE/E0|max =  13.7722%  (exp ~13.77)  fe=  2501  -> OK
+  IC6: |dE/E0|max =   0.0006%  (exp ~0.0006)  fe=  2501  -> OK
+GUARD: PASS
+
+==============================================================================
+TRACK 1 — matched-dt ablation on IC1  (A=NN/no-adapt, C=soft/adapt, D=full SIMON)
+Matched-dt reconciliation: Run A (no adaptive) vs Run D (full SIMON).
+==============================================================================
+run                            dt   |dE/E0|max  rms_short  rms_final  bounded force_evals
+-----------------------------------------------------------------------------------------
+A_no_adaptive(NN,fixed)      0.04      0.6845%     0.0224      1.692     True        2501
+C_no_nn(soft,adaptive)       0.04      1.2397%     0.0224      1.675     True        2504
+D_full_SIMON(NN,adaptive)    0.04      1.3895%     0.0224      1.529     True        2504
+-----------------------------------------------------------------------------------------
+A_no_adaptive(NN,fixed)      0.02    417.2181%     0.0145    104.764    False        5001
+C_no_nn(soft,adaptive)       0.02      1.3112%     0.0145      1.584     True        5010
+D_full_SIMON(NN,adaptive)    0.02      1.3004%     0.0145      1.710     True        5014
+-----------------------------------------------------------------------------------------
+A_no_adaptive(NN,fixed)      0.01   9253.1856%     0.0069    428.379    False       10001
+C_no_nn(soft,adaptive)       0.01      0.1870%     0.0069      0.920     True       10020
+D_full_SIMON(NN,adaptive)    0.01      0.2217%     0.0069      0.873     True       10034
+-----------------------------------------------------------------------------------------
+
+RECONCILIATION ANSWER:
+  Run A @ dt=0.04: bounded=True  |dE/E0|max=0.684%  final_rms=1.69 AU
+  Run A @ dt=0.02: bounded=False  |dE/E0|max=417.218%  final_rms=104.76 AU
+  Run A @ dt=0.01: bounded=False  |dE/E0|max=9253.186%  final_rms=428.38 AU
+  -> At the operational dt=0.04, Run A STAYS BOUNDED.
+  (Published 161.7 AU ejection is NOT reproduced at matched dt; likely a finer-dt / sampling-bug artifact.)
+
+[wall 1.1s]

@@ -1,0 +1,28 @@
+Sun-Earth-Moon (JPL Horizons 2026-01-01)  Phase-A:  heuristic vs analytic sub-stepping
+====================================================================================================
+T=100.0 yr | n_samples=5000 | G=4*pi^2=39.478418 | eps=0.0003 | adaptive ON | dt=[0.008, 0.012, 0.016]
+IC: Sun-Earth=0.983327 AU  Earth-Moon=0.002413 AU
+IAS15 ref: EM range [0.002384,0.002718] AU | max|dE/E0|=7.7642e-06%
+
+REQUESTED TABLE  (speedup ratio = heuristic n_sub avg / analytic n_sub avg; >1 = analytic fewer)
+     dt |  heuristic n_sub avg |  analytic n_sub avg | speedup ratio
+----------------------------------------------------------------------
+  0.008 |                16.00 |               21.40 |         0.748
+  0.012 |                16.00 |               31.87 |         0.502
+  0.016 |                16.00 |               42.33 |         0.378
+
+PER-VARIANT METRICS
+     dt    variant | nsub_avg RMS_0:T(AU) max|dE/E0|%          EM range (AU)  state
+----------------------------------------------------------------------------------------
+  0.008  heuristic |    16.00  2.3056e-02  1.7135e-05 [0.002376,0.002644] ok
+  0.008   analytic |    21.40  2.3369e-02  9.8506e-06 [0.002383,0.002638] ok
+  0.012  heuristic |    16.00  3.3972e-02  3.7796e-05 [0.002376,0.002647] ok
+  0.012   analytic |    31.87  3.5184e-02  1.0098e-05 [0.002385,0.002637] ok
+  0.016  heuristic |    16.00  4.4508e-02  6.6416e-05 [0.002378,0.002652] ok
+  0.016   analytic |    42.33  4.6981e-02  1.0153e-05 [0.002388,0.002637] ok
+
+Notes:
+- n_sub avg = total_substeps / macro_steps (Earth-Moon is always < adapt_thresh, so every step sub-steps).
+- heuristic max_substeps=16 (original); analytic max_substeps=64 so its criterion is not artificially capped.
+- RMS_0:T = sqrt(mean_t RMS(pos-IAS15)^2); max|dE/E0| uses SOFTENED PE (eps=3e-4), same diagnostic as the file.
+- Earth-Moon physical range ~0.00244-0.00271 AU (target band 0.002-0.003).

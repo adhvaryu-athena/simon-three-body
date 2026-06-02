@@ -1,0 +1,22 @@
+=================================================================
+NO-NN ABLATION SUMMARY
+Question: Is the NN correction essential at close encounters?
+=================================================================
+
+T=100.0yr  dt=0.04yr  n_samples=5000
+m=[1.0, 0.01, 0.005] Msun
+
+Design:
+  SIMON:   F = c * G*mi*mj/r_soft^3 * rij  (NN predicts c)
+  No-NN:   F = G*mi*mj/r_soft^3 * rij       (c = 1 always, no NN)
+
+Model                   lambda(/yr)    final_RMS    speedup    NN_frac   bounded
+-----------------------------------------------------------------------------
+ias15                            --        0.000      1.00x         --       YES
+SIMON (with NN)              0.1655       1.5427      1.07x     0.0045       YES
+No-NN baseline               0.1655       1.6748      1.07x     0.0047       YES
+
+VERDICT:
+  Both models stay bounded.
+  NN contribution is accuracy improvement, not stability guarantee.
+  Paper framing should be adjusted accordingly.

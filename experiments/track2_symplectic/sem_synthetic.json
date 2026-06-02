@@ -1,0 +1,58 @@
+[
+  {
+    "method": "leapfrog_fixed",
+    "param": "dt=0.04",
+    "max_dE_pct": 0.10152738702541506,
+    "em_min": 0.002569999999999961,
+    "em_max": 2.196959605351956,
+    "bounded": true,
+    "force_evals": 751
+  },
+  {
+    "method": "leapfrog_fixed",
+    "param": "dt=0.01",
+    "max_dE_pct": 0.0008148718218840643,
+    "em_min": 0.002569999999999961,
+    "em_max": 0.0033653067961755875,
+    "bounded": true,
+    "force_evals": 3001
+  },
+  {
+    "method": "leapfrog_fixed",
+    "param": "dt=0.002",
+    "max_dE_pct": 1.4773312758301924e-05,
+    "em_min": 0.002534971166452864,
+    "em_max": 0.0026025845236926095,
+    "bounded": true,
+    "force_evals": 15001
+  },
+  {
+    "method": "leapfrog_adaptive",
+    "param": "dt=0.04",
+    "max_dE_pct": 2.3666951848306016e-05,
+    "em_min": 0.0025550944129974044,
+    "em_max": 0.0026061492712171463,
+    "bounded": true,
+    "force_evals": 12001
+  },
+  {
+    "method": "tsalf",
+    "param": "eta=0.1",
+    "max_dE_pct": 5.997412586111661e-06,
+    "em_min": 0.0025088551436256725,
+    "em_max": 0.0025968275118708603,
+    "bounded": true,
+    "force_evals": 75946,
+    "max_dE_steps": 5.997412586111661e-06
+  },
+  {
+    "method": "tsalf",
+    "param": "eta=0.05",
+    "max_dE_pct": 2.6775794746568777e-06,
+    "em_min": 0.0025015947143675024,
+    "em_max": 0.002595645546149169,
+    "bounded": true,
+    "force_evals": 152476,
+    "max_dE_steps": 2.6775794746568777e-06
+  }
+]

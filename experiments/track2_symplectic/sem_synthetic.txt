@@ -1,0 +1,21 @@
+============================================================================================
+SYNTHETIC SUN-EARTH-MOON (Earth-Moon=0.00257 AU, mode=newton, G=4pi^2)
+============================================================================================
+IAS15 ref Earth-Moon range: (0.002499132344753919, 0.0025955234039402556) AU
+method                      param   |dE/E0|max    EM_min    EM_max   bnd force_evals
+------------------------------------------------------------------------------------
+leapfrog_fixed            dt=0.04      0.1015%   0.00257   2.19696  True         751
+leapfrog_fixed            dt=0.01      0.0008%   0.00257   0.00337  True        3001
+leapfrog_fixed           dt=0.002      0.0000%   0.00253   0.00260  True       15001
+leapfrog_adaptive         dt=0.04      0.0000%   0.00256   0.00261  True       12001
+tsalf                     eta=0.1      0.0030%   0.00251   0.00260  True       75946
+tsalf                    eta=0.05      0.0007%   0.00250   0.00260  True      152476
+
+SEM verdict:
+  leapfrog dt=0.04: bnd=True dE~0.102% fe=751 EM=[0.00257,2.19696]
+  leapfrog dt=0.01: bnd=True dE~0.000815% fe=3001 EM=[0.00257,0.00337]
+  leapfrog dt=0.002: bnd=True dE~1.48e-05% fe=15001 EM=[0.00253,0.00260]
+  tsalf eta=0.1: bnd=True dE=5.997e-06% fe=75946 EM=[0.00251,0.00260]
+  tsalf eta=0.05: bnd=True dE=2.678e-06% fe=152476 EM=[0.00250,0.00260]
+wrote frontier.png
+wrote energy_vs_time_IC1.png

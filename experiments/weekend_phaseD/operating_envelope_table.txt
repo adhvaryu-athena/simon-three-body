@@ -1,0 +1,77 @@
+SIMON OPERATING ENVELOPE — full table (phaseD). NOTHING omitted; failures marked.
+force model: existing+binary = SIMON softened (eps=3e-4 negligible); SEM = Newtonian (point masses).
+fe/yr = force evals per simulated yr (ias15 = steps*8 estimate). max|dE| = softened PE. PARTIAL = tsalf step-capped.
+====================================================================================================================================
+config   cls      method              fe/yr wall/yr(s)   max|dE/E0|     status completed            pair_range(AU)
+------------------------------------------------------------------------------------------------------------------
+IC1      existing heuristic            25.0     0.0004        1.24%         ok     100yr                         -
+IC1      existing leapfrog_0.04        25.0     0.0003       3.856%         ok     100yr                         -
+IC1      existing leapfrog_0.01       100.0     0.0012       7.004%         ok     100yr                         -
+IC1      existing leapfrog_0.005      200.0     0.0025       128.4%    EJECTED     100yr                         -
+IC1      existing tsalf                87.5     0.0020     0.08715%         ok     100yr                         -
+IC1      existing ias15               813.8     0.0008     0.01313%         ok     100yr                         -
+------------------------------------------------------------------------------------------------------------------
+IC3      existing heuristic            25.0     0.0004      0.6718%         ok     100yr                         -
+IC3      existing leapfrog_0.04        25.0     0.0003      0.6718%         ok     100yr                         -
+IC3      existing leapfrog_0.01       100.0     0.0013     0.02323%         ok     100yr                         -
+IC3      existing leapfrog_0.005      200.0     0.0025    0.005842%         ok     100yr                         -
+IC3      existing tsalf               210.7     0.0047       0.042%         ok     100yr                         -
+IC3      existing ias15               800.0     0.0008   5.544e-05%         ok     100yr                         -
+------------------------------------------------------------------------------------------------------------------
+IC4      existing heuristic            25.0     0.0004       13.77%         ok     100yr                         -
+IC4      existing leapfrog_0.04        25.0     0.0003       13.77%         ok     100yr                         -
+IC4      existing leapfrog_0.01       100.0     0.0013       1.045%         ok     100yr                         -
+IC4      existing leapfrog_0.005      200.0     0.0025      0.2592%         ok     100yr                         -
+IC4      existing tsalf                75.3     0.0017      0.2236%         ok     100yr                         -
+IC4      existing ias15               800.0     0.0008   0.0006863%         ok     100yr                         -
+------------------------------------------------------------------------------------------------------------------
+IC6      existing heuristic            25.0     0.0004   0.0006202%         ok     100yr                         -
+IC6      existing leapfrog_0.04        25.0     0.0003   0.0006202%         ok     100yr                         -
+IC6      existing leapfrog_0.01       100.0     0.0013   3.879e-05%         ok     100yr                         -
+IC6      existing leapfrog_0.005      200.0     0.0025   9.477e-06%         ok     100yr                         -
+IC6      existing tsalf                33.4     0.0008    0.002961%         ok     100yr                         -
+IC6      existing ias15               800.0     0.0007   2.985e-07%         ok     100yr                         -
+------------------------------------------------------------------------------------------------------------------
+BS_0.05  binary   heuristic            25.0     0.0004        4905%    EJECTED     100yr     [0.05000,23915.90493]
+BS_0.05  binary   leapfrog_0.04        25.0     0.0003   1.905e+04%    EJECTED     100yr     [0.05000,47493.36586]
+BS_0.05  binary   leapfrog_0.01       100.0     0.0013        1363%    EJECTED     100yr     [0.05000,12261.30113]
+BS_0.05  binary   leapfrog_0.005      200.0     0.0025         436%    EJECTED     100yr      [0.05000,6323.28081]
+BS_0.05  binary   tsalf             41241.2     1.0684   0.0001692%         ok     100yr         [0.04998,0.05007]
+BS_0.05  binary   ias15             31593.4     0.0163   1.099e-07%         ok     100yr         [0.05000,0.05000]
+------------------------------------------------------------------------------------------------------------------
+BS_0.10  binary   heuristic            25.0     0.0004        2535%    EJECTED     100yr     [0.10000,12066.87367]
+BS_0.10  binary   leapfrog_0.04        25.0     0.0003        2535%    EJECTED     100yr     [0.10000,12066.87367]
+BS_0.10  binary   leapfrog_0.01       100.0     0.0013       234.4%    EJECTED     100yr      [0.10000,2830.11830]
+BS_0.10  binary   leapfrog_0.005      200.0     0.0025       157.9%    EJECTED     100yr      [0.10000,1835.24850]
+BS_0.10  binary   tsalf             14582.2     0.3800     0.00016%         ok     100yr         [0.09997,0.10013]
+BS_0.10  binary   ias15             11197.8     0.0064   1.613e-07%         ok     100yr         [0.09999,0.10001]
+------------------------------------------------------------------------------------------------------------------
+BS_0.20  binary   heuristic            25.0     0.0004       434.8%    EJECTED     100yr      [0.20000,3153.33569]
+BS_0.20  binary   leapfrog_0.04        25.0     0.0003       434.8%    EJECTED     100yr      [0.20000,3153.33569]
+BS_0.20  binary   leapfrog_0.01       100.0     0.0012       6.836%         ok     100yr         [0.19999,0.27168]
+BS_0.20  binary   leapfrog_0.005      200.0     0.0024      0.6591%         ok     100yr         [0.19999,0.21786]
+BS_0.20  binary   tsalf              5155.8     0.1161   0.0001722%         ok     100yr         [0.19991,0.20026]
+BS_0.20  binary   ias15              3999.3     0.0027   2.397e-07%         ok     100yr         [0.19993,0.20006]
+------------------------------------------------------------------------------------------------------------------
+BS_0.40  binary   heuristic            25.0     0.0004         119%    EJECTED     100yr       [0.35589,339.27076]
+BS_0.40  binary   leapfrog_0.04        25.0     0.0003         119%    EJECTED     100yr       [0.35589,339.27076]
+BS_0.40  binary   leapfrog_0.01       100.0     0.0012      0.1814%         ok     100yr         [0.39989,0.41799]
+BS_0.40  binary   leapfrog_0.005      200.0     0.0025     0.01279%         ok     100yr         [0.39987,0.40452]
+BS_0.40  binary   tsalf              1823.2     0.0411   0.0003754%         ok     100yr         [0.39919,0.40101]
+BS_0.40  binary   ias15              1599.8     0.0015   3.834e-07%         ok     100yr         [0.39909,0.40076]
+------------------------------------------------------------------------------------------------------------------
+SEM      sem      heuristic          1000.0     0.0106   6.549e-05%         ok     100yr         [0.00238,0.00273]
+SEM      sem      leapfrog_0.04        25.0     0.0003      0.1974%         ok     100yr         [0.00241,2.42365]
+SEM      sem      leapfrog_0.01       100.0     0.0011    0.007867%         ok     100yr         [0.00203,1.98950]
+SEM      sem      leapfrog_0.005      200.0     0.0021    0.001679%         ok     100yr         [0.00237,0.00298]
+SEM      sem      tsalf              5037.5     0.1045   2.364e-05%         ok     100yr         [0.00238,0.00272]
+SEM      sem      ias15              2478.1     0.0023   7.764e-06%         ok     100yr         [0.00238,0.00272]
+------------------------------------------------------------------------------------------------------------------
+
+SEM Earth-Moon distance range (catches lunar unbinding global metrics miss):
+  heuristic       EM range [0.00238, 0.00273] AU
+  leapfrog_0.04   EM range [0.00241, 2.42365] AU  <-- LUNAR ORBIT DISRUPTED
+  leapfrog_0.01   EM range [0.00203, 1.98950] AU  <-- LUNAR ORBIT DISRUPTED
+  leapfrog_0.005  EM range [0.00237, 0.00298] AU
+  tsalf           EM range [0.00238, 0.00272] AU
+  ias15           EM range [0.00238, 0.00272] AU

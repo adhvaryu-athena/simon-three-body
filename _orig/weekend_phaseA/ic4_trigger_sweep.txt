@@ -1,0 +1,44 @@
+IC4 TRIGGER SWEEP - does lowering the sub-stepping trigger fix IC4's energy drift?
+======================================================================================================================
+T=100.0yr  dt=0.04yr  n_samples=5000  max_substeps=16  energy=softened PE (eps=0.0003, G=1.0)
+Integrator/forces/ias15/masses/dt/sampling identical to multi_ic_eval_v3.py; ONLY adapt_thresh varies.
+min r_min = closest macro-step pair distance over the run (engages only if < adapt_thresh).
+nsub_jump = max |n_sub[k]-n_sub[k-1]| over the run (symplecticity-kick proxy).
+
+IC                  adapt  min r_min  nsub_avg  nsub_max  nsub_jump  total_sub     RMS_0:T   |dE/E0|max  bounded
+----------------------------------------------------------------------------------------------------------------
+IC1_default          0.05     0.0322      1.00         2          1       2503  1.0839e+00      1.3892%     True
+IC1_default          0.10     0.0149      1.01         7          4       2531  3.1716e+00    329.1729%    False
+IC1_default          0.20     0.0318      1.02         7          3       2540  1.3669e+00      0.1724%     True
+IC1_default          0.30     0.0234      1.07        13          7       2681  1.2139e+00      0.2393%     True
+IC1_default          0.50     0.0233      1.20        16          6       3011  1.0706e+00      0.3086%     True
+
+IC3_tight            0.05     0.2354      1.00         1          0       2500  1.5994e+00      0.6718%     True
+IC3_tight            0.10     0.2354      1.00         1          0       2500  1.5994e+00      0.6718%     True
+IC3_tight            0.20     0.2354      1.00         1          0       2500  1.5994e+00      0.6718%     True
+IC3_tight            0.30     0.2348      1.01         2          1       2516  1.4989e+00      0.6464%     True
+IC3_tight            0.50     0.1735      1.80         3          1       4496  8.3552e-01      0.3747%     True
+
+IC4_hierarchical     0.05     0.1805      1.00         1          0       2500  1.4197e+00     13.7722%     True
+IC4_hierarchical     0.10     0.1805      1.00         1          0       2500  1.4197e+00     13.7722%     True
+IC4_hierarchical     0.20     0.1807      1.00         2          1       2507  1.4925e+00     13.8518%     True
+IC4_hierarchical     0.30     0.1782      1.01         2          1       2523  9.3216e-01      4.1036%     True
+IC4_hierarchical     0.50     0.1776      1.03         3          1       2566  1.1859e+00      1.7642%     True
+
+IC6_near_circular    0.05     1.4536      1.00         1          0       2500  1.1570e-02      0.0006%     True
+IC6_near_circular    0.10     1.4536      1.00         1          0       2500  1.1570e-02      0.0006%     True
+IC6_near_circular    0.20     1.4536      1.00         1          0       2500  1.1570e-02      0.0006%     True
+IC6_near_circular    0.30     1.4536      1.00         1          0       2500  1.1570e-02      0.0006%     True
+IC6_near_circular    0.50     1.4536      1.00         1          0       2500  1.1570e-02      0.0006%     True
+
+======================================================================================================================
+VERDICT: PASS
+  Best IC4 trigger: adapt_thresh=0.5  |dE/E0|max 13.7722% -> 1.7642%  (RMS_0:T 1.4197e+00 -> 1.1859e+00)
+  IC4 n_sub at best: avg=1.03 max=3 jump=1  (min r_min=0.1776)
+  Collateral regressions at adapt_thresh=0.5: none
+
+Verification guard (adapt_thresh=0.05) reproduced the known baseline:
+  IC1_default        dE=1.3892% (exp~1.39) lam=+0.1655 (exp +0.1655) finRMS=1.5030 (exp 1.54) -> OK
+  IC3_tight          dE=0.6718% (exp~0.67) lam=+0.1207 (exp +0.1207) finRMS=3.4534 (exp 3.45) -> OK
+  IC4_hierarchical   dE=13.7722% (exp~13.77) lam=+0.0990 (exp +0.0990) finRMS=1.5981 (exp 1.6) -> OK
+  IC6_near_circular  dE=0.0006% (exp~0.0006) lam=-0.0189 (exp -0.0189) finRMS=0.0079 (exp 0.0079) -> OK

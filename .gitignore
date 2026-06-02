@@ -1,0 +1,20 @@
+# internal logs / working notes
+DIGEST.md
+PROGRESS.md
+# macOS / editor cruft
+.DS_Store
+._.DS_Store
+**/.DS_Store
+# internal tooling config
+**/.claude/
+# stdout run logs
+**/*.log
+# binary working documents (excluded from the public record)
+**/*.docx
+# redundant top-level result copies (kept under experiments/)
+/weekend_phaseC/
+/weekend_phaseD/
+# python caches
+__pycache__/
+*.pyc
+*.pyo
