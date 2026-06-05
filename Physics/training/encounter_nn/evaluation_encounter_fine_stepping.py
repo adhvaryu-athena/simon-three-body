@@ -245,6 +245,92 @@ def rel_energy_drift(E0, E_now):
     return abs((E_now - E0) / (abs(E0) + 1e-30))
 
 
+def energy_diagnostics_from_series(method, pos, vel, m, G=1.0, nn_jump=float("nan"),
+                                   relE_window_noNN=float("nan"),
+                                   relE_corr_total=float("nan")):
+    """
+    Compute energy diagnostics from an already-generated trajectory.
+
+    This does not change the simulation. It only post-processes sampled states.
+    relE_final, relE_max, relE_timeavg, and relE_p95 are measured relative to
+    the first sampled state of this trajectory. For EncounterNN, nn_jump is the
+    instantaneous correction-only energy change.
+    """
+    pos = np.asarray(pos, dtype=np.float64)
+    vel = np.asarray(vel, dtype=np.float64)
+    if pos.shape != vel.shape or pos.ndim != 3:
+        raise ValueError(f"Bad trajectory shapes for energy diagnostics: pos={pos.shape}, vel={vel.shape}")
+
+    energies = np.array([total_energy_state(pos[k], vel[k], m, G)
+                         for k in range(pos.shape[0])], dtype=np.float64)
+    E0 = float(energies[0])
+    rel = np.abs((energies - E0) / (abs(E0) + 1e-30))
+    diag = {
+        "method": str(method),
+        "E0": E0,
+        "E_final": float(energies[-1]),
+        "relE_final": float(rel[-1]),
+        "relE_max": float(np.max(rel)),
+        "relE_timeavg": float(np.sqrt(np.mean(rel * rel))),
+        "relE_p95": float(np.percentile(rel, 95)),
+        "relE_corr_jump": float(nn_jump),
+        "relE_window_noNN": float(relE_window_noNN),
+        "relE_corr_total": float(relE_corr_total),
+    }
+    diag["energy_status"] = energy_status(max_finite([
+        diag["relE_max"], diag["relE_corr_jump"]
+    ]))
+    return diag
+
+
+def encounter_correction_energy_audit(x_entry, v_entry, x_no_exit, v_no_exit,
+                                      x_corr, v_corr, m, G=1.0):
+    """
+    Separate the 0.5yr noNN window drift from the instantaneous NN correction jump.
+    The existing relE_corr value is kept as relE_corr_total for backward compatibility.
+    """
+    E_entry = total_energy_state(x_entry, v_entry, m, G)
+    E_no_exit = total_energy_state(x_no_exit, v_no_exit, m, G)
+    E_corr = total_energy_state(x_corr, v_corr, m, G)
+    return {
+        "E_entry": float(E_entry),
+        "E_no_exit": float(E_no_exit),
+        "E_corr": float(E_corr),
+        "relE_window_noNN": rel_energy_drift(E_entry, E_no_exit),
+        "relE_corr_jump": rel_energy_drift(E_no_exit, E_corr),
+        "relE_corr_total": rel_energy_drift(E_entry, E_corr),
+    }
+
+
+def max_finite(values):
+    finite_vals = [float(v) for v in values if math.isfinite(float(v))]
+    return max(finite_vals) if finite_vals else float("nan")
+
+
+def energy_status(value):
+    """Reporting-only energy status. Does not stop or change a run."""
+    if not math.isfinite(float(value)):
+        return "N/A"
+    value = abs(float(value))
+    if value < 1e-5:
+        return "EXCELLENT"
+    if value < 1e-3:
+        return "GOOD"
+    if value < 1e-2:
+        return "CAUTION"
+    if value < 1e-1:
+        return "HIGH"
+    return "UNSAFE"
+
+
+def copy_energy_diag_to_seed(row, prefix, diag):
+    """Flatten selected energy diagnostics into a per-seed result row."""
+    for key in ("relE_final", "relE_max", "relE_timeavg", "relE_p95",
+                "relE_corr_jump", "energy_status"):
+        row[f"{prefix}_{key}"] = diag.get(key, float("nan"))
+
+
+
 def pct_gain(base, new):
     return 100.0 * (base - new) / max(abs(base), 1e-30)
 
@@ -522,8 +608,12 @@ def simulate_simon_encounterNN(x0, v0, m, encounter_model, cfg,
     pred_pos_sum = 0.0; pred_vel_sum = 0.0
     min_r_global = r_min_cur
     max_rad_global = max_radius_state(x)
+    
     relE_corr_used = float("nan")
+    relE_corr_jump_used = float("nan")
+    relE_window_noNN_used = float("nan")
 
+    
     t_start = time.perf_counter()
     while t_cur < float(T) - 1e-14 and steps < n_steps + 10:
         step_dt_macro = min(float(dt), float(T) - t_cur)
@@ -548,13 +638,17 @@ def simulate_simon_encounterNN(x0, v0, m, encounter_model, cfg,
                 min_r_global = min(min_r_global, r_min_cur)
                 fill()
                 if not all_finite_state(x, v): break
+            
             x_no_exit = x.copy(); v_no_exit = v.copy()
             dx, dv, pred_pos_norm, pred_vel_norm = predict_encounter_residual_np(encounter_model, X_entry)
             x_corr = x_no_exit + dx; v_corr = v_no_exit + dv
             if com_project:
                 x_corr, v_corr = project_com_to_reference(x_corr, v_corr, x_no_exit, v_no_exit, m)
-            relE_corr = abs((total_energy_state(x_corr, v_corr, m, G=cfg.G) - E_start) / (abs(E_start)+1e-30))
+            energy_audit = encounter_correction_energy_audit(
+                x_start, v_start, x_no_exit, v_no_exit, x_corr, v_corr, m, cfg.G)
+            relE_corr = energy_audit["relE_corr_total"]  # legacy total-from-entry value
             use = True; reason = "used"
+            
             if not all_finite_state(x_corr, v_corr):
                 use = False; reason = "nonfinite"
             elif max_radius_state(x_corr) > float(max_radius_gate):
@@ -574,8 +668,13 @@ def simulate_simon_encounterNN(x0, v0, m, encounter_model, cfg,
                 pred_pos_sum += pred_pos_norm; pred_vel_sum += pred_vel_norm
                 min_r_global  = min(min_r_global, r_min_cur)
                 max_rad_global = max(max_rad_global, max_radius_state(x))
+                
                 relE_corr_used = relE_corr
+                relE_corr_jump_used = energy_audit["relE_corr_jump"]
+                relE_window_noNN_used = energy_audit["relE_window_noNN"]
                 if si > 0 and abs(times[si-1] - t_cur) <= max(1e-10, 1e-9*abs(t_cur)):
+
+
                     pos_out[si-1] = x; vel_out[si-1] = v
                 fill()
             else:
@@ -585,8 +684,13 @@ def simulate_simon_encounterNN(x0, v0, m, encounter_model, cfg,
                     "used": int(use), "reason": reason, "r_pair": float(r_pair),
                     "v_rad_norm": float(vr_entry), "v_tan_norm": float(vt_entry),
                     "min_r_window": float(min_r_window),
+                    
                     "pred_pos_norm": float(pred_pos_norm), "pred_vel_norm": float(pred_vel_norm),
-                    "relE_corr": float(relE_corr)})
+                    "relE_corr": float(relE_corr),
+                    "relE_window_noNN": float(energy_audit["relE_window_noNN"]),
+                    "relE_corr_jump": float(energy_audit["relE_corr_jump"]),
+                    "relE_corr_total": float(energy_audit["relE_corr_total"])})
+                
             continue
         x, v, r_min_cur, a_cache, _ = kernel.macro_step(x, v, step_dt_macro, r_min_cur, a_cache)
         t_cur += step_dt_macro; steps += 1
@@ -610,8 +714,13 @@ def simulate_simon_encounterNN(x0, v0, m, encounter_model, cfg,
         "pred_vel_norm_mean": float(pred_vel_sum / used_safe),
         "min_r": float(min_r_global),
         "max_radius": float(max_rad_global),
+        
         "local_correction_relE_corr": float(relE_corr_used),
+        "local_correction_relE_corr_total": float(relE_corr_used),
+        "local_correction_relE_corr_jump": float(relE_corr_jump_used),
+        "local_correction_relE_window_noNN": float(relE_window_noNN_used),
         "relE_drift": rel_energy_drift(E0, E_final),
+
     })
     return times, pos_out, vel_out, perf
 
@@ -920,10 +1029,14 @@ def compute_exit_state_all_methods(x_event, v_event, m, encounter_model, cfg,
     dx, dv, pred_pos_norm, _ = predict_encounter_residual_np(encounter_model, X_entry)
     x_corr = x_no_exit + dx; v_corr = v_no_exit + dv
     x_corr, v_corr = project_com_to_reference(x_corr, v_corr, x_no_exit, v_no_exit, m)
-    relE_corr = abs((total_energy_state(x_corr, v_corr, m, cfg.G) - E_start) / (abs(E_start)+1e-30))
+    
+    energy_audit = encounter_correction_energy_audit(
+        x_event, v_event, x_no_exit, v_no_exit, x_corr, v_corr, m, cfg.G)
+    relE_corr = energy_audit["relE_corr_total"]  # legacy total-from-entry value
     enc_ok = bool(all_finite_state(x_corr, v_corr)
                   and max_radius_state(x_corr) <= float(max_radius_gate)
                   and relE_corr <= float(energy_gate))
+    
     x_enc_exit = x_corr if enc_ok else x_no_exit
     v_enc_exit = v_corr if enc_ok else v_no_exit
 
@@ -934,8 +1047,14 @@ def compute_exit_state_all_methods(x_event, v_event, m, encounter_model, cfg,
     encNN_pos = pos_err(x_enc_exit); encNN_vel = vel_err(v_enc_exit)
 
     result = {
+        
         "r_pair_entry": float(r_e), "v_rad_norm_entry": float(vr_e),
-        "relE_corr": float(relE_corr), "enc_accepted": int(enc_ok),
+        "relE_corr": float(relE_corr),
+        "relE_window_noNN": float(energy_audit["relE_window_noNN"]),
+        "relE_corr_jump": float(energy_audit["relE_corr_jump"]),
+        "relE_corr_total": float(energy_audit["relE_corr_total"]),
+        "enc_accepted": int(enc_ok),
+
         "noNN_pos_exit_err": noNN_pos, "noNN_vel_exit_err": noNN_vel,
         "encNN_pos_exit_err": encNN_pos, "encNN_vel_exit_err": encNN_vel,
         "encNN_pos_gain_pct": pct_gain(noNN_pos, encNN_pos),
@@ -1131,6 +1250,10 @@ def run_validation(x0, v0, m, cfg, encounter_model, dt, T, n_samples,
         perf_no,
         perf_en,
         event_rows,
+        p_no,
+        v_no,
+        p_en,
+        v_en,
     )
 
 
@@ -1474,6 +1597,128 @@ def write_summary_winner(out_dir, dt, global_lines, isolated_exit, ensemble_winn
     print("\n".join(lines))
     return path
 
+# =============================================================================
+# Energy diagnostics writer
+# =============================================================================
+def _fmt_energy_value(v):
+    if isinstance(v, str):
+        return v
+    try:
+        vf = float(v)
+    except Exception:
+        return "---"
+    if not math.isfinite(vf):
+        return "---"
+    return f"{vf:.3e}"
+
+
+def write_energy_diagnostics(out_dir, dt, global_energy_rows, event_rows,
+                             isolated_energy_rows, seed_results, k_list):
+    """Write one separate human-readable energy diagnostics report per dt."""
+    lines = []
+    W = 118
+    div = "=" * W
+    lines.append(div)
+    lines.append(f"ENERGY DIAGNOSTICS — EncounterNN / fine-stepping comparison  (dt={dt})")
+    lines.append(div)
+    lines.append("")
+    lines.append("Threshold legend, reporting only:")
+    lines.append("  EXCELLENT < 1e-5 | GOOD < 1e-3 | CAUTION < 1e-2 | HIGH < 1e-1 | UNSAFE >= 1e-1")
+    lines.append("  Status uses max(relE_max, NN_jump). It does not stop the run.")
+    lines.append("")
+
+    lines.append("A) GLOBAL 100-year ENERGY DIAGNOSTICS")
+    lines.append(f"  {'Method':<22} {'relE_final':>12} {'relE_max':>12} {'relE_timeavg':>14} {'relE_p95':>12} {'NN_jump':>12} {'Status':>10}")
+    lines.append("  " + "-" * 100)
+    for row in global_energy_rows:
+        lines.append(
+            f"  {row.get('method','?'):<22} "
+            f"{_fmt_energy_value(row.get('relE_final')):>12} "
+            f"{_fmt_energy_value(row.get('relE_max')):>12} "
+            f"{_fmt_energy_value(row.get('relE_timeavg')):>14} "
+            f"{_fmt_energy_value(row.get('relE_p95')):>12} "
+            f"{_fmt_energy_value(row.get('relE_corr_jump')):>12} "
+            f"{row.get('energy_status','N/A'):>10}"
+        )
+    lines.append("")
+
+    lines.append("B) ENCOUNTERNN EVENT ENERGY AUDIT")
+    if not event_rows:
+        lines.append("  No EncounterNN event rows were recorded.")
+    else:
+        lines.append(f"  {'t_start':>9} {'t_exit':>9} {'used':>5} {'reason':<18} {'window_noNN':>13} {'NN_jump':>12} {'total_entry_to_corr':>20} {'Status':>10}")
+        lines.append("  " + "-" * 105)
+        for r in event_rows:
+            ctrl = max_finite([r.get("relE_corr_jump", float("nan")),
+                               r.get("relE_corr_total", r.get("relE_corr", float("nan")))])
+            lines.append(
+                f"  {float(r.get('t_start', float('nan'))):>9.3f} "
+                f"{float(r.get('t_exit', float('nan'))):>9.3f} "
+                f"{int(r.get('used', 0)):>5d} "
+                f"{str(r.get('reason','?')):<18} "
+                f"{_fmt_energy_value(r.get('relE_window_noNN')):>13} "
+                f"{_fmt_energy_value(r.get('relE_corr_jump')):>12} "
+                f"{_fmt_energy_value(r.get('relE_corr_total', r.get('relE_corr'))):>20} "
+                f"{energy_status(ctrl):>10}"
+            )
+    lines.append("")
+
+    lines.append("C) ISOLATED LOCAL ENERGY DIAGNOSTICS")
+    if not isolated_energy_rows:
+        lines.append("  Isolated local comparison was not run or no accepted event was available.")
+    else:
+        lines.append(f"  {'Method':<22} {'relE_final':>12} {'relE_max':>12} {'relE_timeavg':>14} {'relE_p95':>12} {'NN_jump':>12} {'Status':>10}")
+        lines.append("  " + "-" * 100)
+        for row in isolated_energy_rows:
+            lines.append(
+                f"  {row.get('method','?'):<22} "
+                f"{_fmt_energy_value(row.get('relE_final')):>12} "
+                f"{_fmt_energy_value(row.get('relE_max')):>12} "
+                f"{_fmt_energy_value(row.get('relE_timeavg')):>14} "
+                f"{_fmt_energy_value(row.get('relE_p95')):>12} "
+                f"{_fmt_energy_value(row.get('relE_corr_jump')):>12} "
+                f"{row.get('energy_status','N/A'):>10}"
+            )
+    lines.append("")
+
+    lines.append("D) ENSEMBLE ENERGY SUMMARY")
+    if not seed_results:
+        lines.append("  Ensemble was skipped or produced no seed rows.")
+    else:
+        methods = ["noNN", "encNN"] + [f"finer_k{kk}" for kk in k_list]
+        lines.append(f"  {'Method':<14} {'mean relE_max':>14} {'max relE_max':>14} {'mean NN_jump':>14} {'max NN_jump':>13} {'N HIGH':>8} {'N UNSAFE':>10}")
+        lines.append("  " + "-" * 95)
+        for mth in methods:
+            max_vals = np.array([r.get(f"{mth}_relE_max", float("nan")) for r in seed_results], dtype=np.float64)
+            jump_vals = np.array([r.get(f"{mth}_relE_corr_jump", float("nan")) for r in seed_results], dtype=np.float64)
+            ctrl_vals = []
+            for a, b in zip(max_vals, jump_vals):
+                ctrl_vals.append(max_finite([a, b]))
+            n_high = sum(1 for v in ctrl_vals if math.isfinite(v) and 1e-2 <= abs(v) < 1e-1)
+            n_unsafe = sum(1 for v in ctrl_vals if math.isfinite(v) and abs(v) >= 1e-1)
+            lines.append(
+                f"  {mth:<14} "
+                f"{_fmt_energy_value(np.nanmean(max_vals)):>14} "
+                f"{_fmt_energy_value(np.nanmax(max_vals)):>14} "
+                f"{_fmt_energy_value(np.nanmean(jump_vals)):>14} "
+                f"{_fmt_energy_value(np.nanmax(jump_vals)):>13} "
+                f"{n_high:>8d} {n_unsafe:>10d}"
+            )
+    lines.append("")
+    lines.append("Interpretation notes:")
+    lines.append("  - relE_final/max/timeavg/p95 are trajectory-level energy diagnostics.")
+    lines.append("  - NN_jump is only meaningful for EncounterNN; for noNN/fine-stepping it is blank.")
+    lines.append("  - window_noNN isolates the noNN energy change during the 0.5yr local window.")
+    lines.append("  - total_entry_to_corr preserves the old relE_corr meaning for backward compatibility.")
+    lines.append(div)
+
+    path = os.path.join(out_dir, f"energy_diagnostics_dt{dt}.txt")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    print("\n".join(lines))
+    return path
+
+
 
 # =============================================================================
 # Main
@@ -1575,6 +1820,10 @@ def main():
             perf_no,
             perf_en,
             event_rows,
+            p_no,
+            v_no,
+            p_en,
+            v_en,
         ) = run_validation(
             x0,
             v0,
@@ -1612,8 +1861,29 @@ def main():
               f"relE_drift={perf_fk['relE_drift']:.3e}")
         finer_global[kk] = (p_fk, v_fk, met_fk, perf_fk, sp_fk)
 
+    # Build energy diagnostics from already-generated global trajectories.
+    # This is reporting-only and does not affect the simulation results.
+    global_energy_rows = [
+        energy_diagnostics_from_series("noNN", p_no, v_no, m, cfg.G),
+        energy_diagnostics_from_series(
+            "EncounterNN", p_en, v_en, m, cfg.G,
+            nn_jump=perf_en.get("local_correction_relE_corr_jump", float("nan")),
+            relE_window_noNN=perf_en.get("local_correction_relE_window_noNN", float("nan")),
+            relE_corr_total=perf_en.get("local_correction_relE_corr_total",
+                                        perf_en.get("local_correction_relE_corr", float("nan"))),
+        ),
+    ]
+    for kk in k_list:
+        p_fk, v_fk, _, _, _ = finer_global[kk]
+        global_energy_rows.append(
+            energy_diagnostics_from_series(f"finer-Zone3-k{kk}", p_fk, v_fk, m, cfg.G))
+
+    isolated_energy_rows = []
+    seed_results = []
+
     # Build methods_data for global table
     methods_data = [
+
         ("noNN",              met_no, perf_no, sp_no, perf_no["relE_drift"], {}),
         ("EncounterNN",       met_en, perf_en, sp_en,
          perf_en.get("local_correction_relE_corr", perf_en.get("relE_drift", float("nan"))),
@@ -1680,12 +1950,24 @@ def main():
 
         local_metrics = [_4yr_metrics(p_no_l, v_no_l, "noNN"),
                          _4yr_metrics(p_en_l, v_en_l, "EncounterNN")]
+        isolated_energy_rows = [
+            energy_diagnostics_from_series("local-noNN", p_no_l, v_no_l, m, cfg.G),
+            energy_diagnostics_from_series(
+                "local-EncounterNN", p_en_l, v_en_l, m, cfg.G,
+                nn_jump=perf_en_l.get("relE_corr_jump", exit_met.get("relE_corr_jump", float("nan"))),
+                relE_window_noNN=perf_en_l.get("relE_window_noNN", exit_met.get("relE_window_noNN", float("nan"))),
+                relE_corr_total=perf_en_l.get("relE_corr_total",
+                                              perf_en_l.get("relE_corr", exit_met.get("relE_corr", float("nan")))),
+            ),
+        ]
         for kk in k_list:
             print(f"  Running local finer-k{kk}...")
             p_fk_l, v_fk_l, _ = _run_finer_local(
                 x_event, v_event, m, cfg, dt, local_horizon,
                 args.local_n_samples, int(kk), args.vr_thresh)
             local_metrics.append(_4yr_metrics(p_fk_l, v_fk_l, f"finer-k{kk}"))
+            isolated_energy_rows.append(
+                energy_diagnostics_from_series(f"local-finer-k{kk}", p_fk_l, v_fk_l, m, cfg.G))
             exit_met[f"finer_k{kk}_4yr_gain"] = local_metrics[-1]["pos_gain_pct"]
 
         iso_path = write_isolated_comparison(args.out_dir, dt, exit_met, local_metrics, k_list)
@@ -1709,8 +1991,11 @@ def main():
             print(f"  seed {seed}...")
             xp, vp = perturb_ic(x0, v0, m, seed, args.perturb_scale)
             tr_s, pr_s, vr_s, _ = simulate_rebound_ias15(xp, vp, m, cfg.G, args.T, args.n_samples)
-            _, p_nos, v_nos, _ = simulate_simon_noNN(xp, vp, m, cfg, dt, args.T, args.n_samples)
+            
+            _, p_nos, v_nos, perf_nos = simulate_simon_noNN(xp, vp, m, cfg, dt, args.T, args.n_samples)
             met_nos = metric_block(p_nos, v_nos, pr_s, vr_s)
+            ed_no_s = energy_diagnostics_from_series("noNN", p_nos, v_nos, m, cfg.G)
+
             ev_s = []
             _, p_ens, v_ens, perf_ens = simulate_simon_encounterNN(
                 xp, vp, m, encounter_model, cfg,
@@ -1720,6 +2005,13 @@ def main():
                 event_rows=ev_s)
             
             met_ens = metric_block(p_ens, v_ens, pr_s, vr_s)
+            ed_en_s = energy_diagnostics_from_series(
+                "EncounterNN", p_ens, v_ens, m, cfg.G,
+                nn_jump=perf_ens.get("local_correction_relE_corr_jump", float("nan")),
+                relE_window_noNN=perf_ens.get("local_correction_relE_window_noNN", float("nan")),
+                relE_corr_total=perf_ens.get("local_correction_relE_corr_total",
+                                             perf_ens.get("local_correction_relE_corr", float("nan"))),
+            )
             sr = {"seed": seed,
                   "encNN_relE_drift": perf_ens.get("local_correction_relE_corr",
                                                     perf_ens.get("relE_drift", float("nan"))),
@@ -1727,6 +2019,9 @@ def main():
                   "noNN_pos_final_gain_pct": pct_gain(met_nos["pos_final"], met_nos["pos_final"]),
                   "encNN_pos_final_gain_pct": pct_gain(met_nos["pos_final"], met_ens["pos_final"]),
                   "encNN_iso_exit_gain": float("nan")}
+            copy_energy_diag_to_seed(sr, "noNN", ed_no_s)
+            copy_energy_diag_to_seed(sr, "encNN", ed_en_s)
+            
             # noNN gain vs itself is always 0; patch
             sr["noNN_pos_final_gain_pct"] = 0.0
             for kk in k_list:
@@ -1734,9 +2029,13 @@ def main():
                     xp, vp, m, cfg, dt, args.T, args.n_samples, int(kk), args.vr_thresh)
                 
                 met_fks = metric_block(p_fks, v_fks, pr_s, vr_s)
+                ed_fk_s = energy_diagnostics_from_series(
+                    f"finer-k{kk}", p_fks, v_fks, m, cfg.G)
                 sr[f"finer_k{kk}_pos_final_gain_pct"] = pct_gain(
                     met_nos["pos_final"], met_fks["pos_final"])
                 sr[f"finer_k{kk}_relE_drift"] = perf_fks.get("relE_drift", float("nan"))
+                copy_energy_diag_to_seed(sr, f"finer_k{kk}", ed_fk_s)
+                
                 
             # Isolated exit for this seed
             used_s = [r for r in ev_s if int(r.get("used",0))==1]
@@ -1781,14 +2080,22 @@ def main():
                          iso_winner if used_events else "N/A",
                          ens_winner)
 
+    energy_path = write_energy_diagnostics(
+        args.out_dir, dt, global_energy_rows, event_rows,
+        isolated_energy_rows, seed_results, k_list)
+
     print(f"\n[done] All outputs written to: {args.out_dir}")
+
     print(f"  Return to Claude for analysis:")
     out_files = [
         f"comparison_global_dt{dt}.txt",
         f"comparison_isolated_dt{dt}.txt",
         f"comparison_ensemble_dt{dt}.txt",
+        
         f"summary_winner_dt{dt}.txt",
+        f"energy_diagnostics_dt{dt}.txt",
     ]
+
     for fn in out_files:
         print(f"    {os.path.join(args.out_dir, fn)}")
 
@@ -1823,10 +2130,14 @@ def _run_encounterNN_local_once(x_event, v_event, m, encounter_model, cfg,
     dx, dv, _, _ = predict_encounter_residual_np(encounter_model, X_entry)
     xc = x_no + dx; vc = v_no + dv
     xc, vc = project_com_to_reference(xc, vc, x_no, v_no, m)
-    relE = abs((total_energy_state(xc, vc, m, cfg.G) - E_start) / (abs(E_start)+1e-30))
+    
+    energy_audit = encounter_correction_energy_audit(
+        x_event, v_event, x_no, v_no, xc, vc, m, cfg.G)
+    relE = energy_audit["relE_corr_total"]  # legacy total-from-entry value
     ok = bool(all_finite_state(xc, vc)
               and max_radius_state(xc) <= float(max_radius_gate)
               and relE <= float(energy_gate))
+    
     if ok:
         x = xc; v = vc
         _, r2c, _ = kernel.geometry(x); r_min = float(np.sqrt(r2c.min()+1e-30)); ac = None
@@ -1840,7 +2151,14 @@ def _run_encounterNN_local_once(x_event, v_event, m, encounter_model, cfg,
         t_cur += h; steps += 1; fill()
     while si < len(times):
         p_out[si]=x; v_out[si]=v; si+=1
-    perf = {"correction_used": int(ok), "relE_corr": float(relE)}
+    
+    perf = {
+        "correction_used": int(ok),
+        "relE_corr": float(relE),
+        "relE_corr_total": float(energy_audit["relE_corr_total"]),
+        "relE_corr_jump": float(energy_audit["relE_corr_jump"]),
+        "relE_window_noNN": float(energy_audit["relE_window_noNN"]),
+    }
     return p_out, v_out, perf
 
 
