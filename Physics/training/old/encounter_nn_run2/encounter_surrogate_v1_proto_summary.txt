@@ -1,0 +1,103 @@
+Encounter-level surrogate v1 training summary
+================================================================================
+data: encounter_surrogate_v1_proto.npz
+output: encounter_surrogate_v1_proto.pt
+samples: 870
+train/val/test: 609 / 130 / 131
+model: MLP 18 -> hidden=128 -> 18
+epochs requested: 3000
+best_epoch: 69
+best_selection_score: 1.03229302e-02
+lr: 0.001
+batch_size: 256
+loss: SmoothL1/Huber on normalized residuals, pos_weight=1.0, vel_weight=0.1
+device: cuda
+elapsed_sec: 13.154
+
+Dataset checks
+--------------------------------------------------------------------------------
+r_pair: min=5.685363e-02 med=1.146535e-01 max=1.474361e-01
+v_rad_norm: min=-0.9528 med=-0.2085 max=+1.6640
+v_tan_norm: min=0.0936 med=0.8946 max=1.7977
+relE_ias: max=3.777e-14 med=5.193e-16
+relE_nonn: max=4.989e-02 med=7.516e-03 p95=4.035e-02
+category counts:
+  strong_approach : 285
+  weak_side       : 283
+  recede          : 302
+
+TRAIN metrics
+--------------------------------------------------------------------------------
+  base_pos_mean                   : 0.027708958
+  corr_pos_mean                   : 0.018863869
+  base_pos_median                 : 0.0081573422
+  corr_pos_median                 : 0.0080096488
+  base_pos_p95                    : 0.092722501
+  corr_pos_p95                    : 0.071406409
+  pos_improvement_mean_pct        : -1285.8734
+  pos_improvement_median_pct      : -25.193018
+  pos_success_frac                : 0.42364532
+  unsafe_pos_frac                 : 0.40558292
+  base_vel_mean                   : 0.14987495
+  corr_vel_mean                   : 0.14405886
+  base_vel_median                 : 0.034722966
+  corr_vel_median                 : 0.02533144
+  vel_improvement_mean_pct        : -1499.7458
+  vel_improvement_median_pct      : -6.7979669
+  vel_success_frac                : 0.41707718
+  resid_pos_err_median            : 0.0080096488
+  resid_vel_err_median            : 0.02533144
+
+VAL metrics
+--------------------------------------------------------------------------------
+  base_pos_mean                   : 0.025187671
+  corr_pos_mean                   : 0.024197688
+  base_pos_median                 : 0.0087295103
+  corr_pos_median                 : 0.0076584934
+  base_pos_p95                    : 0.10519302
+  corr_pos_p95                    : 0.10765462
+  pos_improvement_mean_pct        : -854.24609
+  pos_improvement_median_pct      : -39.129217
+  pos_success_frac                : 0.36153846
+  unsafe_pos_frac                 : 0.43076923
+  base_vel_mean                   : 0.16734862
+  corr_vel_mean                   : 0.17483616
+  base_vel_median                 : 0.034731278
+  corr_vel_median                 : 0.026644368
+  vel_improvement_mean_pct        : -892.69515
+  vel_improvement_median_pct      : -9.3276209
+  vel_success_frac                : 0.37692308
+  resid_pos_err_median            : 0.0076584934
+  resid_vel_err_median            : 0.026644368
+
+TEST metrics
+--------------------------------------------------------------------------------
+  base_pos_mean                   : 0.032022191
+  corr_pos_mean                   : 0.029052112
+  base_pos_median                 : 0.0076302046
+  corr_pos_median                 : 0.0079392806
+  base_pos_p95                    : 0.087291051
+  corr_pos_p95                    : 0.086169479
+  pos_improvement_mean_pct        : -1002.361
+  pos_improvement_median_pct      : -34.498174
+  pos_success_frac                : 0.41221374
+  unsafe_pos_frac                 : 0.3740458
+  base_vel_mean                   : 0.10552598
+  corr_vel_mean                   : 0.10504754
+  base_vel_median                 : 0.03473191
+  corr_vel_median                 : 0.023241452
+  vel_improvement_mean_pct        : -1410.5047
+  vel_improvement_median_pct      : -12.927664
+  vel_success_frac                : 0.4351145
+  resid_pos_err_median            : 0.0079392806
+  resid_vel_err_median            : 0.023241452
+
+TEST category breakdown
+--------------------------------------------------------------------------------
+  strong_approach  n=   42 base_pos_med=2.0539e-02 corr_pos_med=7.5411e-03 impr_med= +28.66% success=78.6% unsafe=14.3%
+  weak_side        n=   43 base_pos_med=6.5201e-03 corr_pos_med=9.3309e-03 impr_med= -80.70% success=32.6% unsafe=44.2%
+  recede           n=   46 base_pos_med=3.3245e-03 corr_pos_med=8.0771e-03 impr_med=-117.14% success=15.2% unsafe=52.2%
+
+Verdict
+--------------------------------------------------------------------------------
+STOP/REASSESS: surrogate does not improve median held-out position error.

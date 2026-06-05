@@ -1,0 +1,85 @@
+Rollout error timeline diagnostic v1
+========================================================================================
+model              : encounter_surrogate_v3_rollout_local_velocitysafe.pt
+dt                 : 0.08000000 yr
+T                  : 100.00000000 yr
+window_years       : 0.50000000
+n_samples          : 1200
+gate               : pair 1-2 in Zone 3 and v_rad_norm < -0.4000
+alphas             : [0.25, 0.5, 0.75, 1.0]
+energy_gate        : 0.200000
+device             : cuda
+
+Model load info
+----------------------------------------------------------------------------------------
+in_dim              : 18
+hidden_stack        : 128 -> 128 -> 128 -> 64
+out_dim             : 18
+linear_keys         : net.0.weight,net.3.weight,net.6.weight,net.9.weight,net.11.weight
+input_mean          : input_mean
+input_std           : input_std
+target_mean         : target_mean
+target_std          : target_std
+
+Baseline
+----------------------------------------------------------------------------------------
+IAS15 time         : 0.019206 s
+noNN time          : 0.041733 s
+noNN pos final     : 1.62347543e+00
+noNN pos timeavg   : 7.50996628e-01
+noNN vel final     : 1.18254216e+00
+noNN vel timeavg   : 6.55339857e-01
+
+Alpha sweep
+----------------------------------------------------------------------------------------
+alpha  used event_t  exit_t   pos_final  pos_timeavg pos_gain  vel_final  vel_timeavg vel_gain  first_worse  pos_pattern
+ 0.25     1  82.560  83.060 6.7064e+01 2.4802e+00 -230.25% 1.2999e+01 1.2680e+00  -93.48%     84.320  persistent branch divergence / phase shift
+ 0.50     1  82.560  83.060 1.9331e+00 7.7128e-01   -2.70% 8.3070e-01 6.4835e-01   +1.07%     84.320  persistent branch divergence / phase shift
+ 0.75     1  82.560  83.060 1.4729e+00 7.6829e-01   -2.30% 5.4080e-01 6.3287e-01   +3.43%     84.320  persistent branch divergence / phase shift
+ 1.00     1  82.560  83.060 1.4302e+00 7.6373e-01   -1.70% 6.2905e-01 6.3235e-01   +3.51%     84.320  persistent branch divergence / phase shift
+
+Detailed position timeline interpretation
+----------------------------------------------------------------------------------------
+alpha=0.2500
+  first time surrogate position error becomes worse : 84.32026688907422
+  max excess position error                         : 6.54406505e+01
+  max excess time                                   : 100.0
+  max excess interval                               : 94.16180150125103 to 100.0
+  fraction worse after event exit                   : 0.755
+  tail fraction worse                               : 0.824
+  pattern                                           : persistent branch divergence / phase shift
+alpha=0.5000
+  first time surrogate position error becomes worse : 84.32026688907422
+  max excess position error                         : 5.20573872e-01
+  max excess time                                   : 97.49791492910758
+  max excess interval                               : 85.73811509591326 to 100.0
+  fraction worse after event exit                   : 0.873
+  tail fraction worse                               : 1.000
+  pattern                                           : persistent branch divergence / phase shift
+alpha=0.7500
+  first time surrogate position error becomes worse : 84.32026688907422
+  max excess position error                         : 5.08485159e-01
+  max excess time                                   : 97.24770642201834
+  max excess interval                               : 85.57130942452042 to 99.4161801501251
+  fraction worse after event exit                   : 0.848
+  tail fraction worse                               : 0.931
+  pattern                                           : persistent branch divergence / phase shift
+alpha=1.0000
+  first time surrogate position error becomes worse : 84.32026688907422
+  max excess position error                         : 3.78260639e-01
+  max excess time                                   : 97.24770642201834
+  max excess interval                               : 85.4045037531276 to 99.08256880733944
+  fraction worse after event exit                   : 0.838
+  tail fraction worse                               : 0.892
+  pattern                                           : persistent branch divergence / phase shift
+
+Decision hint
+----------------------------------------------------------------------------------------
+Best alpha by simple position-first score: 1.0
+Prefer the smallest alpha that keeps local/event gain while avoiding persistent post-event position-timeavg worsening.
+
+Files written
+----------------------------------------------------------------------------------------
+rollout_error_timeline_v1c\alpha_sweep_summary.csv
+rollout_error_timeline_v1c\rollout_error_timeline.csv
+rollout_error_timeline_v1c\surrogate_events_timeline_diag.csv

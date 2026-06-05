@@ -1,0 +1,86 @@
+Encounter-level surrogate v2 fixed-gate evaluation
+================================================================================================
+data              : encounter_surrogate_v1_large1.npz
+predictions       : encounter_surrogate_v2_velocitysafe_large1_predictions_test.npz
+test samples      : 355
+gate rule         : use NN iff v_rad_norm < -0.4000
+gate used         : 160/355 (45.07%)
+unsafe factor     : 2x baseline error
+
+Held-out test distribution
+------------------------------------------------------------------------------------------------
+  v_rad_norm      : min=-0.8311 med=-0.2548 max=+1.4678
+  v_tan_norm      : min=0.1151 med=0.8946 max=1.5378
+  pred_pos_norm   : med=4.7784e-03 p90=4.6206e-02 p95=5.0029e-02
+  pred_vel_norm   : med=1.9048e-02 p90=2.0028e-01 p95=3.2145e-01
+  strong_approach :   138 | gate used   138/  138 (100.0%)
+  weak_side       :   101 | gate used    22/  101 (21.8%)
+  recede          :   116 | gate used     0/  116 (0.0%)
+
+Compact comparison
+------------------------------------------------------------------------------------------------
+method                              pos_med    pos_p95   posUns    vel_med    vel_p95   velUns   anyUns  bothSucc
+  ----------------------------------------------------------------------------------------------
+noNN baseline                     8.729e-03  1.026e-01    0.00%  3.473e-02  1.043e+00    0.00%    0.00%     0.00%
+full NN                           1.585e-03  7.872e-02    9.58%  7.340e-03  6.298e-01   24.51%   25.92%    54.08%
+gated NN: v_rad_norm < -0.40      1.858e-03  8.963e-02    0.56%  6.510e-03  8.718e-01    3.10%    3.10%    36.90%
+
+GATED correction -- position error
+------------------------------------------------------------------------------------------------
+  base_mean                     :  2.80050385e-02
+  method_mean                   :  1.75268001e-02
+  base_median                   :  8.72912072e-03
+  method_median                 :  1.85777782e-03
+  base_p90                      :  8.29600289e-02
+  method_p90                    :  6.44321352e-02
+  base_p95                      :  1.02641704e-01
+  method_p95                    :  8.96271065e-02
+  base_max                      :  1.25278485e+00
+  method_max                    :  1.25278485e+00
+  improvement_mean_pct          :    +30.81%
+  improvement_median_pct        :     +0.00%
+  success_frac                  :  40.85%
+  unsafe_frac                   :   0.56%
+  ratio_median                  :  1.00000000e+00
+  ratio_p90                     :  1.00000000e+00
+  ratio_p95                     :  1.00000000e+00
+
+GATED correction -- velocity error
+------------------------------------------------------------------------------------------------
+  base_mean                     :  1.42103712e-01
+  method_mean                   :  1.19034154e-01
+  base_median                   :  3.47317271e-02
+  method_median                 :  6.50974829e-03
+  base_p90                      :  3.54344344e-01
+  method_p90                    :  3.34152144e-01
+  base_p95                      :  1.04303541e+00
+  method_p95                    :  8.71788776e-01
+  base_max                      :  2.03147292e+00
+  method_max                    :  2.03147292e+00
+  improvement_mean_pct          :    +20.60%
+  improvement_median_pct        :     +0.00%
+  success_frac                  :  37.18%
+  unsafe_frac                   :   3.10%
+  ratio_median                  :  1.00000000e+00
+  ratio_p90                     :  1.00000000e+00
+  ratio_p95                     :  1.56775286e+00
+
+Gated category breakdown
+------------------------------------------------------------------------------------------------
+category             n    gate% |   pos_base   pos_gate  pos_impr   posUns |   vel_base   vel_gate  vel_impr   velUns   anyUns
+  ----------------------------------------------------------------------------------------------
+strong_approach    138  100.00% |  8.732e-03  1.137e-03   +90.08%    0.00% |  3.475e-02  4.845e-03   +85.53%    5.80%    5.80%
+weak_side          101   21.78% |  7.567e-03  2.727e-03    +0.00%    1.98% |  3.656e-02  1.834e-02    +0.00%    2.97%    2.97%
+recede             116    0.00% |  3.250e-03  3.250e-03    +0.00%    0.00% |  7.439e-03  7.439e-03    +0.00%    0.00%    0.00%
+
+Decision check
+------------------------------------------------------------------------------------------------
+  Full NN improves position median vs noNN?    True
+  Full NN improves velocity median vs noNN?    True
+  Gate improves position median vs noNN?       True
+  Gate improves velocity median vs noNN?       True
+  Gate position unsafe <= 5%?                  True
+  Gate velocity unsafe <= 10%?                 True
+  Gate any unsafe <= 10%?                      True
+
+VERDICT: PROCEED: fixed gate improves both medians while keeping unsafe fractions low enough for the next rollout prototype.

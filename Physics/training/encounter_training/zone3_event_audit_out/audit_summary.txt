@@ -1,0 +1,15 @@
+Zone 3 event audit: dt=0.04 failure vs dt=0.08 improvement
+==============================================================================
+T_years: 100.0
+n_samples: 5000
+model: pair_correction_nn_v4_bounded.pt
+method: Zone 2 direct Newtonian + substeps; Zone 3 frozen v4 NN vs no-Zone-3-NN baseline
+
+dt	v4_time_avg	noNN_time_avg	v4_minus_noNN	v4_final	noNN_final	events	steps_with_zone3	zone3_frac	gate_frac	strong_frac
+0.04	2.219740e+00	1.086255e+00	1.133485e+00	2.421958e+00	1.287105e+00	10	10	0.000666	0.000000	0.500000
+0.08	9.679291e-01	9.890699e-01	-2.114080e-02	1.225807e+00	1.623559e+00	7	7	0.000933	0.000000	0.428571
+
+Interpretation guide:
+- Positive v4_minus_noNN means v4 is worse than the revised no-Zone-3-NN baseline.
+- Check the per-dt CSV files to see whether one event or several events cause the difference.
+- The PNG plots show RMS divergence with vertical lines at Zone 3 NN event times.

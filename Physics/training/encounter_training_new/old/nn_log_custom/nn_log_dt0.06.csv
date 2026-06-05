@@ -1,0 +1,2 @@
+step_idx,substep_idx,t_yr,dt_step,pair_i,pair_j,r_au,v_rad_norm,v_tan_norm,m_i,m_j,c_pred,c_anal_softening,gate_fallback,strong_approach,n_zone3_pairs_this_step,encounter_gate_suppressed
+0,0,0.0,0.06,0,1,0.09,0.0,1.2032847899455414,1.0,0.05,0.5733948739430647,1.0000166667129626,False,False,1,False

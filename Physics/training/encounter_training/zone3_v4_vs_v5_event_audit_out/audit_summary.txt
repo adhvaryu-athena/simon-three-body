@@ -1,0 +1,88 @@
+ZONE 3 OLD-v4 vs NEW-v5 EVENT AUDIT
+old_model: pair_correction_nn_v4_bounded.pt
+new_model: pair_correction_nn_v5_blended_weighted.pt
+base_file: pair_eval_v4_zone3_frozen_timeavg_v3_with log.py
+T_years: 100.0
+n_samples: 5000
+IAS15_time_sec: 0.069467
+
+========================================================================================
+dt=0.040000
+========================================================================================
+Rollout metrics vs IAS15:
+  no_zone3_nn : final_err=1.287105e+00  time_avg_rms=1.086255e+00  zone3_frac=0.000000  speedup=1.48x
+  old_v4      : final_err=2.421958e+00  time_avg_rms=2.219740e+00  zone3_frac=0.001199  speedup=1.46x
+  new_v5      : final_err=1.244712e+00  time_avg_rms=1.889676e+00  zone3_frac=0.001199  speedup=1.46x
+
+Event summary:
+  old_v4: n_events=10  pairs=1-2:10  time_span=33.520000 to 34.000000
+    c all      : min/mean/max = 0.780099 / 1.000117 / 1.263162
+    approach  : n=5  c min/mean/max = 1.076052 / 1.148559 / 1.263162
+    recede    : n=5  c min/mean/max = 0.780099 / 0.851675 / 0.897005
+    fallback_n=0  strong_approach_n=5
+    sequence: 1-2@33.520, 1-2@33.560, 1-2@33.600, 1-2@33.640, 1-2@33.680, 1-2@33.840, 1-2@33.880, 1-2@33.920, 1-2@33.960, 1-2@34.000
+  new_v5: n_events=10  pairs=1-2:10  time_span=33.520000 to 34.000000
+    c all      : min/mean/max = 0.814312 / 0.980467 / 1.160870
+    approach  : n=5  c min/mean/max = 1.076468 / 1.116977 / 1.160870
+    recede    : n=5  c min/mean/max = 0.814312 / 0.843957 / 0.869428
+    fallback_n=0  strong_approach_n=5
+    sequence: 1-2@33.520, 1-2@33.560, 1-2@33.600, 1-2@33.640, 1-2@33.680, 1-2@33.840, 1-2@33.880, 1-2@33.920, 1-2@33.960, 1-2@34.000
+
+Matched events: 10 / 10 old events matched
+  Δc(new-old) all     : mean=-0.019650, min=-0.105289, max=+0.079953
+  Δc(new-old) approach: mean=-0.031582, min=-0.105289, max=+0.079953
+  Δc(new-old) recede  : mean=-0.007718, min=-0.027577, max=+0.034214
+
+========================================================================================
+dt=0.080000
+========================================================================================
+Rollout metrics vs IAS15:
+  no_zone3_nn : final_err=1.623559e+00  time_avg_rms=9.890699e-01  zone3_frac=0.000000  speedup=2.88x
+  old_v4      : final_err=1.225807e+00  time_avg_rms=9.679291e-01  zone3_frac=0.001733  speedup=2.84x
+  new_v5      : final_err=1.721503e+00  time_avg_rms=1.035857e+00  zone3_frac=0.001733  speedup=2.83x
+
+Event summary:
+  old_v4: n_events=7  pairs=1-2:7  time_span=82.560000 to 83.040000
+    c all      : min/mean/max = 0.739999 / 1.002665 / 1.246506
+    approach  : n=4  c min/mean/max = 1.004637 / 1.165976 / 1.246506
+    recede    : n=3  c min/mean/max = 0.739999 / 0.784918 / 0.830035
+    fallback_n=0  strong_approach_n=3
+    sequence: 1-2@82.560, 1-2@82.640, 1-2@82.720, 1-2@82.800, 1-2@82.880, 1-2@82.960, 1-2@83.040
+  new_v5: n_events=7  pairs=1-2:7  time_span=82.560000 to 83.040000
+    c all      : min/mean/max = 0.805868 / 1.081411 / 1.358678
+    approach  : n=4  c min/mean/max = 1.207492 / 1.273371 / 1.358678
+    recede    : n=3  c min/mean/max = 0.805868 / 0.825466 / 0.859376
+    fallback_n=0  strong_approach_n=3
+    sequence: 1-2@82.560, 1-2@82.640, 1-2@82.720, 1-2@82.800, 1-2@82.880, 1-2@82.960, 1-2@83.040
+
+Matched events: 7 / 7 old events matched
+  Δc(new-old) all     : mean=+0.078746, min=-0.024166, max=+0.287635
+  Δc(new-old) approach: mean=+0.107395, min=-0.000932, max=+0.287635
+  Δc(new-old) recede  : mean=+0.040548, min=-0.024166, max=+0.119376
+
+========================================================================================
+dt=0.100000
+========================================================================================
+Rollout metrics vs IAS15:
+  no_zone3_nn : final_err=1.427401e+00  time_avg_rms=1.081235e+00  zone3_frac=0.000000  speedup=3.40x
+  old_v4      : final_err=1.836760e+00  time_avg_rms=1.043566e+00  zone3_frac=0.004496  speedup=3.18x
+  new_v5      : final_err=1.506781e+00  time_avg_rms=1.249659e+00  zone3_frac=0.004163  speedup=3.23x
+
+Event summary:
+  old_v4: n_events=15  pairs=1-2:15  time_span=36.900000 to 70.600000
+    c all      : min/mean/max = 0.651208 / 1.017797 / 1.348552
+    approach  : n=8  c min/mean/max = 1.099026 / 1.208266 / 1.348552
+    recede    : n=7  c min/mean/max = 0.651208 / 0.800119 / 0.888591
+    fallback_n=0  strong_approach_n=7
+    sequence: 1-2@36.900, 1-2@37.000, 1-2@37.100, 1-2@37.200, 1-2@37.350, 1-2@37.400, 1-2@37.500, 1-2@37.600, 1-2@37.700, 1-2@70.100, 1-2@70.200, 1-2@70.300, 1-2@70.400, 1-2@70.500, 1-2@70.600
+  new_v5: n_events=14  pairs=1-2:14  time_span=36.900000 to 68.700000
+    c all      : min/mean/max = 0.864016 / 1.032268 / 1.359686
+    approach  : n=7  c min/mean/max = 1.038009 / 1.160505 / 1.359686
+    recede    : n=7  c min/mean/max = 0.864016 / 0.904031 / 0.975608
+    fallback_n=0  strong_approach_n=4
+    sequence: 1-2@36.900, 1-2@37.000, 1-2@37.100, 1-2@37.200, 1-2@37.350, 1-2@37.400, 1-2@37.500, 1-2@37.600, 1-2@37.700, 1-2@68.300, 1-2@68.400, 1-2@68.500, 1-2@68.600, 1-2@68.700
+
+Matched events: 9 / 15 old events matched
+  Δc(new-old) all     : mean=+0.017558, min=-0.076212, max=+0.119874
+  Δc(new-old) approach: mean=-0.038894, min=-0.076212, max=+0.011134
+  Δc(new-old) recede  : mean=+0.062719, min=+0.014783, max=+0.119874

@@ -1,0 +1,19 @@
+============================================================
+3-MODEL COMPARISON SUMMARY
+============================================================
+
+T = 100.0 years  |  dt = 0.04 yr  |  n_samples = 5000
+Initial conditions: m=[1.0, 0.01, 0.005] Msun
+
+Model                 lambda(/yr)    final_RMS    speedup    NN_frac
+-----------------------------------------------------------------
+ias15 (reference)              --        0.000      1.00x         --
+SIMON                      0.1655       1.5427      1.04x     0.0045
+Vector NN                  0.1656      83.0155      1.05x     0.0101
+
+INTERPRETATION:
+  lambda(VectorNN) - lambda(SIMON) = 0.0000/yr
+  Vector NN diverges faster. Enforcing analytic force direction
+  (SIMON) reduces the error-growth rate in this chaotic system.
+  Small NN directional errors accumulate faster than SIMON's
+  scalar magnitude errors over 100-year chaotic orbits.

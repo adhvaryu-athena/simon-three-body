@@ -1,0 +1,28 @@
+ZONE 3 SHORT-WINDOW TRAJECTORY DATASET SUMMARY v2
+==============================================================================
+dt             : 0.100000
+window_years   : 0.500000
+window_samples : 21
+batch          : 2
+mode           : mixed
+seed           : 73300542
+target         : 50
+accepted       : 50
+tried          : 152
+elapsed_sec    : 3.0
+output         : encounter_shards_window\encounter_data_zone3_window_v2_mixed_dt0p1_w0p5_batch002.npz
+isolate_ias15  : False
+size_kb        : 6.8
+zone           : r 0.052-0.148 AU
+target meaning : c_opt/log_c_opt are c_window_opt/log(c_window_opt)
+window method  : trial c applies only to pair (0,1) on the first macro-step; later Zone 3 uses c=1 baseline
+required fields: r_AU r_soft log_mi log_mj log_dt v_rad_norm v_tan_norm c_opt log_c_opt c_ana log_c_ana improvement
+
+dt=0.100000: n=50 | tried=152 | pass=32.9% | window=0.500yr | c_med=0.79674 | impr_med=68.09% | identity=3 | loss_c1_med=1.756113e-01 | loss_opt_med=5.290430e-02 | vr_med=+0.02909 | vt_med=0.51758 | 3s
+Rejected       : {'ic': 21, 'ias15': 0, 'ref_eject': 0, 'bad_c': 0, 'boundary': 81, 'bad_window': 0}
+Near-identity stored samples: 3
+Strong-attempt counter: 71
+
+Compatibility note:
+  This shard can be merged by merge_encounter_shards.py because all required v3 fields are present.
+  Your current merger will ignore extra fields such as window_loss_c1 and c_window_raw.

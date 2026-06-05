@@ -1,0 +1,57 @@
+==========================================================================
+CONTROLLED IC1-LIKE SPEED--ACCURACY BENCHMARK — SUMMARY
+==========================================================================
+
+SETUP
+  N_BENCH        : 50
+  Valid ICs      : 50  (failed during simulation: 0)
+  T=100yr, dt=0.04yr  (conservative IC1-like timestep)
+  Samples/IC     : 5000  (dense-output protocol)
+  Population     : IC1 base + local pre-integration perturbations
+  Perturbations  : mass sigma=0.08, radius sigma=0.08, angle sigma=0.12 rad, vtan sigma=0.08
+  IC filters     : min pair distance >= 0.50 AU, radii in [0.70,1.60] AU, E_total < 0
+  Seed           : 42
+
+OUTCOME CLASSIFICATION
+  ias15 ejection rate  : 4.0%  (2/50 ICs)
+  SIMON ejection rate  : 42.0%  (21/50 ICs)
+  Agreement rate       : 58.0%  (29/50 ICs)
+
+  Confusion matrix (ias15 rows x SIMON cols):
+    Both bounded        :   28  (56.0%)
+    ias15 ej, SIMON bnd :    1  (2.0%)
+    ias15 bnd, SIMON ej :   20  (40.0%)
+    Both ejected        :    1  (2.0%)
+
+DIVERGENCE RATE AND RMS ERROR (both-bounded ICs only)
+  Population lambda : 0.0804 +/- 0.0573 /yr  (N=28)
+  7-IC reference    : 0.0916 +/- 0.0682 /yr
+  Final RMS         : 1.7191 +/- 1.3073 AU  (median 1.5038 AU)
+  Mean RMS          : 0.7471 AU
+  Max RMS           : 2.2435 AU
+
+COMPUTATIONAL PERFORMANCE
+  Mean speedup      : 1.085x +/- 0.028
+  Median speedup    : 1.081x
+  Total ias15       : 3.487 s
+  Total SIMON       : 3.213 s
+  Population speedup: 1.085x
+
+INTERPRETATION GATE
+  Use for speed claim? : NO
+  Gate condition       : agreement >= 90%, most cases both-bounded, median speedup > 1x, population speedup > 1x
+
+PAPER-SAFE FRAMING
+  If the gate is YES, this benchmark supports the narrow claim that the IC1
+  speed-frontier result is locally robust to small pre-defined perturbations.
+  If the gate is NO, treat the result as evidence that even the conservative dt=0.04
+  operating point needs tighter calibration or a narrower IC1 neighbourhood.
+
+OUTPUT FILES
+  ic1_perturb_data.csv
+  fig1_agreement_matrix.png
+  fig2_speedup_distribution.png
+  fig3_lambda_distribution.png
+  fig4_rms_distribution.png
+  fig5_speedup_vs_rms.png
+==========================================================================

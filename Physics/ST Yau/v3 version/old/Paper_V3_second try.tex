@@ -1,0 +1,1232 @@
+cat > /home/claude/V3.tex << 'ENDOFFILE'
+% ============================================================
+% V3.tex — Hybrid Neural Force Correction for the
+%           Unrestricted Three-Body Problem
+% Aarush Gupta
+% ST Yau High School Science Award (Asia) — August 2026
+% ============================================================
+
+\documentclass[12pt]{article}
+
+% --- Layout ---
+\usepackage[a4paper,
+            left=2.5cm, right=2.5cm,
+            top=2.5cm,  bottom=2.5cm]{geometry}
+
+% --- Typography ---
+\usepackage{setspace}           % 1.5 line spacing
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+
+% --- Math ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% --- Figures and Tables ---
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+
+% --- References ---
+\usepackage{natbib}
+
+% --- PDF features: clickable TOC, links ---
+\usepackage[
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue,
+  bookmarks=true,
+  bookmarksopen=true,
+  pdftitle={Hybrid Neural Force Correction for the Unrestricted Three-Body Problem},
+  pdfauthor={Aarush Gupta}
+]{hyperref}
+
+% --- Insert PDF pages (academic honesty) ---
+\usepackage{pdfpages}
+
+% --- TOC formatting ---
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% --- Page style ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Hybrid Neural Force Correction for the Unrestricted Three-Body Problem}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Caption formatting ---
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf}
+
+% --- Paragraph spacing ---
+\setlength{\parskip}{0.5em}
+
+% ============================================================
+\begin{document}
+\onehalfspacing   % 1.5 line spacing throughout
+% ============================================================
+
+% ============================================================
+%  COVER PAGE
+% ============================================================
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+\vspace*{1cm}
+
+{\Large \textbf{ST Yau High School Science Award (Asia)}}\\[0.4cm]
+{\large Physics Research Paper}\\[2cm]
+
+\rule{\linewidth}{1pt}\\[0.5cm]
+{\LARGE\bfseries Hybrid Neural Force Correction for the\\[0.3cm]
+Unrestricted Three-Body Problem}\\[0.5cm]
+\rule{\linewidth}{1pt}\\[2cm]
+
+{\large\bfseries Aarush Gupta}\\[1cm]
+
+\begin{tabular}{rl}
+  \textbf{School:}             & [School Name] \\[0.4cm]
+  \textbf{Country/Region:}     & [Country/Region] \\[0.4cm]
+  \textbf{Registration No.:}   & [Registration Number] \\[0.4cm]
+  \textbf{Supervisor:}         & [Supervisor Name] \\[0.4cm]
+  \textbf{Submission Date:}    & August 2026 \\
+\end{tabular}
+
+\vfill
+{\small \textit{This paper presents original research conducted by the author.}}
+\end{titlepage}
+
+% ============================================================
+%  TITLE, ABSTRACT, KEYWORDS  (page i)
+% ============================================================
+\newpage
+\thispagestyle{empty}
+\setcounter{page}{1}
+\pagenumbering{roman}
+
+\begin{center}
+  {\LARGE\bfseries Hybrid Neural Force Correction for the\\
+  Unrestricted Three-Body Problem}\\[0.8cm]
+  {\large Aarush Gupta}\\[0.3cm]
+  {\normalsize August 2026}
+\end{center}
+
+\vspace{0.5cm}
+\noindent\textbf{\large Abstract}
+\vspace{0.3cm}
+
+\noindent
+We present SIMON (Scalar-corrected Integration with Model-corrected Orbital Newtonian forces),
+a hybrid neural network integrator for the unrestricted gravitational three-body problem.
+SIMON augments a fixed-timestep leapfrog integrator with a lightweight neural network that
+predicts a scalar pairwise force correction factor at close encounters, while enforcing two
+physical constraints: analytic force direction and targeted adaptive sub-stepping.
+Through a controlled four-run ablation study, we demonstrate that these two constraints play
+orthogonal roles---adaptive sub-stepping is the primary stability mechanism, while the neural
+network correction provides an 8.5\% accuracy refinement at close-encounter steps.
+Without adaptive sub-stepping, body ejection occurs (worst-case final error 161.7\,AU);
+without the neural network but with adaptive stepping, orbits remain bounded (1.67\,AU final
+RMS), confirming the network contributes accuracy rather than stability.
+SIMON is evaluated across seven qualitatively distinct initial conditions, maintaining bounded
+dynamics in all four dynamically stable configurations and correctly reproducing physical
+instability in three unstable cases.
+Energy drift scales as $dt^2$, consistent with second-order leapfrog theory, and is
+attributable to the integrator rather than the neural correction.
+Training is reproducible across five random seeds with identical downstream simulation
+metrics ($\lambda = 0.1655$\,yr$^{-1}$ for all seeds).
+At the operational timestep $dt = 0.04$\,yr, SIMON achieves a 1.10$\times$ speedup over
+the \texttt{ias15} reference integrator, offering a computationally efficient alternative for
+long-horizon chaotic three-body orbit characterisation.
+
+\vspace{0.8cm}
+\noindent\textbf{Keywords:} Three-Body Problem, Neural Network, Leapfrog Integration,
+Adaptive Sub-Stepping, Chaotic Dynamics, Force Correction, Lyapunov Exponent, N-body Simulation
+
+% ============================================================
+%  ACKNOWLEDGEMENT  (page ii)
+% ============================================================
+\newpage
+\thispagestyle{empty}
+
+\begin{center}
+  {\Large\bfseries Acknowledgement}
+\end{center}
+
+\vspace{1cm}
+
+[Leave space here for acknowledgement text. Acknowledge all assistance received,
+including supervision, computational resources, and any other support.]
+
+\vspace{2cm}
+\noindent Aarush Gupta\\
+August 2026
+
+% ============================================================
+%  ACADEMIC HONESTY  (page iii)
+%  Upload "Declaration_of_academic_integrity.pdf" to Overleaf
+% ============================================================
+\newpage
+\thispagestyle{empty}
+\includepdf[pages={1}]{Declaration_of_academic_integrity.pdf}
+
+% ============================================================
+%  TABLE OF CONTENTS  (pages iv--v)
+% ============================================================
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+
+% ============================================================
+%  BEGIN MAIN REPORT — Arabic page numbers
+% ============================================================
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ============================================================
+% SECTION 1: INTRODUCTION  (new in V3)
+% ============================================================
+\section{Introduction}
+\label{sec:introduction_v3}
+
+The gravitational three-body problem---predicting the long-horizon motion of three mutually
+interacting massive bodies---is one of the oldest unsolved problems in classical mechanics.
+Unlike the two-body case, which admits a closed analytical solution, the unrestricted
+three-body problem is generically chaotic: trajectories are exquisitely sensitive to
+initial conditions, and no general algebraic formula can predict the system's future state
+arbitrarily far in advance \citep{poincare1890sur}. Despite this, accurate long-horizon
+numerical simulation of three-body systems remains important across astrophysics, astrodynamics,
+and celestial mechanics.
+
+Traditional high-order integrators such as \texttt{ias15} \citep{Rein_2014} achieve near
+machine-precision energy conservation but at a cost that scales with simulation length.
+Neural network approaches offer the prospect of reduced computational cost, yet naive networks
+often fail during close encounters---the brief, high-force interactions that dominate
+long-term orbital evolution---leading to non-physical body ejections.
+
+This work investigates whether a lightweight hybrid architecture can bridge this gap:
+retaining the speed advantage of a simple leapfrog integrator while avoiding the numerical
+failures that close encounters produce. The key contribution is not the neural network
+itself, but the two physical constraints imposed upon it:
+\begin{enumerate}
+  \item \textbf{Analytic force direction}, which prevents the accumulation of non-radial
+        gravitational impulses over long simulations.
+  \item \textbf{Adaptive sub-stepping}, which resolves close encounters that would otherwise
+        cause trajectory divergence or body ejection.
+\end{enumerate}
+
+We demonstrate, through a controlled four-run ablation study, that these two constraints
+serve orthogonal roles: adaptive sub-stepping is the primary stability mechanism, and the
+neural network correction is an accuracy refinement. This decomposition replaces the
+defensive framing of V2 (``the NN is only invoked for 1.1\% of pair evaluations'') with
+a precise, evidence-based characterisation of what each component contributes.
+
+The specific contributions of this work are:
+\begin{itemize}
+  \item A four-run ablation framework that cleanly decomposes SIMON's performance into
+        two orthogonal physical constraints (Sections~\ref{sec:res1}--\ref{sec:synthesis}).
+  \item Generalisation to seven qualitatively distinct initial conditions spanning the
+        full stable dynamical spectrum of the three-body problem (Section~\ref{sec:res2}).
+  \item Energy drift analysis confirming that drift is attributable to the leapfrog integrator,
+        not the neural correction, with quantitative $dt^2$ scaling confirmation
+        (Section~\ref{sec:energy}).
+  \item Training reproducibility across five random seeds, with all downstream simulation
+        metrics invariant (Section~\ref{sec:seeds}).
+  \item An honest operational comparison against \texttt{ias15}: 1.10$\times$ speedup at
+        $dt = 0.04$\,yr with bounded dynamics maintained across the full tested timestep range
+        (Section~\ref{sec:performance}).
+\end{itemize}
+
+The paper is structured as follows. Section~\ref{sec:lit_review} reviews the three-body
+problem and its chaotic properties. Section~\ref{sec:comp_modeling} discusses computational
+approaches. Section~\ref{sec:methodology} describes the SIMON architecture and training.
+Section~\ref{sec:results} presents results in three parts: stability decomposition,
+generalisation, and physical consistency. Section~\ref{sec:discussion} discusses implications
+and limitations.
+
+% ============================================================
+% SECTION 2: LITERATURE REVIEW  (V2 §1 — verbatim)
+% ============================================================
+\section{Introduction to the Three-Body Problem}
+\label{sec:lit_review}
+
+The Three-Body Problem is the classical problem in celestial mechanics of describing the motion of three massive bodies gravitationally interacting with each other. This problem has significant applications in understanding the orbits of planets, moons, and artificial satellites \citep{gardner2006james}.
+
+The Three-Body Problem is the manifestation of centuries of development in astronomy. Its history dates back to ancient Greek times. The Greeks were among the first to begin the systematic observation of celestial movements, although they lacked the mathematical framework to describe the complex gravitational interactions between bodies precisely \citep{anjum2020timelinegravity}. However, in the 17th century, Sir Isaac Newton's \textit{Philosophi\ae{} Naturalis Principia Mathematica} \citep{newton1687principia, cohen1999principia} dictated universal laws that laid the groundwork for classical mechanics, creating a wide range of avenues for research into gravitational systems. To utilize Newton's formalism to understand the Three-Body Problem, we first need to analyze the simpler Two-Body Problem.
+
+\subsection{The Two-Body Problem}
+\label{subsec:2bp}
+The general formula for the force of attraction between any two objects in a gravitational field is given by Newton's Universal Law of Gravitation in Equation~\ref{eq:1}:
+
+\begin{equation}
+    F=G\frac{m_1m_2}{r^2},
+    \label{eq:1}
+\end{equation}
+where $G$ is the universal gravitational constant, $m_1$ is the mass of the first body, $m_2$ is the mass of the second body and $r$ is the distance between the centers of the bodies. Using this formula, the total force of gravity experienced by an object from any number of massive bodies can be calculated.
+
+To understand how this force translates to celestial orbital motion, consider the following scenario: an observer on earth throws a ball of mass $m_b$. The harder the ball is thrown, the farther it will travel, but will eventually fall to the ground as a result of gravitational attraction exerted on it by the earth. However, if thrown hard enough, the ball will make an orbit around the earth and return to where it started. If we assume that the ball moves in a circular orbit around the Earth, we can equate the force of gravity exerted on the ball by the earth to the centripetal force on the ball, giving us Equations~\ref{eq:2}, and~\ref{eq:3}.
+
+\begin{equation}
+    G\frac{m_e m_b}{r^2} = \frac{m_b v^2}{r}
+    \label{eq:2}
+\end{equation}
+
+\begin{equation}
+    v= \sqrt{\frac{G m_e}{r}},
+    \label{eq:3}
+\end{equation}
+
+where $m_e$ is the mass of the Earth, $v$ is the velocity of the ball, $G$ is the universal gravitational constant, and $r$ is the distance between the two bodies, measured from their centers of mass.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure_1.pdf}
+    \caption{A diagram of a simple two-body system.}
+    \label{fig:fig1}
+\end{figure}
+
+Similarly, a two-body system (see Figure~\ref{fig:fig1}) can be reduced to operate under the same principles as the ball and the earth example. Therefore, the velocity of the orbiting planet can be given by Equation~\ref{eq:3}. In the math presented above, the path of the ball around the Earth is approximated to be circular. However, in reality, the ball can take any elliptical path around the Earth \citep{murray1999solar}. The two-body framework can be used to model systems such as a satellite orbiting the earth or a planet orbiting the sun. In addition, the two-body problem is helpful in modeling N-body systems where the masses of two objects are much larger than the masses of all other bodies. However, the two-body problem omits situations in which three or more masses are all exhibiting comparable gravitational forces on each other at the same time.
+
+\subsection{The Three-Body Problem}
+\label{subsec:ODEs}
+In the three body problem, the goal is to approximate the future positions and velocities of the \textit{three} planets, given their initial states. However, when calculating the future states of a system of three bodies interacting gravitationally, it is not possible to construct an equation that will precisely reveal the trajectories of each body. To obtain this conclusion, we define some assumptions and simplifications.
+
+\begin{itemize}
+    \item \textbf{Point Masses:} The bodies will be treated as point masses.
+    \item \textbf{Newtonian Gravity:} We will use Newton's Law of Gravitation to describe the force of gravity.
+    \item \textbf{Isolated System:} The system only consists of the three bodies interacting, without external forces.
+\end{itemize}
+
+We present a schematic of this system in Figure~\ref{fig:fig2}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Figure_2.pdf}
+    \caption{A diagram of a simple three-body system. Each body is exerting a gravitational force on the other two bodies.}
+    \label{fig:fig2}
+\end{figure}
+
+We will use a three-dimensional cartesian coordinate system to define the centers of each of the bodies. Let the position vector of a body $n$ be the vector $\mathbf{P}_n$. Each of the six forces in the system can be described using Newton's law of gravitation, generally given by
+$$
+\mathbf{F}_{n/b} = G \frac{M_n M_b}{\left|\mathbf{P}_n - \mathbf{P}_b\right|^3} (\mathbf{P}_n - \mathbf{P}_b)
+$$
+Where $\textbf{F}_{n/b}$ is the gravitational force of attraction that body $n$ feels toward body $b$. This is the first law we will use to formulate our problem. We will also take Newton's second law as follows.
+$$
+\sum \mathbf{F}_{n} = m\mathbf{a_n}
+$$
+$$
+\sum \mathbf{F}_{n} = m \left( \frac{d\mathbf{v}_n}{dt} \right)
+$$
+$$
+\sum \mathbf{F}_{n} = m \left( \frac{d^2 \mathbf{P}_n}{dt^2} \right)
+$$
+We can now use these two laws to create a system of Ordinary Differential Equations (ODEs) that we can use to approximate the positions of the bodies at time $t$. We can take the sum of forces on body 1 as an example:
+$$
+\sum \mathbf{F}_{\text{exterior}} (\text{body } 1) = m_1 \frac{d^2\mathbf{P}_1}{dt^2} = \mathbf{F}_{2/1} + \mathbf{F}_{3/1}
+$$
+Substituting in law 1:
+$$
+\sum \mathbf{F}_{\text{exterior}} (\text{body } 1) = G \left[ M_2 \frac{\mathbf{P}_2 - \mathbf{P}_1}{|\mathbf{P}_2 - \mathbf{P}_1|^3} + M_3 \frac{\mathbf{P}_3 - \mathbf{P}_1}{|\mathbf{P}_3 - \mathbf{P}_1|^3} \right]
+$$
+
+$$
+\frac{d^2\mathbf{P}_1}{dt^2} = G \left[ M_2 \frac{\mathbf{P}_2 - \mathbf{P}_1}{|\mathbf{P}_2 - \mathbf{P}_1|^3} + M_3 \frac{\mathbf{P}_3 - \mathbf{P}_1}{|\mathbf{P}_3 - \mathbf{P}_1|^3} \right]
+$$
+
+Doing the same for bodies 2 and 3 we get the system of ODEs \citep{murray1999solar}:
+\begin{align*}
+\frac{d^2\mathbf{P}_1}{dt^2} &= G \left[ M_2 \frac{\mathbf{P}_2 - \mathbf{P}_1}{|\mathbf{P}_2 - \mathbf{P}_1|^3} + M_3 \frac{\mathbf{P}_3 - \mathbf{P}_1}{|\mathbf{P}_3 - \mathbf{P}_1|^3} \right] \\[1em]
+\frac{d^2\mathbf{P}_2}{dt^2} &= G \left[ M_1 \frac{\mathbf{P}_1 - \mathbf{P}_2}{|\mathbf{P}_1 - \mathbf{P}_2|^3} + M_3 \frac{\mathbf{P}_3 - \mathbf{P}_2}{|\mathbf{P}_3 - \mathbf{P}_2|^3} \right] \\[1em]
+\frac{d^2\mathbf{P}_3}{dt^2} &= G \left[ M_1 \frac{\mathbf{P}_1 - \mathbf{P}_3}{|\mathbf{P}_1 - \mathbf{P}_3|^3} + M_2 \frac{\mathbf{P}_2 - \mathbf{P}_3}{|\mathbf{P}_2 - \mathbf{P}_3|^3} \right]
+\end{align*}
+
+This system of ODEs does not have a closed-form analytical solution like the two-body example in Section~\ref{subsec:2bp}. This is because the motion of the three bodies that all exert forces simultaneously on each other is too complex and generally leads to chaos. In this context, chaos means that even the slightest change in position or velocity has a relatively huge impact on the long-term motion of the system, leading to unpredictable motion which makes it impossible to measure with complete accuracy.
+
+\subsection{Chaos}
+\label{Chaos}
+Chaos can be quantified using many different frameworks. For the sake of simplicity, the framework we will be using is the Lyapunov Exponent \citep{ott2002chaos} which measures the rate of trajectory divergence as an exponential model. If the initial separation between two points in phase space is $\delta(0)$, their separation at time $t$ is approximated by the function
+
+$$\delta(t) \approx e^{\lambda t} \delta(0)$$
+
+where $\lambda$ is the Lyapunov exponent. If $\lambda > 0$, the system is chaotic, and if $\lambda \leq 0$ it is regular, or periodic. $\lambda$ is a time constant.
+
+The ideas of chaos in the Three-Body Problem can be traced back to the late 19th century, when Henri Poincar\'{e} introduced the groundwork for defining Chaos \citep{poincare1890sur}. He found that when perturbations (deviance due to an external force) in a chaotic system occurred, the stable and unstable manifolds (two different sets of future states of a system, one stable versus unstable) of a periodic orbit began to intersect. Instead of one manifold neatly returning to its source, they crossed each other an infinite number of times. Because they cannot cross themselves but must cross each other to satisfy the equations of motion, they create an incredibly intricate, mesh-like structure. This tangling, known as the homoclinic tangle, leads to chaos because it creates an infinite, fractal-like web of trajectories, that makes the system's future state impossible to analytically predict.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\linewidth]{homoclinic.pdf}
+    \caption{A plot of a homoclinic tangle.}
+    \label{fig:fig3}
+\end{figure}
+
+Poincar\'{e} himself noted he couldn't even begin to draw the figure, concluding that an algebraic formula to predict a planet's long-term position was physically impossible. Linking back to the Lyapunov exponent, Poincar\'{e} predicted that the rate of trajectory divergence would be exponential. Two bodies starting at almost identical positions within the tangle will be stretched along the unstable manifold and compressed along the stable one. Very quickly, their paths smear exponentially across the web.
+
+This work showcased that the Three-Body problem is highly sensitive to its initial conditions, exemplifying how seemingly simple gravitational systems can exhibit unpredictable behavior. This would go on to establish the idea that while some solutions existed, a generalized solution to the Three-Body Problem was impossible, which set up the connection between chaos theory and celestial mechanics.
+
+Some specific factors that influence the chaos of a Three-Body system are mass, relative velocity, and initial separation. For example, if the mass of a system is concentrated on one body while the other two are smaller, then the system is less likely to be as chaotic than if the masses were distributed \cite{Hietarinta_1993}. Furthermore, if the relative velocities of the bodies are high, even when nearby, the bodies may be moving with too much kinetic energy to induce an exchange that would cause them to diverge much from their initial trajectories. This would reduce the rate at which changes in trajectory would happen, lowering $\lambda$. Lastly, if the bodies have a large initial separation, it is unlikely that they will enter each other's zones of gravitational influence, so the likelihood of divergence from their trajectories will be lower, reducing $\lambda$ and hence the chaos of the system.
+
+\subsection{The Restricted Three-Body Problem}
+There exists another form of the Three-Body Problem by the name of the Restricted Three-Body Problem, which was developed following Newton's discoveries primarily by Euler and Lagrange during the 18th century. Euler built upon the first versions of the restricted Three-Body problem by fixing two massive bodies in space and solving analytically for the motion of a third, smaller particle under their combined gravitational pull \cite{bistafa2021euler}. This makes the problem easier to interpret, with one notable method of interpretation being Lagrange points. Developed by Joseph-Louis Lagrange, these are five special solutions which represent stable positions where a smaller body can theoretically maintain its position \cite{lagrange1772essai}. However, these solutions tended to be unstable in the context of the Unrestricted Three-Body problem.
+
+The fact that these stable Lagrange points can be identified means that the restricted Three-Body Problem tends to be more applicable than the more chaotic Unrestricted version, because the restrictions simplify the system enough to be studied to a great degree of accuracy without losing too much of the complex dynamics. For example, the restricted Three-Body Problem is used to chart spacecraft trajectories when entering the gravitational influence of celestial bodies. Moreover, identifying Lagrange points in a restricted Three-Body System allows telescopes like the James Webb telescope \citep{gardner2006james} to stay in an orbit to perform long-term observational missions.
+
+\subsection{Expansion into Modern Physics}
+\label{exp_phys}
+Progressing into the 20th century, the Three-Body problem continued to attract significant attention. The development of new numerical methods brought new perspectives on chaos and stability in the Three-Body problem. Furthermore, the development of modern computers allowed for numerical simulations of the Three-Body problem via integration, allowing easier investigation into its chaotic nature for longer time periods.
+
+In modern astrophysics, the Three-Body problem finds application in contexts like calculating orbits of planets in multi-body systems, examining interactions in exoplanet systems, and understanding stability in star clusters. On a more recent note, as this paper will outline, machine learning techniques are being used to deepen traditional methodologies of Three-Body analysis and prediction. One such example of a machine learning application was by \cite{ulibarrena2024hybrid}. In their setup, they have created and evaluated a Hamiltonian Neural Network (HNN,) and their findings were that an HNN was able to successfully emulate a traditional step-by-step integrator, at a considerably reduced computational cost. A Hamiltonian Neural Network is a type of NN that composes forces in a way such that energy conservation is structurally preserved. However, this increased complexity was reflected in their results, as the training process was significantly more advanced than that of other methods of Three-Body computation. The Three-Body Problem continues to be an area of interest for modern computational physics problems, and its chaotic nature makes it especially beneficial as a testbed for numerical stability in physics applied machine learning.
+
+\subsection{Summary}
+
+To summarise, we have defined:
+
+\begin{itemize}
+    \item \textbf{The Two-Body Problem:} Assuming circular orbits, using Newton's universal law of gravitation.
+    \item \textbf{The Three-Body Problem:} The setup and derivation of a system of ODEs for approximating the motion of an unrestricted Three-Body system.
+    \item \textbf{Chaotic Nature of a Three-Body System:} Introduced the idea of Chaos using the Lyapunov exponent (rate of trajectory divergence), and established that the trajectories in a Three-Body system are highly sensitive to the initial conditions, rendering it impossible to predict without approximation. Explored Poincar\'{e}'s discoveries on homoclinic tangles and their implications on chaos in the Three-Body Problem.
+    \item \textbf{Examples of Influences of Initial Conditions on the Chaos of a Three-Body System:} Explained that a system with more distributed masses, closer bodies, and lower relative velocities is likely to be highly chaotic.
+    \item \textbf{The Restricted Three-Body Problem:} Analysis of Lagrange points, and how they are applied to real-life scenarios.
+\end{itemize}
+
+% ============================================================
+% SECTION 3: COMPUTATIONAL MODELING  (V2 §2 — verbatim)
+% ============================================================
+\section{Computational Modeling of the Three-Body Problem}
+\label{sec:comp_modeling}
+The Gravitational Three-Body Problem, can be simulated using the aid of computer programs, as mentioned in Section~\ref{exp_phys}. Because the system of ODEs defining the Unrestricted Three-Body Problem does not have a closed solution (see Section~\ref{sec:lit_review}), integration is done incrementally to calculate the evolution of the system over a set period of time. In short term contexts, traditional integration techniques tend to work quite well and provide results to a great level of accuracy. However, traditional integration methods scale linearly with the integration period. Hence, it can be useful to find a technique that doesn't scale with the integration period for longer term simulations so as to be more computationally efficient. Furthermore, in a larger time frame, errors may accumulate as a byproduct of the highly chaotic nature of a Three-Body system.
+
+A Neural Network may offer a method of simulating a system over longer integration periods more efficiently. By training on datasets with a variety of trajectories, neural networks can learn to directly map from a set of initial conditions to a future state. This allows it to skip the incremental time steps that a traditional integrator would have to take, which allows the network to perform fewer calculations, and would ideally increase the speed of a prediction. Moreover, fewer calculations may mean less floating-point errors, which could be beneficial for stability in long-term simulations. The computing cost that comes with using a Neural Network that maps directly from initial conditions to a future state would remain constant, regardless of the temporal distance $t$ from the starting point, which in principle could yield large speedups over step-by-step integrators. In practice, however, the hybrid approach in this work still evolves the system through timesteps, so realized speedups depend on the specific architecture and timestep chosen. However, a standard network may fail to acknowledge the underlying physics that govern the Three-Body problem, which may lead to energy conservation violations. Furthermore, it may struggle during close encounters. This is because according to Newton's law of universal gravitation, the gravitational force exerted between two celestial bodies separated by distance $r$ is proportional to $1/r^2$. Therefore, when $r$ approaches $0$ during a close encounter, the gravitational force approaches $\infty$. This relation has such a steep gradient that even the slightest error in position from the network may cause a body to be ejected from the system or gain infinite energy, which is not physically possible \cite{Dehnen2001}.
+
+These shortcomings render computational methods of simulating the Three-Body problem incomplete, and for this reason, we will study the use of more complex networks.
+
+% ============================================================
+% SECTION 4: METHODOLOGY  (V2 §3 — verbatim, with two fixes)
+% ============================================================
+\section{SIMON: Architecture and Methodology}
+\label{sec:methodology}
+
+\subsection{Overview and Research Objective}
+\label{research_obj}
+The aim of this study is to investigate how closely physically constrained neural network force models can reproduce the long-term stability and energy-conserving behavior of traditional numerical integrators in three-body simulations, while operating at significantly reduced computational cost. Rather than attempting to replace established integration schemes, this work seeks to quantify the extent to which neural networks can approximate the physical fidelity of traditional step integrators when computational efficiency is prioritized.
+
+Traditional numerical integrators are expected to achieve superior accuracy, particularly with energy conservation over long timescales, but typically incur higher computational costs. Neural methods, by contrast, offer faster force evaluations but often suffer from less long-term stability. By embedding physical constraints directly into the neural network architecture, this study examines whether such models can narrow the gap in physical accuracy while retaining their computational advantage.
+
+Formally, we address the following research question:
+\begin{quote}
+\emph{How closely can physically constrained neural network force models approximate the long-term stability of traditional numerical integrators in three-body simulations, while operating at substantially higher computational speed?}
+\end{quote}
+
+\subsection{Problem Formulation}
+We study the unrestricted Three-Body problem where masses solely interact through Newtonian gravitational forces. The governing equations (see Subsection~\ref{subsec:ODEs}) for the evolution of this system are deterministic, time-reversible, and conserve total energy. As discussed earlier in section Subsection~\ref{subsec:ODEs}, a Three-Body system exhibits chaotic motion for generic initial conditions, making it ideal for testing long-term numerical stability in Physically constrained neural networks.
+
+\subsection{Baseline Numerical Solver: \texttt{Rebound}}
+Throughout this paper, we will take the ground truth of the Three-Body integration to be the output from \texttt{Rebound} \citep{Rein2012}, and any output from neural networks will be compared against \texttt{Rebound} output. \texttt{Rebound} is an N-body integrator that can simulate the motion of particles under the influence of gravity. \texttt{Rebound} has several integrators: and the one we will be using in our case will be the \texttt{ias15}, \cite{Rein_2014} as it is one of the most precise integrators offered by Rebound. It is a high-order adaptive integrator based on Gauss-Radau quadrature, accurate to near machine precision over long integrations \citep{Rein_2014}. The ``15'' in \texttt{ias15} refers to its 15th-order accuracy, which enables excellent energy conservation without being a symplectic method. Its adaptive timestep control makes it especially reliable for close encounters and long-horizon simulations.
+
+To get an idea of what the model we will train is actually being trained on, observe 2 simulations with trajectories plotted.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{rebound_sim1.pdf}
+    \caption{Trajectories calculated by \texttt{Rebound}, with body masses 1$\,\rm M_\odot$, 0.01$\,\rm M_\odot$, 0.005$\,\rm M_\odot$, for 100 years.}
+    \label{fig:fig4}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{rebound_sim2.pdf}
+    \caption{Trajectories calculated by \texttt{Rebound}, with body masses 1$\,\rm M_\odot$, 0.01$\,\rm M_\odot$, 0.005$\,\rm M_\odot$, for 100 years, but with different initial positions.}
+    \label{fig:fig5}
+\end{figure}
+
+These simulations serve several purposes. First, they establish a physically consistent baseline against which alternative force models can be evaluated. Second, they illustrate the range of orbital behaviors encountered even in relatively simple three-body configurations, including non-circular motion and mutual perturbations. Finally, it provides a concrete visualization of the types of interactions, particularly variations in inter-body separation and acceleration, that any force emulator must accurately capture in order to remain stable over extended integration times.
+
+\subsection{Physically Constrained Force Magnification Neural Network}
+The Pairwise Force Magnitude Network (PFMN) \cite{nguyen2021pairwise}, \cite{battaglia2016interaction}, we are training for the purpose of this investigation is not trained to predict forces directly, but instead is trained to predict a scalar pairwise force magnitude, which is essentially the magnitude of the force of interaction between bodies interacting, given in pairs. Let:
+\begin{itemize}
+    \item \textbf{$\mathbf{x}_i(t) \in \mathbb{R}^3$} be the position vector of body $i$ at a time $t$,
+    \item \textbf{$\mathbf{v}_i (t) = \mathbf{\dot x}_i(t)$} be its velocity vector,
+    \item \textbf{$m_i > 0$} be its mass,
+    \item \textbf{$G$} be the universal gravitational constant.
+\end{itemize}
+
+For any pair of bodies, the displacement vector can be given as $\mathbf{r}_{ij} = \mathbf{x}_j - \mathbf{x}_i$. The pairwise distance can be given by $r_{ij} = \|\mathbf{r}_{ij}\|$. The classical Newtonian equations of motion used for their interactions are; $\sum \mathbf{F}_{ij} = m_i \mathbf{\ddot x}$ (second law of motion,) and $$\mathbf{F}_{ij}^{\text{Newt}} = G \frac{m_i m_j}{|\mathbf{r}_{ij}|^3} \mathbf{r}_{ij}$$ (universal law of gravitation.) \cite{murray1999solar}.
+
+To improve stability during close encounters, a softened gravitational force is also computed using a fixed softening parameter $\epsilon$. This softened force replaces the Newtonian inter-body distance $r_{ij}$ with $\sqrt{r^2_{ij} + \epsilon^2}$ to ensure forces are controlled during interactions where the inter-body distance $r_{ij}$ is less than $\epsilon$. \cite{Dehnen2001}. This provides a smoother learning target for the model, in the sense that minuscule errors in position do not completely break the simulation. The new, softened force can be represented as $\tilde{r}$. However, when using softening, a slight bias is introduced, which why during model analysis/evaluation we will be using unsoftened forces.
+
+Hence, substituting into the universal law of gravitation, we get the following representation of a pairwise force:
+
+$$\mathbf{F}_{ij}^{\text{soft}} = G \frac{m_i m_j}{\tilde{r}_{ij}^3} \mathbf{r}_{ij}$$.
+
+Now that the mathematics of the method of force formulation has been developed, we will now move onto the model architecture. The learned model is a scalar function with neural network weights $\theta$, $f_{\theta} : (\tilde{r}_{ij}, m_i, m_j) \mapsto F_{ij} \in \mathbb{R}$, where $\hat{F}_{ij}$ is the predicted pairwise force magnitude. When we implement this, the network will receive a feature vector $z_{ij} = [r_{ij}, m_i, m_j] \in \mathbb{R}^3$, and will output $\hat{F}_{ij} = f_{\theta}(z_{ij})$. We now construct a unit vector for the direction of the force, given by
+$$u_{ij} \equiv \frac{\mathbf{r}_{ij}}{\|\mathbf{r}_{ij}\|}$$
+(using the unsoftened displacement for the direction, which ensures a purely radial force impulse).
+Now that we have both the direction of the unit vector and the magnitude, we can multiply $\hat{F}_{ij}$ and $u_{ij}$ to get the magnitude and direction of the force: $\mathbf{F}_{ij}^{NN} = F_{ij} \mathbf{u}_{ij}$. Now, to get the sum of the forces on body $i$ we will sum over all forces: $\mathbf{F}_{i}^{NN} = \sum_{j \neq i} \mathbf{F}_{ij}^{NN}$. \cite{kipf2018neural}.
+
+Moreover, the architecture is a neural network with 3 hidden layers of 32 neurons each, using SiLU activation functions:
+$\text{Input}(3) \to \text{Linear}(32) \to \text{SiLU} \to \text{Linear}(32) \to \text{SiLU} \to \text{Linear}(32) \to \text{SiLU} \to \text{Linear}(1)$.
+
+\subsection{Hybrid Incorporation}
+\cite{ulibarrena2024hybrid} predicts that using a hybrid combination of an analytical integrator (like \texttt{ias15} in our case) to correct inaccurate neural network predictions could ``prevent large energy errors.'' A fixed timestep is used. We incorporate \texttt{ias15} into our model in a similar way \cite{ulibarrena2024hybrid} did, replacing inaccurate neural predictions with an analytic one instead. We do this by not letting the NN predict by itself, but rather learn a correction, $c$, to a softened gravitational force \cite{kipf2018neural}. The coefficient of correction, predicted by the NN, determines whether the softened force should be stronger or weaker. We divide force computation into three tiers. Far field, where $r > 500\epsilon = 0.15\,\text{AU}$ means the NN is not invoked and is identical to what \texttt{ias15} predicts. Close encounters, where $r < 0.15\,\text{AU}$ means the NN is invoked and predicts a correction factor. To prevent the force from being strengthened or weakened too much, we gate the coefficient, bounding it between 0.2 and 5. If it falls outside of this range, we do not use the NN correction and simply take the softened baseline force. Lastly, for very close encounters, where $r < 5\times10^{-4}$ the NN is again bypassed to ensure that no bodies are ejected, and non-physical behavior is prevented.
+
+\subsection{Training Process}
+\label{sec:training}
+Training data is generated by sampling 50,000 physically valid pairwise configurations from \texttt{Rebound}. For each configuration, reference forces are computed analytically using Newtonian gravity. Approximately $60\%$ of the samples are drawn from regions where the inter-body distance $r\in [0.5 \epsilon, 50 \epsilon]$ ($\epsilon = 3 \times10^{-4}$), where the correction predicted by the model would deviate meaningfully from 1. The other $40\%$ is sampled from the far field $r\in[50\epsilon, 10]$ where the correction would be closer to one.
+
+Furthermore, the following hyperparameters are used for the model.
+\begin{itemize}
+    \item \textbf{Optimizer}: AdamW, weight decay = $1\times10^{-5}$
+    \item \textbf{Learning rate}: $1\times10^{-3}$, cosine annealing to $1\times10^{-5}$ \cite{loshchilov2017sgdr} over 5,000 epochs.
+    \item \textbf{Loss Function}: MSE on log($c$)
+    \item \textbf{Batch Size}: Full batch (40,000 training samples)
+    \item \textbf{Train/evaluation split}: 80\% / 20\% (40,000/10,000)
+    \item \textbf{Training device}: NVIDIA GeForce RTX 5050 CUDA 13.0
+    \item \textbf{Training time}: 9 seconds
+    \item \textbf{Best MSE}: $1.1 \times 10^{-5}$
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{training_log.png}
+    \caption{Training and validation loss curves for PairCorrectionNN (seed 42) over 5,000 epochs, showing stable convergence to a best validation MSE of $1.1 \times 10^{-5}$.}
+    \label{fig:training_log}
+\end{figure}
+
+\subsection{Adaptive Sub-Stepping}
+The integrator uses a fixed macro timestep $dt$. To resolve close encounters where gravitational acceleration changes faster than $dt$ can capture, an adaptive sub-stepping mechanism is applied \cite{Rein_2014}. At each step $dt$ the minimum pairwise distance $r_{min}$ is computed across all body pairs. If $r_{min} <0.05\,\text{AU}$ then $dt$ will be split into smaller sub-steps. The number of sub-steps is determined by the following: $n_{sub}=\frac{0.05}{r_{min}}$. Each sub-step has a duration $\frac{dt}{n_{sub}}$. This makes sure that as encounters become closer and closer, the number of sub-steps increases proportionally to account for the increased gravitational force (and hence acceleration) that is associated with closer encounters. The maximum of 16 sub-steps per large $dt$ caps the computational cost to optimize speed.
+
+All physics (positions, velocities, accelerations, forces) is computed in float64 for numerical stability. The NN forward pass uses float32 weights, with the correction factor being converted back to float64 before use.
+
+\subsection{Evaluation Strategy}
+\label{sec:eval_strategy}
+Long-term trajectory divergence in chaotic systems like the Three-Body problem is inevitable, as established in section Subsection~\ref{subsec:ODEs}. With this knowledge in mind, we will evaluate with the following diagnostics on the hybrid model:
+
+\begin{itemize}
+    \item \textbf{Trajectory Overlay:} Trajectories generated by neural models are superimposed against the reference numerical solution to gain qualitative insight into the accuracy of the model. This will be done with various different initial conditions to explore how the model will handle different situations, to get a better insight into its versatility. Moreover, we will also plot a time series overlay to analyze if there is any phase drift.
+    \item \textbf{Trajectory Divergence:} To gain insight into the sensitivity of each system with respect to the initial conditions, we numerically estimate the trajectory divergence by evolving predicted trajectories in parallel, then calculating the RMS position error between the two. Agreement between neural and reference values indicates preservation of the system's chaotic structure.
+    \item \textbf{Speed-Accuracy Tradeoff:} The distance between the neural network predicted trajectory and the \texttt{Rebound} predicted trajectory, plotted over throughput (how fast trajectory points were saved.)
+\end{itemize}
+
+The divergence rate $\lambda$ is estimated by fitting an exponential $\delta(t) \approx \delta_0 e^{\lambda t}$ to the RMS position error over a 10--50 year fit window. This quantity is a divergence-rate proxy rather than a formal Lyapunov exponent: we compare two different models rather than two nearby initial conditions evolved under the same dynamics. Consequently, $\lambda$ reflects both the intrinsic chaotic sensitivity of the three-body system and SIMON's accumulated force errors; a perfect model would yield $\lambda = 0$, while larger values indicate a combination of genuine chaos and model mismatch. Throughout this paper, $\lambda = 0.1655$\,yr$^{-1}$ refers to SIMON at the operational timestep $dt = 0.04$\,yr, consistent across all experiments.
+
+\subsection{Scope of the Method}
+This method is designed to see how closely a physically constrained Neural Network can shadow a traditional iterative integrator in terms of close counters, computational efficiency, and trajectory divergence. By comparing these two, we seek insight into the development of neural methods of Three-Body emulation, and learn to what extent these methods are able to speed-up simulations without compromising significant accuracy and stability.
+
+% ============================================================
+% SECTION 5: RESULTS
+% ============================================================
+\section{Results}
+\label{sec:results}
+
+In this section we examine the performance of SIMON across six experimental configurations.
+Results are presented in three subsections. Section~\ref{sec:res1} isolates the contribution
+of each architectural component through a controlled ablation study.
+Section~\ref{sec:res2} tests generalisation across seven qualitatively distinct initial
+conditions. Section~\ref{sec:res3} assesses physical consistency: energy conservation,
+timestep scaling, computational performance, and training reproducibility.
+
+% ============================================================
+% 5.1 RESULTS I — STABILITY DECOMPOSITION
+% ============================================================
+\subsection{Results I: Stability Decomposition}
+\label{sec:res1}
+
+\subsubsection{The Four-Run Ablation Design}
+\label{sec:ablation_design}
+
+To isolate the contribution of each architectural component, we conduct a controlled
+four-run ablation. In each run, exactly one component is removed or replaced, while all
+other parameters---model weights, initial conditions, timestep grid, and simulation
+horizon---are held identical. Table~\ref{tab:ablation} summarises the framework.
+
+\begin{table}[H]
+\centering
+\caption{Four-run ablation framework. Each run removes exactly one component.
+IC1 ($m = [1.0,\,0.01,\,0.005]\,\rm M_\odot$), $T=100$\,yr, $dt=0.04$\,yr.}
+\label{tab:ablation}
+\begin{tabular}{lcccrp{4.5cm}}
+\toprule
+\textbf{Run} & \textbf{Adaptive} & \textbf{Force dir.} & \textbf{NN corr.} & \textbf{Final RMS} & \textbf{What it proves} \\
+\midrule
+A (Exp.\ 4) & OFF & Analytic & ON  & 161.7\,AU (ejection) & Adaptive stepping necessary for stability \\
+B (Exp.\ 1) & ON  & Learned  & N/A & 83.0\,AU (ejection)  & Analytic force direction necessary \\
+C (Exp.\ 6) & ON  & Analytic & OFF & 1.67\,AU (bounded)   & NN provides accuracy, not stability \\
+D (SIMON)   & ON  & Analytic & ON  & 1.54\,AU (bounded)   & Both constraints: best result \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This framework cleanly decomposes SIMON's performance: Runs A and B identify the conditions
+under which instability arises, while Runs C and D quantify the accuracy contribution
+of the neural network once stability is guaranteed.
+
+\subsubsection{Run A: Adaptive Sub-Stepping Is the Primary Stability Mechanism}
+\label{sec:runA}
+
+Without adaptive sub-stepping (Run A), the leapfrog integrator fails to resolve a
+close encounter at $dt = 0.01$\,yr. The lightest body is ejected to a final RMS
+deviation of 161.7\,AU from the \texttt{ias15} reference. Adding adaptive sub-stepping
+eliminates this failure: all five tested timestep values produce bounded dynamics
+(Figure~\ref{fig:adaptive_frontier}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{adaptive_error_vs_dt.png}
+    \caption{Final RMS error vs timestep $dt$ before (red circles) and after (green squares)
+    adaptive sub-stepping, across $dt \in \{0.005, 0.01, 0.02, 0.04, 0.08\}$\,yr.
+    Without adaptive stepping, $dt = 0.01$\,yr produces body ejection (161.7\,AU).
+    With adaptive stepping, all timestep values produce bounded dynamics.
+    Worst-case improvement: $161.7 / 1.54 = 105\times$ across the full frontier.}
+    \label{fig:adaptive_frontier}
+\end{figure}
+
+At the operational timestep $dt = 0.04$\,yr, adaptive sub-stepping reduces final RMS
+from 1.691\,AU (Run A, no adaptive) to 1.543\,AU (Run D, full SIMON), an 8.8\%
+improvement. The per-step overhead is $+28\%$ (19.21\,$\mu$s to 24.57\,$\mu$s),
+reducing the speedup over \texttt{ias15} from 1.49$\times$ to 1.10$\times$.
+The mechanism is targeted: sub-stepping activates only when a body pair falls below
+$r_{\min} < 0.05$\,AU, covering fewer than 1\% of integration steps.
+
+\subsubsection{Run B: Analytic Force Direction Is a Necessary Physical Constraint}
+\label{sec:runB}
+
+Run B replaces SIMON's analytic force direction with a learned direction (Vector NN),
+while retaining adaptive sub-stepping and exact analytic magnitude. The Vector NN achieves
+$0.04^\circ$ angular accuracy on the training distribution, yet the simulation ejects
+the lightest body to 83.0\,AU---compared with SIMON's bounded 1.54\,AU
+(Figures~\ref{fig:div_3model} and~\ref{fig:traj_3model}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\linewidth]{divergence_3model.png}
+    \caption{Divergence rate: SIMON (green, bounded, $\lambda \approx 0.1655$\,yr$^{-1}$)
+    vs Vector NN (red, ejection, $\lambda \approx 0.1656$\,yr$^{-1}$ initially).
+    Both systems show similar divergence rates in the 10--50\,yr fit window,
+    but the Vector NN continues to diverge post-window and ejects to $>100$\,AU
+    by $T=100$\,yr. The subtle initial similarity underscores that the instability
+    is cumulative, not immediately apparent.}
+    \label{fig:div_3model}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{trajectory_3model.png}
+    \caption{XY trajectory overlay for all three bodies over 100 years:
+    \texttt{ias15} (blue solid), SIMON (green dashed), Vector NN (red dotted).
+    SIMON and \texttt{ias15} produce bounded orbits. The Vector NN ejects Body 2
+    (panel right), which travels to $>100$\,AU by the simulation end.}
+    \label{fig:traj_3model}
+\end{figure}
+
+The ejection mechanism is cumulative non-radial impulse accumulation. Even at $0.04^\circ$
+directional error per step, the tangential impulse component is non-zero. Over hundreds
+of close-encounter steps, these small non-radial contributions compound into a significant
+energy injection, eventually unbinding a body. SIMON's analytic direction
+$\mathbf{u}_{ij} = \mathbf{r}_{ij}/\|\mathbf{r}_{ij}\|$ is structurally radial---every
+force impulse is directed exactly along the inter-body axis, preventing tangential
+accumulation entirely.
+
+\subsubsection{Run C: The Neural Network Correction Is an Accuracy Mechanism}
+\label{sec:runC}
+
+Run C retains adaptive sub-stepping and analytic force direction, but fixes the
+correction factor at $c = 1.0$, removing the neural network entirely. The simulation
+remains bounded at 1.6748\,AU, and the divergence rate is $\lambda = 0.1655$\,yr$^{-1}$---
+identical to SIMON (Run D, Figure~\ref{fig:div_nonn}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\linewidth]{divergence_no_nn.png}
+    \caption{Divergence rate: SIMON with NN correction (green solid,
+    $\lambda \approx 0.1655$\,yr$^{-1}$) vs No-NN baseline with pure softened gravity
+    (red dashed, $\lambda \approx 0.1655$\,yr$^{-1}$). Both curves are visually
+    indistinguishable throughout 100\,yr. The NN contributes to final RMS accuracy
+    (1.5427 vs 1.6748\,AU, an 8.5\% improvement) without affecting the divergence rate.}
+    \label{fig:div_nonn}
+\end{figure}
+
+This result directly answers the question that V2 left open: without the neural network,
+orbital stability is preserved. The neural network contributes an 8.5\% improvement in
+final RMS ($1.6748 \to 1.5427$\,AU) at the 0.45\% of pair evaluations involving close
+encounters---a measurable accuracy refinement, not a stability requirement.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{trajectory_no_nn.png}
+    \caption{XY trajectory overlay for all three bodies over 100 years:
+    \texttt{ias15} (blue), SIMON with NN (green dashed), No-NN baseline (red dotted).
+    All three produce qualitatively bounded orbits. The trajectories diverge gradually
+    due to chaotic sensitivity, with the No-NN and SIMON trajectories separating slightly
+    more than SIMON and \texttt{ias15}.}
+    \label{fig:traj_nonn}
+\end{figure}
+
+\subsubsection{Synthesis: Two Complementary Physical Constraints}
+\label{sec:synthesis}
+
+The four-run ablation yields a precise decomposition of SIMON's performance.
+\textbf{Adaptive sub-stepping} is the primary stability mechanism: removing it causes
+body ejection even with the neural correction active (Run A, 161.7\,AU). It is not
+a marginal optimisation but a qualitative change in system behaviour.
+\textbf{The neural network correction} provides accuracy refinement: removing it while
+retaining adaptive stepping leaves stability intact, reducing final RMS by 8.5\% (Run C
+vs D). Both components are needed for optimal performance: Run D (full SIMON, 1.54\,AU)
+outperforms Run C (1.67\,AU) in accuracy, while Run C confirms that Run D's bounded
+trajectory is not contingent on the neural correction.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{traj_overlay_xy_subplots_all_bodies_T100_after_adaptive.png}
+    \caption{XY trajectory overlays for all three bodies over 100 years comparing
+    SIMON (dashed) to \texttt{ias15} (solid). SIMON (Run D: full system with both
+    constraints) emulates the qualitative orbital geometry of the reference across
+    the full 100-year horizon. All bodies remain gravitationally bounded.}
+    \label{fig:traj_simon}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{model_vs_rebound_divergence_T100_after_adaptive.png}
+    \caption{SIMON--\texttt{ias15} RMS position deviation over 100 years (IC1,
+    $dt=0.04$\,yr). The shaded region (10--50\,yr) is the fit window for
+    $\lambda = 0.1655$\,yr$^{-1}$. The smooth exponential growth confirms that
+    SIMON reproduces the system's chaotic divergence structure without introducing
+    catastrophic instabilities.}
+    \label{fig:div_simon}
+\end{figure}
+
+% ============================================================
+% 5.2 RESULTS II — GENERALISATION
+% ============================================================
+\subsection{Results II: Generalisation Across Initial Conditions}
+\label{sec:res2}
+
+To test whether SIMON's performance on IC1 generalises beyond a single configuration,
+we evaluate across seven qualitatively distinct initial conditions spanning the full
+stable dynamical spectrum of the three-body problem.
+
+\subsubsection{Seven Initial Conditions}
+\label{sec:7ics}
+
+Table~\ref{tab:7ics} describes all seven configurations. All use masses
+$[1.0,\,0.01,\,0.005]\,\rm M_\odot$ except IC2 (near-equal mass).
+All are energetically bound ($E < 0$) before the simulation, and all were tested
+at $T=100$\,yr, $dt=0.04$\,yr. IC5 and IC7 (high eccentricity) were independently
+verified as physically unstable using \texttt{ias15} alone
+(scripts \texttt{check\_ic5.py}, \texttt{check\_ic7.py}).
+
+\begin{table}[H]
+\centering
+\caption{Seven initial conditions. $\lambda$ and final RMS from \texttt{multi\_ic\_eval\_v3.py}.
+All runs: $T=100$\,yr, $dt=0.04$\,yr. Unstable ICs confirmed by \texttt{ias15} alone.}
+\label{tab:7ics}
+\small
+\begin{tabular}{llrrrl}
+\toprule
+\textbf{IC} & \textbf{Regime} & \textbf{$\lambda$ (yr$^{-1}$)} & \textbf{RMS (AU)} & \textbf{Bounded} & \textbf{Note} \\
+\midrule
+IC1: Default     & Moderate scattering        & 0.1655  &   1.543  & Yes & V2 baseline \\
+IC2: Near-equal  & Strongly interacting       & 0.0430  & 116.872  & No  & Unstable$^\dagger$ \\
+IC3: Tight pair  & Tight inner binary         & 0.1207  &   3.453  & Yes & \\
+IC4: Hierarchical& Weakly coupled outer body  & 0.0990  &   1.598  & Yes & \\
+IC5: High-ecc.   & High eccentricity (r=0.3)  & 0.0648  &  19.971  & No  & Unstable$^\dagger$ \\
+IC6: Near-circ.  & Near-Keplerian circular    & $-$0.019 &  0.008  & Yes & \\
+IC7: High-ecc.   & High eccentricity (r=0.6)  & 0.0341  &  11.444  & No  & Unstable$^\dagger$ \\
+\midrule
+\multicolumn{2}{l}{Mean (bounded ICs only)} & 0.0916 & 1.651 & 4/4 & \\
+\multicolumn{2}{l}{Std  (bounded ICs only)} & 0.0682 & 1.221 & & \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+
+\footnotesize{$^\dagger$ Physically unstable: \texttt{ias15} alone also predicts ejection.
+IC2: \texttt{ias15} ejects to 58.94\,AU. IC5: \texttt{ias15} ejects to 47.08\,AU at $t=34.8$\,yr.
+IC7: \texttt{ias15} ejects to 21.96\,AU at $t=88.4$\,yr. Post-ejection separation differences
+are consistent with chaotic amplification of integrator differences after the system becomes unbound.}
+\end{table}
+
+\subsubsection{Bounded Configurations}
+\label{sec:bounded}
+
+Across all four dynamically stable configurations, SIMON maintains bounded orbital
+dynamics for the full 100-year horizon. The configurations span qualitatively distinct
+regimes of the three-body problem, from near-circular low-chaos orbits to a tight inner
+binary with high encounter rate.
+
+\begin{itemize}
+  \item \textbf{IC6 (near-circular):} Final RMS = 0.008\,AU---near-exact \texttt{ias15}
+        tracking. The NN is never invoked (NN\_frac = 0.000); the residual is entirely
+        from the leapfrog--Gauss-Radau integrator difference.
+        $\lambda \approx 0$: no detectable exponential growth in the fit window.
+  \item \textbf{IC4 (hierarchical):} Final RMS = 1.598\,AU, $\lambda = 0.099$\,yr$^{-1}$.
+        The weakly-coupled outer body creates a near-restricted three-body configuration.
+        NN\_frac = 0.000.
+  \item \textbf{IC1 (default):} The V2 baseline. Final RMS = 1.543\,AU,
+        $\lambda = 0.1655$\,yr$^{-1}$, speedup 1.11$\times$.
+  \item \textbf{IC3 (tight inner pair):} Final RMS = 3.453\,AU,
+        $\lambda = 0.121$\,yr$^{-1}$. The highest encounter rate and highest RMS among
+        bounded ICs, reflecting the continuous close encounters at $r \approx 0.5$\,AU.
+        NN\_frac = 0.000.
+\end{itemize}
+
+Mean divergence rate across bounded ICs: $\bar{\lambda} = 0.092 \pm 0.068$\,yr$^{-1}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{multi_ic_results_v3.png}
+    \caption{Summary bar charts for all 7 ICs: divergence rate $\lambda$ (left),
+    final RMS vs \texttt{ias15} (centre, log scale), and speedup (right).
+    Hatched bars (IC2, IC5, IC7) indicate physically unstable configurations
+    confirmed by \texttt{ias15}. The ejection threshold (10\,AU) is shown as
+    a dotted line in the centre panel.}
+    \label{fig:multi_ic_results}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{multi_ic_divergence_v3.png}
+    \caption{Divergence curves (RMS vs \texttt{ias15}) for all 7 initial conditions
+    over 100 years. Bounded ICs (IC1, IC3, IC4, IC6) show gradual growth consistent
+    with chaotic divergence. The three unstable ICs (IC2, IC5, IC7) show rapid growth
+    leading to ejection, matching the behaviour predicted by \texttt{ias15} alone.}
+    \label{fig:multi_ic_div}
+\end{figure}
+
+\subsubsection{Physically Unstable Configurations}
+\label{sec:unstable}
+
+In all three ejecting configurations, \texttt{ias15} independently also predicts body
+ejection, confirming the instability is physical rather than a SIMON artefact.
+SIMON does not artificially stabilise configurations that are physically unstable.
+
+IC2 (near-equal mass) involves efficient symmetric energy exchange between comparably
+massive bodies, eventually unbinding the lightest body. Both \texttt{ias15} (58.9\,AU)
+and SIMON (116.9\,AU) predict ejection; the factor-of-two post-ejection discrepancy is
+consistent with chaotic divergence amplifying integrator differences after the binding
+energy is lost.
+
+IC5 and IC7 (high-eccentricity configurations) illustrate that eccentric inner orbits with
+these mass ratios ($[1.0,\,0.01,\,0.005]\,\rm M_\odot$) are intrinsically prone to instability:
+the eccentric inner body transfers angular momentum to the outer body through repeated
+periapsis passages, eventually unbinding it regardless of integrator.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{multi_ic_trajectories_v3.png}
+    \caption{Body 1 trajectory overlays (ias15 vs SIMON) for all 7 ICs.
+    Bounded ICs show overlapping orbital traces in a compact region.
+    The three unstable ICs show the ejected body leaving the plot frame.}
+    \label{fig:multi_ic_traj}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{traj_overlay2.pdf}
+    \caption{Trajectory overlay for IC3 (tight inner pair): \texttt{ias15} (solid)
+    vs SIMON (dashed), all three bodies, $T=100$\,yr. Despite frequent close encounters
+    at $r \approx 0.5$\,AU, SIMON maintains bounded dynamics and qualitatively reproduces
+    the orbital geometry.}
+    \label{fig:traj2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{traj_overlay3.pdf}
+    \caption{Trajectory overlay for IC4 (hierarchical): \texttt{ias15} (solid)
+    vs SIMON (dashed), all three bodies, $T=100$\,yr. The weakly-coupled outer body
+    at 5\,AU maintains its orbit throughout, and the inner binary remains stable.}
+    \label{fig:traj3}
+\end{figure}
+
+% ============================================================
+% 5.3 RESULTS III — PHYSICAL CONSISTENCY AND REPRODUCIBILITY
+% ============================================================
+\subsection{Results III: Physical Consistency and Reproducibility}
+\label{sec:res3}
+
+\subsubsection{Energy Conservation: Leapfrog Attribution}
+\label{sec:energy}
+
+We quantify the fractional energy drift $|dE(t)/E_0|$ as a function of time, where
+$E(t) = \mathrm{KE}(t) + \mathrm{PE}(t)$ uses the softened Hamiltonian consistent with
+SIMON's integration.
+
+\begin{table}[H]
+\centering
+\caption{Maximum fractional energy drift at the operational $dt=0.04$\,yr.
+ias15 conserves energy to float64 machine precision ($\sim 10^{-14}$\%).}
+\label{tab:energy}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{IC} & \textbf{Max drift (\%)} & \textbf{NN\_frac} & \textbf{Drift source} \\
+\midrule
+IC1: Default     & 1.390 & 0.0045 & Leapfrog + small NN contribution \\
+IC3: Tight pair  & 0.672 & 0.0000 & Leapfrog only (NN never invoked) \\
+IC4: Hierarchical& 13.772 & 0.0000 & Leapfrog only; small $|E_0|=0.006$ amplifies \% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The attribution to leapfrog rather than the NN follows directly from IC3 and IC4: both
+have NN\_frac $= 0.000$ at all tested timesteps---the neural correction was never applied---yet
+both show energy drift. The NN cannot cause drift it never contributed to.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{energy_drift_all_ics.png}
+    \caption{Fractional energy drift $|dE/E_0|$ vs time for \texttt{ias15} (solid blue)
+    and SIMON (coloured dashed) across IC1, IC3, IC4 at $dt=0.04$\,yr.
+    \texttt{ias15} holds machine precision ($\sim 10^{-14}$\%) throughout.
+    SIMON's drift reflects the leapfrog integration scheme: IC3 and IC4 have
+    NN\_frac $= 0$, confirming the drift is not from the neural correction.}
+    \label{fig:energy_all}
+\end{figure}
+
+IC4's higher fractional drift (13.772\%) reflects its small binding energy
+($|E_0| = 0.006$): the absolute leapfrog error is comparable to IC1 and IC3, but the
+fractional normalisation amplifies it. The drift is oscillatory (not monotonic), consistent
+with symplectic shadow Hamiltonian conservation, and all bodies in IC4 remain bounded
+(final RMS = 1.598\,AU).
+
+\subsubsection{Timestep Scaling: Quantitative Confirmation of \texorpdfstring{$dt^2$}{dt2} Prediction}
+\label{sec:dt2}
+
+Second-order leapfrog theory predicts energy drift scaling as $dt^2$. To test this,
+we run SIMON on IC1, IC3, and IC4 at two timestep values: $dt = 0.01$\,yr and
+$dt = 0.04$\,yr (operational).
+
+\begin{table}[H]
+\centering
+\caption{Energy drift at $dt=0.01$\,yr and $dt=0.04$\,yr (operational). Slope is
+the fitted log-log exponent; theoretical leapfrog prediction is 2.0.}
+\label{tab:dt2}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{IC} & \textbf{NN\_frac} & \textbf{Drift at $dt=0.01$} & \textbf{Drift at $dt=0.04$} & \textbf{Slope} \\
+\midrule
+IC1: Default     & 0.0045 & 0.222\% & 1.390\% & 1.32 \\
+IC3: Tight pair  & 0.0000 & 0.023\% & 0.672\% & 2.43 \\
+IC4: Hierarchical& 0.0000 & 1.045\% & 13.772\% & 1.86 \\
+\midrule
+Average & & & & \textbf{1.87} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The average fitted slope of 1.87 is consistent with the theoretical $dt^2$ prediction
+of 2.0. IC3 and IC4 have NN\_frac $= 0.000$ at both timestep values, confirming that
+the scaling is from the leapfrog integrator alone. IC4's 13.772\% at $dt=0.04$\,yr
+reduces to 1.045\% at $dt=0.01$\,yr (factor of 13.2$\times$, vs the $dt^2$ prediction
+of 16$\times$), quantitatively confirming the timestep explanation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{01_drift_scaling_loglog.png}
+    \caption{Log-log plot of maximum fractional energy drift vs timestep for IC1 (blue),
+    IC3 (red), and IC4 (purple). Only the two valid data points ($dt=0.01$ and $dt=0.04$)
+    are shown per IC. Grey dotted line: theoretical $dt^2$ reference. Vertical dashed line:
+    operational $dt=0.04$\,yr. All three ICs are broadly consistent with $dt^2$ scaling,
+    confirming the leapfrog attribution quantitatively.}
+    \label{fig:dt2_loglog}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{02_drift_timeseries_IC4_hierarchical.png}
+    \caption{IC4 energy drift timeseries at all five tested timestep values.
+    The operational $dt=0.04$\,yr (orange) shows the 13.772\% drift with
+    characteristic oscillatory structure---consistent with symplectic integration,
+    not monotonic energy loss. At $dt=0.01$\,yr (green), drift reduces to 1.045\%.
+    At $dt=0.08$\,yr and $dt=0.10$\,yr, the integration breaks down for IC4's
+    orbital dynamics, confirming $dt=0.04$\,yr is at the boundary of reliable
+    integration for this configuration.}
+    \label{fig:ic4_timeseries}
+\end{figure}
+
+\subsubsection{Computational Performance: Speed-Accuracy Frontier}
+\label{sec:performance}
+
+We evaluate SIMON's speed-accuracy tradeoff by sweeping timestep $dt \in \{0.005,\, 0.01,\, 0.02,\, 0.04,\, 0.08\}$\,yr on IC1 over $T=100$\,yr. Table~\ref{tab:frontier} and Figure~\ref{fig:frontier} summarise the results.
+
+\begin{table}[H]
+\centering
+\caption{Speed-accuracy frontier for SIMON (after adaptive sub-stepping).
+\texttt{ias15} baseline completes in 0.069\,s. Operational timestep: $dt=0.04$\,yr.}
+\label{tab:frontier}
+\begin{tabular}{rrrrrr}
+\toprule
+$dt$ (yr) & Final RMS (AU) & Throughput (samp/s) & Time/step ($\mu$s) & Total time (s) & Speedup \\
+\midrule
+0.005 & 1.022 & 10,333 & 24.2 & 0.484 & 0.14$\times$ \\
+0.01  & 0.847 & 20,383 & 24.5 & 0.245 & 0.28$\times$ \\
+0.02  & 1.022 & 40,119 & 24.9 & 0.125 & 0.55$\times$ \\
+0.04  & 1.543 & 79,620 & 25.1 & 0.063 & \textbf{1.10$\times$} \\
+0.08  & 1.022 & 150,146 & 26.6 & 0.033 & 2.07$\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{speed_accuracy_frontier_T100_after_adaptive.png}
+    \caption{Speed-accuracy frontier: final RMS vs throughput across timesteps $dt$.
+    Points toward the lower-right are better (higher throughput, lower error).
+    \texttt{SIMON} outperforms \texttt{ias15} at $dt=0.04$ (1.10$\times$ speedup) and
+    $dt=0.08$ (2.07$\times$ speedup). The lowest RMS (0.847\,AU) is at $dt=0.01$,
+    but this is 3.5$\times$ slower than \texttt{ias15}. The nearly constant per-step
+    time (24.2--26.6\,$\mu$s across a 16$\times$ change in $dt$) confirms that runtime
+    is dominated by per-step overhead, not integrator arithmetic.}
+    \label{fig:frontier}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{comp_cost_frontier_T100_after_adaptive.png}
+    \caption{SIMON speed-accuracy scatter plot: RMS position deviation vs throughput
+    (log--log axes). Each point is labelled with its corresponding $dt$ value.
+    $dt = 0.04$\,yr (operational) provides a 1.10$\times$ speedup over \texttt{ias15}
+    with bounded dynamics. $dt = 0.01$\,yr gives the best accuracy but is 3.5$\times$
+    slower than \texttt{ias15}.}
+    \label{fig:scatter}
+\end{figure}
+
+SIMON achieves operational speedups over \texttt{ias15} at $dt=0.04$\,yr (1.10$\times$)
+and $dt=0.08$\,yr (2.07$\times$). The per-step time profile is nearly flat
+(24.2--26.6\,$\mu$s across a 16$\times$ change in $dt$), confirming that runtime cost
+is dominated by per-step overhead (force evaluation, NN gating, adaptive sub-stepping
+logic) rather than integration arithmetic. The speed advantage arises from the hybrid
+architecture's ability to use a simple second-order integrator with a large, fixed timestep
+that would ordinarily fail during close encounters---with adaptive sub-stepping preventing
+the failure.
+
+The RMS values at $dt \in \{0.005,\,0.02,\,0.08\}$\,yr are all approximately 1.02\,AU,
+reflecting chaotic saturation: after 100 years, any two independent integrations of the
+same chaotic system diverge to roughly one orbital radius, regardless of timestep.
+The slight elevation at $dt=0.04$\,yr (1.54\,AU) is a chaotic fluctuation reflecting
+the specific orbital phase reached at $T=100$\,yr.
+
+\subsubsection{Training Seed Robustness}
+\label{sec:seeds}
+
+To verify that SIMON's results are not artefacts of a particular random initialisation,
+training was repeated five times with different random seeds. Table~\ref{tab:seeds} reports
+validation MSE and simulation outcomes for all five seeds.
+
+\begin{table}[H]
+\centering
+\caption{Training seed robustness. All seeds: $T=100$\,yr, $dt=0.04$\,yr, IC1.
+Training data seed fixed at 42 to isolate initialisation sensitivity.}
+\label{tab:seeds}
+\begin{tabular}{rrrrr}
+\toprule
+\textbf{Seed} & \textbf{Val MSE} & \textbf{Time (s)} & \textbf{$\lambda$ (yr$^{-1}$)} & \textbf{Bounded} \\
+\midrule
+42   & $1.113 \times 10^{-5}$ & 12.9 & 0.1655 & Yes \\
+123  & $1.723 \times 10^{-5}$ &  9.6 & 0.1655 & Yes \\
+456  & $1.754 \times 10^{-5}$ &  9.6 & 0.1655 & Yes \\
+789  & $1.683 \times 10^{-5}$ &  9.7 & 0.1655 & Yes \\
+1000 & $1.430 \times 10^{-5}$ & 10.6 & 0.1655 & Yes \\
+\midrule
+Mean & $1.54 \times 10^{-5}$ & 10.5 & 0.1655 & 5/5 \\
+Std  & $2.43 \times 10^{-6}$ &  1.3 & --- & --- \\
+CV   & 15.8\% & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The divergence rate $\lambda = 0.1655$\,yr$^{-1}$ is identical to four decimal places
+across all five seeds, and all seeds produce bounded dynamics. The 15.8\% coefficient
+of variation in validation MSE does not imply dynamical sensitivity: the variation is
+concentrated at sub-softening distances ($r < 5 \times 10^{-4}$\,AU) where the safety gate
+bypasses NN predictions entirely. In the operationally relevant range ($r \geq 10^{-3}$\,AU),
+all seeds produce correction factor errors below 0.3\%---functionally identical in simulation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{seed_robustness_results.png}
+    \caption{Training seed robustness. Left: validation loss curves for all 5 seeds
+    over 5,000 epochs (log scale), showing stable convergence with no instability.
+    Right: best validation MSE per seed. Despite a 15.8\% CV in training MSE
+    (range $1.11$--$1.75 \times 10^{-5}$), all seeds produce identical downstream
+    simulation outcomes ($\lambda = 0.1655$\,yr$^{-1}$, all bodies bounded).}
+    \label{fig:seeds}
+\end{figure}
+
+% ============================================================
+% SECTION 6: DISCUSSION AND CONCLUSION
+% ============================================================
+\section{Discussion and Conclusion}
+\label{sec:discussion}
+
+\subsection{The Two-Constraint Principle and Its Implications}
+
+The central finding of this work is that SIMON's performance decomposes into two orthogonal
+physical constraints that address distinct failure modes of fixed-timestep leapfrog
+integration in chaotic three-body systems.
+
+\textbf{Adaptive sub-stepping} resolves the stability failure: without it, specific
+close-encounter configurations cause body ejection regardless of the neural correction.
+This mechanism fires on fewer than 1\% of integration steps, and its benefit is not
+incremental but qualitative---the difference between a bounded and an unbounded simulation.
+
+\textbf{Analytic force direction} resolves the directional failure: replacing it with a
+learned direction causes ejection even with adaptive stepping active, through cumulative
+non-radial impulse accumulation over hundreds of close-encounter steps.
+
+\textbf{The neural network correction} is layered on top of a stable foundation: it
+provides an 8.5\% improvement in final RMS accuracy at close-encounter steps, but stability
+does not depend on it.
+
+This two-constraint decomposition replaces V2's defensive framing (``the NN is only invoked
+1.1\% of the time'') with a precise, evidenced characterisation of each component's role.
+The 1.1\% invocation rate is not a sign of the NN's marginal contribution---it correctly
+reflects the rarity of close encounters---but the question of what happens at those encounters
+without the NN is now answered: accuracy decreases by 8.5\%, stability does not change.
+
+\subsection{Positioning SIMON Relative to \texttt{ias15}}
+
+SIMON does not compete with \texttt{ias15} on accuracy. \texttt{ias15} is a 15th-order
+Gauss-Radau integrator with continuous global adaptive timestepping; it conserves energy
+to machine precision and is the appropriate tool for high-precision N-body work.
+SIMON targets a different operating point: long-horizon orbital characterisation where
+trajectory-level precision is secondary to computational efficiency.
+
+In a chaotic system, both \texttt{ias15} and SIMON diverge from the ``true'' trajectory
+beyond the Lyapunov time ($T_L \approx 1/\lambda \approx 6$\,yr for IC1). After this
+point, no integrator---however accurate---can reproduce the exact trajectory. The relevant
+question becomes whether SIMON correctly reproduces the qualitative dynamical properties:
+boundedness, chaotic divergence rate, and orbital structure. The experiments presented here
+confirm that it does.
+
+At the operational $dt = 0.04$\,yr, SIMON achieves a 1.10$\times$ speedup over
+\texttt{ias15} while maintaining bounded dynamics across all four stable initial conditions
+tested. This modest but genuine speedup, combined with correct reproduction of physical
+instability in the three unstable configurations, positions SIMON as a useful tool for
+ensemble studies where many long-horizon simulations are required.
+
+\subsection{Limitations and Scope}
+
+Several limitations bound the conclusions of this work.
+
+\textit{Single configuration for ablation.} All four ablation runs use IC1. The
+decomposition of adaptive stepping vs NN contributions may differ quantitatively for
+other mass ratios or initial configurations, though the qualitative roles are expected
+to generalise.
+
+\textit{Chaotic sensitivity.} Beyond the Lyapunov time, SIMON's trajectory diverges from
+\texttt{ias15}. The divergence rate $\lambda = 0.1655$\,yr$^{-1}$ reflects both intrinsic
+chaos and model mismatch; it is a proxy, not a formal Lyapunov exponent.
+
+\textit{Fixed operational timestep.} The $dt=0.04$\,yr operational point was selected
+from the speed-accuracy frontier. Different timestep choices yield different speedup/accuracy
+tradeoffs; the choice of $dt=0.04$\,yr reflects one specific operating point.
+
+\textit{Two-dimensional simulations.} All initial conditions were set up in the $xy$-plane
+with zero $z$-components. The method extends naturally to three dimensions, but the
+presented results are specific to planar configurations.
+
+\textit{High-eccentricity stability.} Across two design attempts, high-eccentricity
+configurations with mass ratios $[1.0,\,0.01,\,0.005]\,\rm M_\odot$ proved intrinsically
+unstable. This appears to be a property of the mass ratio rather than a SIMON limitation,
+but the conclusion is specific to these configurations.
+
+\subsection{Future Work}
+
+Several directions follow naturally from this work.
+
+\textit{Extension to $N > 3$ bodies.} The pairwise force correction architecture scales
+naturally to larger systems; the close-encounter resolution challenge becomes more important
+as $N$ increases.
+
+\textit{Variable mass ratios.} Testing across a wider range of mass distributions would
+establish whether the two-constraint principle generalises or whether different mass
+regimes require different architectural choices.
+
+\textit{Equivariant neural network architectures.} Recent work on equivariant graph neural
+networks (e.g., NequIP \citep{batzner2022nequip}, SchNet \citep{schutt2018schnet}) enforces
+physical symmetries at the level of the network architecture. Integrating such representations
+may improve the correction accuracy, particularly at close encounters.
+
+\textit{Longer time horizons.} Extending simulations beyond 100 years would test whether
+the bounded dynamics observed here persist over multiple Lyapunov times, and whether the
+8.5\% accuracy advantage of the neural correction compounds over longer horizons.
+
+\textit{Adaptive training data.} The current training distribution samples uniformly from
+the close-encounter regime. Adaptive sampling focused on the most challenging configurations
+may reduce the training MSE coefficient of variation and improve accuracy in the most
+demanding orbital configurations.
+
+% ============================================================
+% REFERENCES
+% ============================================================
+\newpage
+\bibliographystyle{plainnat}
+\bibliography{V3_bib}
+
+% ============================================================
+% APPENDIX A: Initial Condition Details
+% ============================================================
+\appendix
+\section{Initial Condition Details}
+\label{app:ics}
+
+Table~\ref{tab:ic_details} provides the full specification of all seven initial conditions
+evaluated in Section~\ref{sec:res2}. All coordinates are after centre-of-mass centering
+and are given in astronomical units (AU) and AU\,yr$^{-1}$.
+
+\begin{table}[H]
+\centering
+\caption{Full initial condition specifications. All masses in $\rm M_\odot$; coordinates in
+AU and AU/yr after CoM centering. $E_0$: total initial energy in natural units ($G=1$).}
+\label{tab:ic_details}
+\small
+\begin{tabular}{lllrl}
+\toprule
+\textbf{IC} & \textbf{Masses} & \textbf{Configuration} & \textbf{$E_0$} & \textbf{Outcome} \\
+\midrule
+IC1 & [1.0, 0.01, 0.005] & $x_0$=[[0,0,0],[1,0,0],[0,1.2,0]], $v_0$=[[0,0,0],[0,1,0],[$-$0.9,0,0]] & $-$0.00723 & Bounded \\
+IC2 & [1.0, 0.5, 0.25]   & $x_0$=[[0,0,0],[1,0,0],[$-$0.5,0.8,0]], $v_0$=[[0,0,0],[0,0.6,0],[$-$0.4,$-$0.3,0]] & $-$0.73460 & Unstable \\
+IC3 & [1.0, 0.01, 0.005] & $x_0$=[[0,0,0],[0.5,0,0],[0,2.5,0]], $v_0$=[[0,0,0],[0,1.3,0],[$-$0.4,0,0]] & $-$0.01325 & Bounded \\
+IC4 & [1.0, 0.01, 0.005] & $x_0$=[[0,0,0],[1,0,0],[0,5,0]], $v_0$=[[0,0,0],[0,1,0],[$-$0.12,0,0]] & $-$0.00602 & Bounded \\
+IC5 & [1.0, 0.01, 0.005] & $x_0$=[[0,0,0],[0.3,0,0],[0,2,0]], $v_0$=[[0,0,0],[0,2.2,0],[$-$0.3,0,0]] & $-$0.01167 & Unstable \\
+IC6 & [1.0, 0.01, 0.005] & $x_0$=[[0,0,0],[1.5,0,0],[$-$3,0,0]], $v_0$=[[0,0,0],[0,0.816,0],[0,$-$0.577,0]] & $-$0.00420 & Bounded \\
+IC7 & [1.0, 0.01, 0.005] & $x_0$=[[0,0,0],[0.6,0,0],[0,4,0]], $v_0$=[[0,0,0],[0,1.6,0],[$-$0.15,0,0]] & $-$0.00520 & Unstable \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Supplementary Figures}
+\label{app:figs}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{traj_overlay_timeseries_all_bodies_T100_after_adaptive.png}
+    \caption{Coordinate time series overlays $x(t)$, $y(t)$ for all three bodies over
+    100 years: \texttt{ias15} (solid) vs SIMON (dashed). Early-time agreement is strong;
+    a phase offset develops after $\sim$25 years, consistent with Lyapunov-time chaotic
+    divergence. All coordinates remain oscillatory and bounded throughout.}
+    \label{fig:timeseries_app}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{timeseries_no_nn.png}
+    \caption{Coordinate time series for SIMON (green dashed) vs No-NN baseline
+    (red dotted) vs \texttt{ias15} (blue solid), all three bodies, $T=100$\,yr.
+    SIMON and No-NN follow the same qualitative trajectory; the 8.5\% RMS difference
+    manifests as a slightly larger phase offset in the No-NN case at later times.}
+    \label{fig:timeseries_nonn_app}
+\end{figure}
+
+\end{document}
+ENDOFFILE
+echo "Done. Lines: $(wc -l < /home/claude/V3.tex)"
+Output
+
+Done. Lines: 1226

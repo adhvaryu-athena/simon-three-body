@@ -1,0 +1,47 @@
+dt=0.005 Zone 3 handoff-guard event audit
+==============================================================================
+T_years: 100.0
+n_samples: 5000
+dt: 0.005
+model: pair_correction_nn_v4_bounded.pt
+handoff_unlock_r: 0.080000 AU
+method: Zone 2 direct Newtonian + substeps; Zone 3 frozen v4 NN; compare noNN, unguarded, guarded.
+
+Performance summary
+mode	final_err	time_avg_rms	zone2_frac	zone3_nn_frac	zone3_skip_frac	gate_frac	steps_with_zone3
+noNN	1.543911e+00	7.526556e-01	0.001015	0.000000	0.000000	0.000000	0
+unguarded_NN	1.848354e+00	1.023727e+00	0.000965	0.001348	0.000000	0.000000	82
+guarded_NN	5.482409e+01	1.543316e+01	0.001496	0.001828	0.000199	0.000000	112
+
+Event counts
+unguarded rows: total=82, active_nn=82, skips=0, strong=40
+guarded rows: total=124, active_nn=112, skips=12, strong=78
+guarded lock transitions: locks=2, unlocks=2
+
+Top guarded events/skips by guarded_minus_noNN_plus_5yr
+t	pair	r	vr_norm	c_pred	skip	locked	minus_1yr	at_event	plus_1yr	plus_5yr
+76.630000	1-2	1.342999e-01	18.529232	0.250000	False	False	-1.015923e+00	-5.464181e-01	2.290138e+00	1.025375e+01
+76.617500	1-2	5.683742e-02	12.092820	nan	True	True	-1.021405e+00	-5.726189e-01	2.236199e+00	1.020242e+01
+76.620000	1-2	7.235427e-02	13.624237	nan	True	True	-1.021405e+00	-5.726189e-01	2.236199e+00	1.020242e+01
+76.625000	1-2	1.033365e-01	16.255511	0.250000	False	False	-1.021405e+00	-5.726189e-01	2.236199e+00	1.020242e+01
+76.550000	1-2	5.971880e-02	-1.350013	1.065151	False	False	-1.037171e+00	-6.242131e-01	2.071748e+00	1.004902e+01
+76.555000	1-2	5.628239e-02	-1.354723	1.071942	False	False	-1.037171e+00	-6.242131e-01	2.071748e+00	1.004902e+01
+76.560000	1-2	5.272487e-02	-1.359990	1.080531	False	False	-1.037171e+00	-6.242131e-01	2.071748e+00	1.004902e+01
+76.530000	1-2	7.250385e-02	-1.335171	1.047628	False	False	-1.042197e+00	-6.373156e-01	2.015957e+00	9.998084e+00
+76.535000	1-2	6.943211e-02	-1.338382	1.051034	False	False	-1.042197e+00	-6.373156e-01	2.015957e+00	9.998084e+00
+76.540000	1-2	6.628301e-02	-1.341900	1.054982	False	False	-1.042197e+00	-6.373156e-01	2.015957e+00	9.998084e+00
+76.545000	1-2	6.304845e-02	-1.345761	1.059613	False	False	-1.042197e+00	-6.373156e-01	2.015957e+00	9.998084e+00
+76.510000	1-2	8.414169e-02	-1.324911	1.037875	False	False	-1.047108e+00	-6.498855e-01	1.959624e+00	9.947255e+00
+
+Top handoff transitions by guarded_minus_noNN_plus_5yr
+t	event	pair	r	vr_norm	minus_1yr	at_event	plus_1yr	plus_5yr
+76.625000	UNLOCK_EXIT_BUFFER	1-2	1.033365e-01	16.255511	-1.021405e+00	-5.726189e-01	2.236199e+00	1.020242e+01
+76.565000	LOCK_ENTER_ZONE2	1-2	4.902816e-02	-1.363698	-1.037171e+00	-6.242131e-01	2.071748e+00	1.004902e+01
+33.865000	UNLOCK_EXIT_BUFFER	1-2	8.063262e-02	1.231112	0.000000e+00	4.084541e-04	1.187259e-02	3.946348e-01
+33.705000	LOCK_ENTER_ZONE2	1-2	4.822219e-02	-1.216456	0.000000e+00	1.393497e-04	9.038752e-03	3.752402e-01
+
+Files written
+zone3_events_unguarded_dt0p005.csv
+zone3_events_guarded_dt0p005.csv
+handoff_transitions_guarded_dt0p005.csv
+min_distance_error_dt0p005.csv

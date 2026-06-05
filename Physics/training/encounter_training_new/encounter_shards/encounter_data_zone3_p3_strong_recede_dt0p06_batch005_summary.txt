@@ -1,0 +1,18 @@
+ZONE 3 TRAJECTORY DATASET SUMMARY -- PHASE 3
+========================================================================
+dt      : 0.060000
+mode    : strong_recede
+batch   : 5
+seed    : 37560042
+target  : 100
+accepted: 100
+tried   : 144
+elapsed : 22.9 sec
+output  : encounter_shards\encounter_data_zone3_p3_strong_recede_dt0p06_batch005.npz
+size_kb : 6.4
+zone    : r 0.052-0.148 AU
+improvement_threshold: 0.10 (Phase 3; Phase 2 used 0.05)
+
+dt=0.060000 mode=strong_recede: n=100 | tried=144 | pass=69.4% | c_med=0.58620 | impr_med=97.63% | identity=0 | vr_med=+1.099 | vr<-0.6=0 | vr<-0.8=0 | 23s
+Rejected: {'ic': 38, 'ias15': 4, 'boundary': 2, 'eject': 0, 'no_improve': 0, 'bad_c': 0}
+Near-identity (c=1) stored: 0

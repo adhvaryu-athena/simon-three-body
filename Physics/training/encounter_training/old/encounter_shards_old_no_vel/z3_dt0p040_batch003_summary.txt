@@ -1,0 +1,14 @@
+CLOSE-ENCOUNTER DATA SHARD SUMMARY  (Zone 3 only)
+========================================================================
+File   : z3_dt0p040_batch003.npz
+Total  : 100
+Target : 100
+Tried  : 183
+Batch  : 003
+Seed   : 340042
+Zone   : 3 only (r 0.052-0.148 AU, macro-step)
+DT     : 0.04
+Fields : r_AU r_soft log_mi log_mj log_dt c_opt log_c_opt c_ana log_c_ana improvement
+
+dt=0.040: n=100 | tried=183 | pass=54.6% | c_opt_med=0.8969 | c_ana_med=1.000013 | impr_med=82.57% | 44s
+Rejected: {'ic': 47, 'ias15': 11, 'boundary': 17, 'eject': 0, 'no_improve': 8, 'find_c': 0}

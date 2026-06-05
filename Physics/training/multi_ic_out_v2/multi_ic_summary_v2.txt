@@ -1,0 +1,94 @@
+========================================================================
+MULTI-INITIAL-CONDITION EVALUATION SUMMARY (v2 -- 6 ICs)
+SIMON  |  T=100.0yr  |  dt=0.04yr  |  n_samples=5000
+Model: pair_correction_nn.pt
+========================================================================
+
+INITIAL CONDITIONS:
+
+  IC1: Default (V2)
+    m=[1.0, 0.01, 0.005]  |  V2 baseline, hierarchical mass ratio
+    Regime: Moderate three-body scattering
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.00723  (negative = bound)
+
+  IC2: Near-Equal Mass
+    m=[1.0, 0.5, 0.25]  |  All bodies interact comparably
+    Regime: Strongly interacting -- expected instability
+    m  = [1.0, 0.5, 0.25]
+    E_total = -0.73460  (negative = bound)
+
+  IC3: Tight Inner Pair
+    m=[1.0, 0.01, 0.005]  |  Body 1 at 0.5 AU, frequent encounters
+    Regime: Tight inner pair -- continuous close encounters
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.01325  (negative = bound)
+
+  IC4: Hierarchical
+    m=[1.0, 0.01, 0.005]  |  Body 2 at 5 AU, near restricted 3-body
+    Regime: Hierarchical -- weakly coupled outer body
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.00602  (negative = bound)
+
+  IC5: High Eccentricity [NEW]
+    m=[1.0, 0.01, 0.005]  |  Body 1 at 0.3 AU, v=2.2 (85% escape vel)
+    Regime: High eccentricity -- periodic intense close encounters
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.01167  (negative = bound)
+
+  IC6: Near-Circular [NEW]
+    m=[1.0, 0.01, 0.005]  |  Both bodies on Keplerian circular orbits
+    Regime: Near-circular coplanar -- low chaos regime
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.00420  (negative = bound)
+
+
+RESULTS:
+
+  IC                          lambda(/yr)    final_RMS   bounded   speedup   NN_frac   new?
+  -----------------------------------------------------------------------------------
+  IC1: Default (V2)                0.1655       1.5427       YES     1.14x    0.0045       
+  IC2: Near-Equal Mass             0.0430     116.8717        NO     1.82x    0.0015       
+  IC3: Tight Inner Pair            0.1207       3.4534       YES     1.21x    0.0000       
+  IC4: Hierarchical                0.0990       1.5981       YES     1.11x    0.0000       
+  IC5: High Eccentricity           0.0648      19.9714        NO     1.19x    0.0007  [NEW]
+  IC6: Near-Circular              -0.0189       0.0079       YES     1.08x    0.0000  [NEW]
+  -----------------------------------------------------------------------------------
+  Mean (bounded only)              0.0916       1.6505
+  Std  (bounded only)              0.0682       1.2209
+
+  Fraction bounded: 4/6 ICs
+
+========================================================================
+IC2 HONEST FRAMING (per mentor feedback -- Concern 2):
+========================================================================
+
+  SIMON final separation:  116.87 AU
+  ias15 final separation:  58.94 AU  (from check_ic2.py)
+  Ratio SIMON/ias15:       2.0x
+
+  CORRECT FRAMING FOR PAPER:
+  IC2 is dynamically unstable; both integrators predict ejection.
+  Post-ejection separations differ by approximately 2x, consistent
+  with chaotic divergence amplifying integrator differences after
+  the system becomes dynamically unbound. This is not a SIMON failure
+  -- both integrators agree on the instability. The 2x gap reflects
+  the expected behaviour of two different integration schemes in a
+  post-ejection chaotic regime.
+
+  DO NOT USE: 'SIMON correctly reproduces physical instability'
+  USE INSTEAD: 'IC2 is dynamically unstable; both integrators predict
+  ejection. Post-ejection separations differ by ~2x, consistent with
+  chaotic divergence amplifying integrator differences post-instability.'
+
+========================================================================
+KEY NUMBERS FOR PAPER:
+========================================================================
+  lambda range (bounded): [-0.0189, 0.1655] /yr
+  lambda mean (bounded):  0.0916 +/- 0.0682 /yr
+  RMS range (bounded):    [0.008, 3.453] AU
+  Bodies bounded:         4/6 ICs
+  Speedup range:          [1.08x, 1.82x]
+
+  IC1-IC4 verification: see VERIFICATION lines in terminal output.
+  IC5, IC6 are new results -- not present in multi_ic_eval.py.

@@ -1,0 +1,34 @@
+========================================================================
+LOCAL ENCOUNTER-WINDOW METRIC REPORT
+Zone 3 Scalar Force-Correction NN
+========================================================================
+
+IC:              IC1
+Model:           pair_correction_nn_v5.pt
+T (yr):          100.0
+Window:          ±15 macro-steps = ±15*dt yr per firing
+n_seeds:         1
+dts:             [0.02, 0.04, 0.05, 0.06, 0.08, 0.1]
+
+Columns: global_Δ = NN vs no-NN over full T
+         local_Δ  = NN vs no-NN ONLY in encounter windows
+         Negative = NN helps
+
+    dt       g_nn       g_no   global_Δ%       l_nn       l_no    local_Δ%   fires  win_pts   win%   spdup
+----------------------------------------------------------------------------------------------------------
+  0.02    1.26264    1.13339      +11.40    0.01461    0.00728     +100.51      20       54   1.1%    0.73x
+            encounter window: t=33.20–34.28 yr
+  0.04    1.96243    1.08626      +80.66    1.05827    1.27551      -17.03      20      164   3.3%    1.32x
+            encounter window: t=32.92–34.60 yr
+            encounter window: t=72.84–74.44 yr
+  0.05    2.35652    1.59331      +47.90    0.09488    0.08054      +17.80      10      100   2.0%    1.64x
+            encounter window: t=32.80–34.80 yr
+  0.06    1.44006    1.48691       -3.15    0.13187    0.12507       +5.43      10      117   2.3%    1.91x
+            encounter window: t=32.70–35.04 yr
+  0.08    0.97011    0.98907       -1.92    1.45372    1.44043       +0.92       7      144   2.9%    2.49x
+            encounter window: t=81.36–84.24 yr
+  0.10    1.10701    1.08124       +2.38    0.92282    1.21528      -24.07      20      535  10.7%    2.40x
+            encounter window: t=35.40–39.20 yr
+            encounter window: t=66.80–70.30 yr
+            encounter window: t=75.10–78.50 yr
+

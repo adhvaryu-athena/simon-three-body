@@ -1,0 +1,38 @@
+Gated encounter-surrogate rollout prototype summary
+========================================================================================
+model              : encounter_surrogate_v2_velocitysafe_large1.pt
+ic                 : IC1
+dt                 : 0.080000 yr
+T                  : 100.000000 yr
+n_samples          : 1200
+window_years       : 0.500000
+gate               : active pair 1-2 in Zone 3 and v_rad_norm < 999.0000
+energy_gate        : 0.200000
+com_project        : True
+
+Runtime
+----------------------------------------------------------------------------------------
+IAS15 time          : 0.018873 s
+noNN time           : 0.042009 s   speedup=0.449x
+gated surrogate time: 0.135422 s   speedup=0.139x
+
+Surrogate event stats
+----------------------------------------------------------------------------------------
+gate_candidates       : 3
+surrogate_attempts    : 3
+surrogate_used        : 0
+surrogate_fallback    : 3
+
+Comparison against IAS15
+----------------------------------------------------------------------------------------
+method                      pos_final  pos_timeavg      pos_med      pos_p95    vel_final  vel_timeavg
+  ------------------------------------------------------------------------------------------------------------
+revised noNN               1.6235e+00   9.8824e-01   6.7171e-01   1.6884e+00   1.1825e+00   8.6453e-01
+gated surrogate            1.9428e+00   9.9901e-01   6.7171e-01   1.7209e+00   1.6057e+00   8.7096e-01
+
+Decision diagnostics
+----------------------------------------------------------------------------------------
+position timeavg gain vs noNN : -1.09%
+velocity timeavg gain vs noNN : -0.74%
+surrogate changed rollout?     : False
+VERDICT: NO EVENT: gate did not fire; extend T or inspect active pair.

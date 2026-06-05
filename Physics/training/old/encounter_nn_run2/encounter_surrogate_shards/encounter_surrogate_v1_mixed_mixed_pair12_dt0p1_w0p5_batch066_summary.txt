@@ -1,0 +1,19 @@
+========================================================================================
+ENCOUNTER SURROGATE SHARD SUMMARY
+file: encounter_surrogate_shards\encounter_surrogate_v1_mixed_mixed_pair12_dt0p1_w0p5_batch066.npz
+n=100 tried=885 pass_rate=11.3% elapsed=1.9s
+dt=0.100000 window=0.500000 active_pair=1-2 mode=mixed
+r_pair: min=0.062890 med=0.129691 max=0.147855
+v_rad_norm: min=-1.001 med=+0.289 max=+1.435
+v_tan_norm: min=0.077 med=0.878 max=1.708
+approach frac=43.0%; strong approach vr<-0.6=4; recede vr>0.2=52
+category counts: strong=4, weak_side=44, recede=52, broad=0
+min_r_ias: min=0.050748 med=0.108995 max=0.147381
+min_r_nonn: min=0.061565 med=0.117591 max=0.147381
+relE_ias: max=7.975e-15 med=3.614e-16
+relE_nonn: max=4.736e-02 med=8.081e-03
+pos_residual_rms: min=6.512e-05 med=3.157e-03 max=2.318e-01
+vel_residual_rms: min=6.545e-05 med=6.263e-03 max=8.967e-01
+noNN zone counts total: z1=0, z2=0, z3=364, z4=1436
+rejections: {'ic': 34, 'ias15': 0, 'ias15_eject': 0, 'ias15_min_r': 584, 'ias15_energy': 0, 'nonn': 0, 'nonn_eject': 0, 'nonn_energy': 167, 'residual_outlier': 0, 'nonfinite': 0}
+========================================================================================

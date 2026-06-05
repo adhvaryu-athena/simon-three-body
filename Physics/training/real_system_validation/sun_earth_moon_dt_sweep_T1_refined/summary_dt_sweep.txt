@@ -1,0 +1,46 @@
+Real Sun-Earth-Moon timestep frontier using JPL Horizons initial conditions
+==================================================================================
+
+Epoch                   = 2026-01-01
+T                       = 1.00 yr
+n_samples               = 1000
+dt_values               = 0.0010, 0.0020, 0.0040, 0.0080, 0.0100, 0.0120, 0.0140, 0.0160 yr
+G_REAL                  = 39.47841760
+ias15 runtime            = 0.042744 s
+
+Initial-condition sanity checks after COM centering:
+Sun-Earth distance      = 0.983327 AU
+Earth-Moon distance     = 0.002413 AU
+Masses                  = [1.00000000e+00 3.00348961e-06 3.69430335e-08]
+
+ias15 reference ranges over simulation:
+Sun-Earth distance      = 0.983302 to 1.016583 AU
+Earth-Moon distance     = 0.002384 to 0.002716 AU
+Max distance from COM   = 1.019192 AU
+
+Main table:
+mode                 dt   runtime(s)     speed   substeps     RMS0T(AU)    final(AU)      max(AU)     EM_min     EM_max  bounded
+-----------------------------------------------------------------------------------------------------------------------------
+adaptive_ON      0.0010     1.790868     0.024      16000  3.578000e-03 2.930907e-03 5.294562e-03   0.002380   0.002638     True
+adaptive_ON      0.0020     0.870276     0.049       8000  6.268817e-03 2.930705e-03 1.059779e-02   0.002380   0.002638     True
+adaptive_ON      0.0040     0.576489     0.074       4000  1.203128e-02 2.929827e-03 2.121113e-02   0.002381   0.002639     True
+adaptive_ON      0.0080     0.266896     0.160       2000  2.377682e-02 2.925194e-03 4.233432e-02   0.002382   0.002640     True
+adaptive_ON      0.0100     0.183134     0.233       1600  2.967086e-02 2.920540e-03 5.278607e-02   0.002383   0.002642     True
+adaptive_ON      0.0120     0.202699     0.211       1344  3.563970e-02 3.982884e-02 6.315237e-02   0.002382   0.002643     True
+adaptive_ON      0.0140     0.154771     0.276       1152  4.156932e-02 3.978917e-02 7.364269e-02   0.002381   0.002645     True
+adaptive_ON      0.0160     0.129870     0.329       1008  4.749723e-02 3.974677e-02 8.428689e-02   0.002384   0.002646     True
+
+adaptive_OFF     0.0010     0.114201     0.374       1000  3.504243e-03 2.888652e-03 5.294861e-03   0.002381   0.002649     True
+adaptive_OFF     0.0020     0.063501     0.673        500  6.032476e-03 2.464970e-03 1.060019e-02   0.002383   0.002681     True
+adaptive_OFF     0.0040     0.043409     0.985        250  1.145156e-02 2.219264e-03 2.122956e-02   0.002378   0.002814     True
+adaptive_OFF     0.0080     0.025028     1.708        125  2.209865e-02 4.810826e-03 4.246117e-02   0.002368   0.003351     True
+adaptive_OFF     0.0100     0.018964     2.254        100  2.703907e-02 6.985868e-03 5.358433e-02   0.002385   0.003807     True
+adaptive_OFF     0.0120     0.018008     2.374         84  3.219300e-02 3.548961e-02 6.446738e-02   0.002190   0.020959     True
+adaptive_OFF     0.0140     0.014408     2.967         72  3.778076e-02 4.703322e-02 7.649634e-02   0.002087   0.074812     True
+adaptive_OFF     0.0160     0.009234     4.629         63  5.478519e+01 1.071024e+02 1.071191e+02   0.000091 185.256732    False
+
+Interpretation guide:
+- RMS0T is the paper-consistent time-averaged RMS: sqrt(mean_t delta(t)^2).
+- Speed is ias15 runtime divided by SIMON runtime; speed < 1 means SIMON is slower.
+- This real Sun-Earth-Moon case is a physical-consistency and timestep-frontier test, not a guaranteed speedup case.
+- Because the Earth-Moon pair is always below the adaptive threshold, adaptive ON can be slower even when stable.

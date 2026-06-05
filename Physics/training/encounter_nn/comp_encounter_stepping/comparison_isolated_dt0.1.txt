@@ -1,0 +1,25 @@
+========================================================================================================================
+FINE-STEPPING VS ENCOUNTERNN  —  ISOLATED LOCAL COMPARISON  (dt=0.1)
+========================================================================================================================
+  Entry state: r_pair=0.14052 AU  vr_norm=-0.5656
+  EncounterNN correction accepted: 1
+  EncounterNN relE_corr: 2.3390e-02
+
+A) 0.5yr exit-state error vs IAS15 (lower=better):
+  Method                   pos exit err   pos gain%   vel exit err   vel gain%
+  ---------------------------------------------------------------------------
+  noNN                       8.0044e-03         ---     1.2019e-01         ---
+  EncounterNN                2.0792e-03     +74.02%     2.7120e-02     +77.43%
+  finer-k2                   2.8048e-03     +64.96%     3.9497e-02     +67.14%
+  finer-k4                   1.9330e-03     +75.85%     3.7734e-02     +68.60%
+
+B) 4yr physical window (time-average error vs IAS15, lower=better):
+  Method                    pos timeavg   pos gain%    vel timeavg
+  -----------------------------------------------------------------
+  noNN                       2.2842e-01      +0.00%     2.3986e-01
+  EncounterNN                1.0971e-01     +51.97%     1.6881e-01
+  finer-k2                   9.6867e-02     +57.59%     1.7163e-01
+  finer-k4                   1.5251e-01     +33.23%     1.8851e-01
+
+  >> EXIT-STATE WINNER: finer-k4  (pos_exit_err=1.9330e-03)
+========================================================================================================================

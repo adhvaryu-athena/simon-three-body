@@ -1,0 +1,11 @@
+Comparison: previous Run D summary vs revised v4 Zone 3 evaluator
+Previous summary file: perf_summary_T100_timeavg.txt
+
+dt	old_time_avg_rms	v4_time_avg_rms	change_%	old_final_err	v4_final_err	change_%	old_speedup	v4_speedup
+0.005	7.887672e-01	1.023727e+00	+29.79%	1.021742e+00	1.848354e+00	+80.90%	nan	0.21x
+0.01	8.550842e-01	3.773285e+00	+341.28%	8.465920e-01	5.715949e+00	+575.17%	nan	0.63x
+0.02	1.119769e+00	1.109435e+00	-0.92%	1.021742e+00	1.374036e+00	+34.48%	nan	1.17x
+0.04	1.084121e+00	2.219740e+00	+104.75%	1.542732e+00	2.421958e+00	+56.99%	nan	2.38x
+0.08	9.860638e-01	9.679291e-01	-1.84%	1.021742e+00	1.225807e+00	+19.97%	nan	4.51x
+
+Negative change means v4 improved the metric. Positive change means worse.

@@ -1,0 +1,45 @@
+Real Sun-Earth-Moon T=100 selected timestep frontier using JPL Horizons initial conditions
+==================================================================================
+
+Epoch                   = 2026-01-01
+T                       = 100.00 yr
+n_samples               = 5000
+dt_values               = 0.0080, 0.0120, 0.0160 yr
+G_REAL                  = 39.47841760
+ejection_threshold      = 10.00 AU from COM
+ias15 runtime            = 0.383412 s
+
+Initial-condition sanity checks after COM centering:
+Sun-Earth distance      = 0.983327 AU
+Earth-Moon distance     = 0.002413 AU
+Masses                  = [1.00000000e+00 3.00348961e-06 3.69430335e-08]
+
+ias15 reference ranges over simulation:
+Sun-Earth distance      = 0.983302 to 1.016624 AU
+Earth-Moon distance     = 0.002384 to 0.002718 AU
+Max distance from COM   = 1.019213 AU
+Max energy drift        = 7.764168e-06%
+Final energy drift      = -4.828871e-06%
+
+Main table:
+mode                 dt   runtime(s)     speed   substeps     RMS0T(AU)      Emax(%)    final(AU)      max(AU)     EM_min     EM_max  bounded    lunar  ejected       t_ej  outcome           
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+adaptive_ON      0.0080    34.727755     0.011     200000  2.305644e-02 1.713605e-05 2.582470e-03 4.268096e-02   0.002376   0.002644     True     True    False        nan  Valid             
+adaptive_ON      0.0120    11.594899     0.033     133344  3.397165e-02 3.779499e-05 3.969836e-02 6.335372e-02   0.002376   0.002647     True     True    False        nan  Valid             
+adaptive_ON      0.0160     9.770430     0.039     100000  4.450821e-02 6.641540e-05 5.558885e-03 8.462460e-02   0.002378   0.002652     True     True    False        nan  Valid             
+
+adaptive_OFF     0.0080     3.250276     0.118      12500  2.409582e-01 4.419137e-03 4.382244e-01 4.452862e-01   0.002360   0.003357     True     True    False        nan  Bounded, degraded 
+adaptive_OFF     0.0120     0.534972     0.717       8334  9.740093e-01 1.105270e-02 1.282616e+00 1.465583e+00   0.002190   1.986214     True    False    False        nan  Lunar orbit lost  
+adaptive_OFF     0.0160     0.009792    39.154         17  6.890898e+00 1.649040e+03 7.272538e+00 7.470398e+00   0.000091  11.200642    False    False     True     0.2720  Ejected           
+
+Interpretation guide:
+- RMS0T is the paper-consistent time-averaged RMS: sqrt(mean_t delta(t)^2).
+- Emax is max_t |(E(t)-E(0))/E(0)| in percent, using the same softened-energy convention as the corrected energy-drift scaling script.
+- Speed is ias15 runtime divided by SIMON runtime; speed < 1 means SIMON is slower.
+- bounded uses the paper's global criterion: all bodies remain within 10 AU of the COM.
+- lunar indicates whether the Earth-Moon distance remains within a broad factor-of-two band around the ias15 Earth-Moon range.
+- outcome is the reporting-safe classification: Valid, Bounded/degraded, Lunar orbit lost, or Ejected.
+- A rollout can be globally bounded but still lose the lunar bound state; this is why both bounded and lunar are reported.
+- This real Sun-Earth-Moon case is a physical-consistency and timestep-frontier test, not a guaranteed speedup case.
+- Because the Earth-Moon pair is always below the adaptive threshold, adaptive ON can be slower even when stable.
+- Long-horizon failed rollouts are stopped once any body exceeds the 10 AU boundedness threshold; remaining samples are filled with the final state to avoid unwritten zero-sample artifacts.

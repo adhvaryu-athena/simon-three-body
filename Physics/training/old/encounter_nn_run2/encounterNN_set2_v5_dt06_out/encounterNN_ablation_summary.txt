@@ -1,0 +1,55 @@
+SIMON encounterNN ablation v5 fast-gate no-scalar NumPy
+========================================================================================
+Purpose: compare IAS15, SIMON-noNN, and SIMON-encounterNN on IC1.
+Only the encounter-level residual NN is evaluated here; scalarNN is not loaded or run.
+EncounterNN deployment formula: corrected_exit = noNN_exit + predicted_residual.
+EncounterNN inference uses NumPy weights only; no torch/CUDA call occurs inside timed rollout. Full X_rel18 features are built only when the cheap pair-1/2 gate passes.
+
+encounter_model: encounter_surrogate_v3_set2.pt
+dt: 0.06000000
+T_years: 100.00000000
+n_samples: 5000
+window_years: 0.50000000
+vr_thresh: -0.40000000
+energy_gate: 0.20000000
+encounter_inference: numpy_weights_no_torch_in_hot_loop
+
+Runtime
+----------------------------------------------------------------------------------------
+IAS15_total_time_sec: 0.100669700
+SIMON_noNN_total_time_sec: 0.054726800
+SIMON_noNN_speedup_vs_IAS15: 1.839495
+SIMON_encounterNN_total_time_sec: 0.060118300
+SIMON_encounterNN_speedup_vs_IAS15: 1.674527
+
+Accuracy vs IAS15
+----------------------------------------------------------------------------------------
+method	pos_final	pos_timeavg	pos_med	pos_p95	vel_final	vel_timeavg	vel_med	vel_p95	total_time_sec	speedup_vs_ias15
+SIMON-noNN	1.537099976e+00	1.486906237e+00	1.558192936e+00	2.332291608e+00	1.045235687e+00	9.300986985e-01	9.190983768e-01	1.515675206e+00	0.054726800	1.839495
+SIMON-encounterNN	4.882048385e-01	1.337137540e+00	1.212968684e+00	2.420358731e+00	4.795461233e-01	8.772241838e-01	8.782551278e-01	1.431635572e+00	0.060118300	1.674527
+
+EncounterNN event stats
+----------------------------------------------------------------------------------------
+gate_candidates: 3
+encounter_attempts: 1
+encounter_used: 1
+encounter_fallback: 0
+first_used_t: 33.59999999999976
+last_used_t: 33.59999999999976
+pred_pos_norm_mean: 0.0008411359165692406
+pred_vel_norm_mean: 0.0040480744796700255
+min_r: 0.08678173338301538
+max_radius: 1.194129313717568
+event_csv: encounterNN_set2_v5_dt06_out\encounter_events.csv
+
+Delta vs SIMON-noNN
+----------------------------------------------------------------------------------------
+SIMON-encounterNN_pos_final_gain_pct: +68.238576
+SIMON-encounterNN_pos_timeavg_gain_pct: +10.072504
+SIMON-encounterNN_vel_final_gain_pct: +54.120766
+SIMON-encounterNN_vel_timeavg_gain_pct: +5.684828
+
+Notes
+- This evaluator is intentionally focused on the encounterNN method only.
+- Step-level Zone-3 NN comparisons should be taken from the established v4 evaluator, not rerun here.
+- EncounterNN is currently validated for dt=0.08, IC1, active pair 1-2, window_years=0.5.

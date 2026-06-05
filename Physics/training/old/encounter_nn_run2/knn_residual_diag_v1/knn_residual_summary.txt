@@ -1,0 +1,72 @@
+Compact-kNN residual surrogate diagnostic v1
+================================================================================================
+data              : encounter_surrogate_v2_event_enriched.npz
+samples           : 2870
+train/val/test    : 2009 / 431 / 430
+feature modes     : compact3, compact5, compact8, hybrid26, xrel18
+k values          : [5, 10, 20, 40, 80]
+alpha values      : [0.25, 0.5, 0.75, 1.0]
+gate              : v_rad_norm < -0.4000
+unsafe factor     : 2.00x baseline error
+
+Dataset/test distribution
+------------------------------------------------------------------------------------------------
+r_pair test min/med/max     : 5.877807e-02 / 1.146535e-01 / 1.474361e-01
+v_rad_norm test min/med/max : -1.3828 / -0.5673 / +1.6640
+strong_approach : 213
+weak_side       : 101
+recede          : 116
+event_like test samples     : 72
+
+noNN baseline on test
+------------------------------------------------------------------------------------------------
+pos_med=6.870118e-03 pos_p95=9.209041e-02 | vel_med=2.202056e-02 vel_p95=5.671814e-01
+
+Top 15 kNN configurations by score
+------------------------------------------------------------------------------------------------
+rank       mode    k  alpha       gate  used    pos_med    vel_med   posUns   velUns   anyUns
+  ----------------------------------------------------------------------------------------------
+   1   hybrid26    5   1.00   vr<-0.40   237  3.331e-03  9.796e-03    1.40%    0.70%    1.63%
+   2   hybrid26   10   1.00   vr<-0.40   237  3.586e-03  1.035e-02    0.93%    0.93%    0.93%
+   3     xrel18   10   1.00   vr<-0.40   237  3.373e-03  1.047e-02    1.40%    1.16%    1.40%
+   4     xrel18    5   1.00   vr<-0.40   237  3.307e-03  1.081e-02    1.40%    0.70%    1.40%
+   5     xrel18    5   0.75   vr<-0.40   237  3.401e-03  1.202e-02    1.16%    0.47%    1.16%
+   6     xrel18   10   0.75   vr<-0.40   237  3.525e-03  1.222e-02    0.70%    0.70%    0.93%
+   7   hybrid26   20   1.00   vr<-0.40   237  4.296e-03  1.133e-02    0.70%    0.93%    0.93%
+   8     xrel18   20   1.00   vr<-0.40   237  3.726e-03  1.146e-02    1.86%    1.86%    2.09%
+   9   hybrid26    5   0.75   vr<-0.40   237  3.970e-03  1.263e-02    0.23%    0.70%    0.70%
+  10   hybrid26   10   0.75   vr<-0.40   237  4.391e-03  1.340e-02    0.23%    0.23%    0.23%
+  11   hybrid26   40   1.00   vr<-0.40   237  4.604e-03  1.221e-02    1.16%    1.63%    1.63%
+  12     xrel18   20   0.75   vr<-0.40   237  4.150e-03  1.296e-02    1.16%    0.93%    1.86%
+  13   hybrid26   20   0.75   vr<-0.40   237  4.788e-03  1.397e-02    0.23%    0.23%    0.47%
+  14     xrel18    5   0.50   vr<-0.40   237  4.391e-03  1.561e-02    0.47%    0.00%    0.47%
+  15   hybrid26   40   0.75   vr<-0.40   237  5.067e-03  1.447e-02    0.70%    0.70%    0.70%
+
+Selected best gated candidate
+------------------------------------------------------------------------------------------------
+mode/k/alpha/gate : xrel18 / 10 / 0.75 / vr<-0.40
+used              : 237/430 (55.12%)
+pos_med           : 6.870118e-03 -> 3.524514e-03 (+48.70%)
+vel_med           : 2.202056e-02 -> 1.221642e-02 (+44.52%)
+pos_p95           : 9.209041e-02 -> 7.996691e-02
+vel_p95           : 5.671814e-01 -> 5.611076e-01
+unsafe pos/vel/any:   0.70% /   0.70% /   0.93%
+both_success      :  49.77%
+
+Best candidate category breakdown
+------------------------------------------------------------------------------------------------
+strong_approach  n= 213 | pos 8.730e-03->3.687e-03 (+57.77%) | vel 3.473e-02->1.194e-02 (+65.63%) | anyUns=  1.41%
+weak_side        n= 101 | pos 7.567e-03->6.520e-03 (+13.83%) | vel 3.656e-02->2.235e-02 (+38.86%) | anyUns=  0.99%
+recede           n= 116 | pos 2.617e-03->2.617e-03 ( +0.00%) | vel 5.877e-03->5.877e-03 ( +0.00%) | anyUns=  0.00%
+event_like       n=  72 | pos 6.175e-03->3.242e-03 (+47.50%) | vel 2.045e-02->1.066e-02 (+47.85%) | anyUns=  4.17%
+
+Decision
+------------------------------------------------------------------------------------------------
+Best kNN candidate improves both medians? : True
+Best kNN candidate any unsafe <= 10%?     : True
+VERDICT: PROCEED TO EVENT REPLAY: local kNN residual direction is promising enough to test on the exact rollout event.
+
+Files written
+------------------------------------------------------------------------------------------------
+knn_residual_diag_v1\knn_residual_results.csv
+knn_residual_diag_v1\knn_best_predictions_test.npz

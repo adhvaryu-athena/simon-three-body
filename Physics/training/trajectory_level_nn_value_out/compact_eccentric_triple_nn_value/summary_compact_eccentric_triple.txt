@@ -1,0 +1,51 @@
+COMPACT ECCENTRIC TRIPLE NN-VALUE EXPERIMENT
+==============================================================================
+
+Purpose:
+  Test whether SIMON's NN correction improves trajectory accuracy, not stability, in a three-body rollout where the NN is repeatedly active.
+
+Design:
+  ias15 reference vs SIMON with NN vs No-NN baseline.
+  Adaptive sub-stepping and analytic force direction remain ON for both SIMON variants.
+  The only model difference is c predicted by NN vs c fixed to 1.
+
+Initial condition parameters:
+  m0: 1.0
+  m1: 0.5
+  m2: 0.2
+  a_in: 1.0
+  e_in: 0.92
+  q_in: 0.07999999999999996
+  Q_in: 1.92
+  period_in: 5.130199320647456
+  a_out: 10.0
+  e_out: 0.2
+  q_out: 8.0
+  Q_out: 12.0
+  period_out: 152.3896275695905
+  mutual_inclination_deg: 55.0
+  NN threshold: 0.15 AU
+  adaptive threshold: 0.05 AU
+  safety threshold r_soft_min: 0.0005 AU
+
+Run configuration:
+  dt: 0.01 yr
+  T: 20.0 yr
+  n_samples: 4000
+  ias15 runtime: 0.131608 s
+
+Core results:
+  Model, bounded, ejected, close_pair_frac, min_pair_distance, full_time_avg_rms, final_rms, max_energy_drift_pct
+  SIMON_with_NN, True, False, 6.66333500e-04, 8.00000000e-02, 3.26591747e+00, 5.41867574e+00, 9.89323542e+01
+  No_NN_baseline, True, False, 6.66333500e-04, 8.00000000e-02, 3.26056154e+00, 5.40816703e+00, 9.88156065e+01
+
+Early-window trajectory accuracy:
+  0_1yr: SIMON=1.18565265e-01, No-NN=1.18388970e-01, NoNN/SIMON=0.9985x, reduction=-0.15%
+  0_2yr: SIMON=2.81278245e-01, No-NN=2.80916254e-01, NoNN/SIMON=0.9987x, reduction=-0.13%
+  0_5yr: SIMON=1.04701360e+00, No-NN=1.04605338e+00, NoNN/SIMON=0.9991x, reduction=-0.09%
+  0_10yr: SIMON=1.89419595e+00, No-NN=1.89201568e+00, NoNN/SIMON=0.9988x, reduction=-0.12%
+  0_1inner_period: SIMON=1.09786523e+00, No-NN=1.09688297e+00, NoNN/SIMON=0.9991x, reduction=-0.09%
+  0_2inner_periods: SIMON=1.95691223e+00, No-NN=1.95465817e+00, NoNN/SIMON=0.9988x, reduction=-0.12%
+
+Interpretation guide:
+  If both SIMON and No-NN remain bounded but SIMON has lower early-window RMS, the experiment supports the claim that the NN correction improves accuracy rather than providing the primary stability mechanism.

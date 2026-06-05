@@ -1,0 +1,55 @@
+NEAR-SOFTENING TRAJECTORY-LEVEL NN-VALUE STRESS TEST
+==============================================================================
+
+Purpose:
+  Test whether SIMON's scalar NN correction improves trajectory accuracy when a three-body rollout repeatedly enters the near-softening regime.
+
+Design:
+  ias15 reference vs SIMON with NN vs No-NN baseline.
+  Adaptive sub-stepping and analytic force direction remain ON for both SIMON variants.
+  The only model difference is c predicted by NN vs c fixed to 1.
+
+Initial condition parameters:
+  m0: 0.01
+  m1: 0.005
+  m2: 0.003
+  a_in: 0.02
+  e_in: 0.95
+  q_in: 0.0010000000000000009
+  Q_in: 0.039
+  period_in: 0.14510394913873742
+  a_out: 0.2
+  e_out: 0.2
+  q_out: 0.16000000000000003
+  Q_out: 0.24
+  period_out: 4.188790204786391
+  mutual_inclination_deg: 45.0
+  eps: 0.0003
+  NN threshold: 0.15 AU
+  adaptive threshold: 0.05 AU
+  safety threshold r_soft_min: 0.0005 AU
+
+Run configuration:
+  dt: 0.0001 yr
+  T: 1.0 yr
+  n_samples: 4000
+  ias15 runtime: 0.121297 s
+
+Core results:
+  Model, bounded, ejected, close_pair_frac, nn_applied_frac, fallback_frac, min_pair_distance, c_mean, full_time_avg_rms, final_rms, exact_max_energy_drift_pct, soft_max_energy_drift_pct
+  SIMON_with_NN, True, False, 3.33333333e-01, 3.33333333e-01, 0.00000000e+00, 9.61934064e-04, 1.00428946e+00, 4.76427895e-04, 9.04670309e-04, 1.18341178e+00, 2.83066708e+02
+  No_NN_baseline, True, False, 2.20913469e-01, 0.00000000e+00, 0.00000000e+00, 1.00000000e-03, nan, 1.99090658e-01, 3.47392617e-01, 1.54998787e+02, 4.67666283e-01
+
+Early-window trajectory accuracy:
+  0_0p02yr: SIMON=4.65536676e-05, No-NN=2.57590175e-03, NoNN/SIMON=55.3319x, reduction=98.19%
+  0_0p05yr: SIMON=3.10667186e-05, No-NN=7.55044113e-03, NoNN/SIMON=243.0395x, reduction=99.59%
+  0_0p10yr: SIMON=3.49191970e-05, No-NN=1.82618117e-02, NoNN/SIMON=522.9734x, reduction=99.81%
+  0_0p25yr: SIMON=1.16430288e-04, No-NN=5.17409754e-02, NoNN/SIMON=444.3945x, reduction=99.77%
+  0_0p50yr: SIMON=2.76252206e-04, No-NN=1.02365777e-01, NoNN/SIMON=370.5519x, reduction=99.73%
+  0_1p00yr: SIMON=4.76427895e-04, No-NN=1.99090658e-01, NoNN/SIMON=417.8820x, reduction=99.76%
+  0_1inner_period: SIMON=1.16337699e-04, No-NN=3.12820263e-02, NoNN/SIMON=268.8898x, reduction=99.63%
+  0_2inner_periods: SIMON=1.85822886e-04, No-NN=6.10239542e-02, NoNN/SIMON=328.3985x, reduction=99.70%
+  0_4inner_periods: SIMON=3.27728089e-04, No-NN=1.18105394e-01, NoNN/SIMON=360.3762x, reduction=99.72%
+
+Interpretation guide:
+  If both SIMON and No-NN remain bounded but SIMON has lower early-window RMS, the experiment supports the claim that the NN correction improves accuracy rather than providing the primary stability mechanism.

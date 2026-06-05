@@ -1,0 +1,77 @@
+Single-event replay diagnostic -- kNN residual surrogate
+================================================================================================
+data                       : encounter_surrogate_v2_event_enriched.npz
+ic                         : IC1
+event_time                 : 82.56000000 yr
+dt/window/T                : 0.08000000 / 0.50000000 / 100.00000000 yr
+kNN mode/k/alpha/gate       : xrel18 / 10 / 0.7500 / vr<-0.4000
+seed/split train-val-test   : 123 / 2009 / 431 / 430
+feature_dim                 : 18
+com_project                 : True
+
+Event features
+------------------------------------------------------------------------------------------------
+r_pair                     : 0.13896513 AU
+v_rad_norm                 : -1.11482716
+v_tan_norm                 : 0.84931896
+window min_r IAS15         : 0.05564652 AU
+window min_r noNN          : 0.06226252 AU
+relE noNN window           : 2.62640906e-04
+
+kNN neighbor diagnostics
+------------------------------------------------------------------------------------------------
+neighbor distance min/med/max: 1.122369e+01 / 1.281502e+01 / 1.302274e+01
+neighbor max weight          : 0.126850
+neighbor residual pos med    : 1.04891422e-01
+neighbor residual vel med    : 1.08523098e+00
+neighbor csv                 : single_event_replay_knn_v1_t82p56\single_event_replay_knn_neighbors.csv
+
+Residual size
+------------------------------------------------------------------------------------------------
+true residual pos RMS        : 6.27095485e-03
+true residual vel RMS        : 2.85510762e-02
+kNN residual pos RMS         : 9.81874532e-02  (15.66x true)
+kNN residual vel RMS         : 2.37600347e-01  (8.32x true)
+unscaled kNN pos RMS         : 1.30916604e-01
+unscaled kNN vel RMS         : 3.16800463e-01
+pred-vs-true pos err RMS     : 9.37826047e-02
+pred-vs-true vel err RMS     : 2.50036467e-01
+
+Local 0.5-year encounter exit
+------------------------------------------------------------------------------------------------
+gate_fires                  : True
+accepted                    : True
+reason                      : used
+relE kNN candidate          : 2.54451088e-02
+noNN pos exit err           : 6.27095485e-03
+kNN candidate pos exit err  : 9.36449375e-02
+branch pos exit err         : 9.36449375e-02
+local pos improvement       : -1393.31%
+noNN vel exit err           : 2.85510762e-02
+kNN candidate vel exit err  : 2.48875115e-01
+branch vel exit err         : 2.48875115e-01
+local vel improvement       : -771.68%
+
+Post-window continuation to T
+------------------------------------------------------------------------------------------------
+noNN branch pos timeavg      : 6.49620934e-01
+kNN branch pos timeavg       : 1.07867431e+00
+post pos gain vs noNN        : -66.05%
+noNN branch vel timeavg      : 5.19516455e-01
+kNN branch vel timeavg       : 6.10110594e-01
+post vel gain vs noNN        : -17.44%
+noNN branch pos final        : 1.78545377e+00
+kNN branch pos final         : 1.50901176e+00
+noNN branch vel final        : 1.26299241e+00
+kNN branch vel final         : 1.65539396e+00
+
+Decision
+------------------------------------------------------------------------------------------------
+LOCAL FAIL: kNN is worse already at the 0.5-year encounter exit.
+
+Files written
+------------------------------------------------------------------------------------------------
+single_event_replay_knn_v1_t82p56\single_event_replay_knn_summary.txt
+single_event_replay_knn_v1_t82p56\single_event_replay_knn_metrics.csv
+single_event_replay_knn_v1_t82p56\single_event_replay_knn_arrays.npz
+single_event_replay_knn_v1_t82p56\single_event_replay_knn_neighbors.csv

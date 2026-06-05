@@ -1,0 +1,130 @@
+Encounter-level surrogate v2 velocity-safe training summary
+========================================================================================
+data: encounter_surrogate_v2_event_enriched.npz
+output: encounter_surrogate_v2_event_enriched_velocitysafe.pt
+samples: 2870
+train/val/test: 2009 / 431 / 430
+model: MLP 18 -> hidden=128 -> 18
+epochs requested: 3000
+best_epoch: 2895
+best_selection_score: 6.09036376e-02
+lr: 0.001
+batch_size: 256
+loss: SmoothL1/Huber on normalized residuals, pos_weight=1.0, vel_weight=1.0
+physical penalties: com_position_weight=0.05, com_velocity_weight=0.05, energy_weight=0.0
+validation score: pos_med + 0.5*vel_med + 0.05*pos_p95 + 0.05*vel_p95 + 0.05*unsafe_pos + 0.1*unsafe_vel
+unsafe_factor: 2.0x baseline error
+device: cuda
+elapsed_sec: 89.874
+
+Dataset checks
+----------------------------------------------------------------------------------------
+r_pair: min=5.685363e-02 med=1.147703e-01 max=1.474361e-01
+v_rad_norm: min=-1.3962 med=-0.5776 max=+1.6640
+v_tan_norm: min=0.0936 med=0.8958 max=1.7977
+relE_ias: max=3.777e-14 med=4.118e-16
+relE_nonn: max=4.993e-02 med=5.884e-03 p95=3.741e-02
+category counts:
+  strong_approach : 1421
+  weak_side       : 677
+  recede          : 772
+
+TRAIN metrics
+----------------------------------------------------------------------------------------
+  base_pos_mean                     : 0.022639776
+  corr_pos_mean                     : 0.00092450085
+  base_pos_median                   : 0.0075662089
+  corr_pos_median                   : 0.00072651528
+  base_pos_p95                      : 0.089627438
+  corr_pos_p95                      : 0.0020916678
+  pos_improvement_mean_pct          : 15.506314
+  pos_improvement_median_pct        : 88.993352
+  pos_success_frac                  : 0.85515182
+  unsafe_pos_frac                   : 0.078148333
+  base_vel_mean                     : 0.10888235
+  corr_vel_mean                     : 0.0045543348
+  base_vel_median                   : 0.02527965
+  corr_vel_median                   : 0.0033982142
+  base_vel_p95                      : 0.56944502
+  corr_vel_p95                      : 0.011506883
+  vel_improvement_mean_pct          : -153.36576
+  vel_improvement_median_pct        : 86.200331
+  vel_success_frac                  : 0.78347437
+  unsafe_vel_frac                   : 0.12294674
+  unsafe_any_frac                   : 0.12792434
+  resid_pos_err_median              : 0.00072651528
+  resid_vel_err_median              : 0.0033982142
+  com_pos_err_median                : 0.00010755418
+  com_vel_err_median                : 0.00054872783
+  com_pos_err_p95                   : 0.00089631544
+  com_vel_err_p95                   : 0.0048396822
+
+VAL metrics
+----------------------------------------------------------------------------------------
+  base_pos_mean                     : 0.027564558
+  corr_pos_mean                     : 0.017275136
+  base_pos_median                   : 0.006670868
+  corr_pos_median                   : 0.0012435742
+  base_pos_p95                      : 0.10259761
+  corr_pos_p95                      : 0.066623926
+  pos_improvement_mean_pct          : -7.5171634
+  pos_improvement_median_pct        : 55.623589
+  pos_success_frac                  : 0.76102088
+  unsafe_pos_frac                   : 0.097447796
+  base_vel_mean                     : 0.13202794
+  corr_vel_mean                     : 0.10690971
+  base_vel_median                   : 0.022289459
+  corr_vel_median                   : 0.005562298
+  base_vel_p95                      : 0.74606233
+  corr_vel_p95                      : 0.64868058
+  vel_improvement_mean_pct          : -218.95756
+  vel_improvement_median_pct        : 42.457816
+  vel_success_frac                  : 0.62180974
+  unsafe_vel_frac                   : 0.16241299
+  unsafe_any_frac                   : 0.17865429
+  resid_pos_err_median              : 0.0012435742
+  resid_vel_err_median              : 0.005562298
+  com_pos_err_median                : 0.00013417446
+  com_vel_err_median                : 0.00072573153
+  com_pos_err_p95                   : 0.0079264173
+  com_vel_err_p95                   : 0.072449024
+
+TEST metrics
+----------------------------------------------------------------------------------------
+  base_pos_mean                     : 0.022992299
+  corr_pos_mean                     : 0.013671651
+  base_pos_median                   : 0.0087295808
+  corr_pos_median                   : 0.0015890105
+  base_pos_p95                      : 0.092016554
+  corr_pos_p95                      : 0.070646368
+  pos_improvement_mean_pct          : -19.272389
+  pos_improvement_median_pct        : 60.375208
+  pos_success_frac                  : 0.75116279
+  unsafe_pos_frac                   : 0.10697674
+  base_vel_mean                     : 0.12250496
+  corr_vel_mean                     : 0.11732109
+  base_vel_median                   : 0.032094078
+  corr_vel_median                   : 0.0070124916
+  base_vel_p95                      : 0.617459
+  corr_vel_p95                      : 0.54804006
+  vel_improvement_mean_pct          : -223.89143
+  vel_improvement_median_pct        : 45.913422
+  vel_success_frac                  : 0.63023256
+  unsafe_vel_frac                   : 0.16744186
+  unsafe_any_frac                   : 0.18139535
+  resid_pos_err_median              : 0.0015890105
+  resid_vel_err_median              : 0.0070124916
+  com_pos_err_median                : 0.00016629649
+  com_vel_err_median                : 0.00091751965
+  com_pos_err_p95                   : 0.011016273
+  com_vel_err_p95                   : 0.05765042
+
+TEST category breakdown
+----------------------------------------------------------------------------------------
+  strong_approach  n=  213 pos_med 8.7312e-03->1.1378e-03 vel_med 3.4732e-02->4.6224e-03 pos_impr= +85.40% vel_impr= +83.25% unsafe_pos=0.5% unsafe_vel=1.4%
+  weak_side        n=  101 pos_med 7.6300e-03->2.6855e-03 vel_med 3.7054e-02->2.0507e-02 pos_impr= +27.19% vel_impr= -10.71% unsafe_pos=13.9% unsafe_vel=14.9%
+  recede           n=  116 pos_med 3.5210e-03->2.8377e-03 vel_med 9.8058e-03->1.3861e-02 pos_impr=  +5.82% vel_impr= -75.38% unsafe_pos=26.7% unsafe_vel=46.6%
+
+Verdict
+----------------------------------------------------------------------------------------
+PROCEED WITH CAUTION: position and velocity medians improve, but unsafe fractions need gating or further tuning.

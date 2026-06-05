@@ -1,0 +1,43 @@
+Gated encounter-surrogate rollout prototype summary
+========================================================================================
+model              : encounter_surrogate_v3_rollout_local_velocitysafe.pt
+ic                 : IC1
+dt                 : 0.080000 yr
+T                  : 100.000000 yr
+n_samples          : 1200
+window_years       : 0.500000
+gate               : active pair 1-2 in Zone 3 and v_rad_norm < -0.4000
+energy_gate        : 0.200000
+com_project        : True
+
+Runtime
+----------------------------------------------------------------------------------------
+IAS15 time          : 0.019726 s
+noNN time           : 0.041120 s   speedup=0.480x
+gated surrogate time: 0.133078 s   speedup=0.148x
+
+Surrogate event stats
+----------------------------------------------------------------------------------------
+gate_candidates       : 3
+surrogate_attempts    : 1
+surrogate_used        : 1
+surrogate_fallback    : 0
+first_used_t        : 82.560000 yr
+last_used_t         : 82.560000 yr
+median_event_vr     : -1.114827
+median_pred_pos_norm: 7.232969e-03
+median_pred_vel_norm: 2.749301e-02
+
+Comparison against IAS15
+----------------------------------------------------------------------------------------
+method                      pos_final  pos_timeavg      pos_med      pos_p95    vel_final  vel_timeavg
+  ------------------------------------------------------------------------------------------------------------
+revised noNN               1.6235e+00   9.8824e-01   6.7171e-01   1.6884e+00   1.1825e+00   8.6453e-01
+gated surrogate            1.4302e+00   1.0083e+00   6.7171e-01   1.7396e+00   6.2905e-01   8.3619e-01
+
+Decision diagnostics
+----------------------------------------------------------------------------------------
+position timeavg gain vs noNN : -2.03%
+velocity timeavg gain vs noNN : +3.28%
+surrogate changed rollout?     : True
+VERDICT: STOP/REASSESS: gated surrogate worsens position rollout versus noNN.

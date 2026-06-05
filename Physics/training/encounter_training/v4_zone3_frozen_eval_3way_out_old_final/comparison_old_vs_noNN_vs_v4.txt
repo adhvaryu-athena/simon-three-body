@@ -1,0 +1,13 @@
+Three-way comparison: previous Run D vs revised no-Zone-3-NN vs v4 Zone 3 frozen-c
+Previous summary file: perf_summary_T100_timeavg.txt
+No-Zone-3-NN baseline: Zone 2 direct Newtonian + sub-stepping; Zone 3 c=1 times F_soft.
+
+dt	old_time_avg	noNN_time_avg	v4_time_avg	v4_vs_noNN_%	v4_vs_old_%	old_final	noNN_final	v4_final	old_speedup	noNN_speedup	v4_speedup
+0.005	7.887672e-01	7.526556e-01	1.023727e+00	+36.02%	+29.79%	1.021742e+00	1.543911e+00	1.848354e+00	0.14x	0.20x	0.20x
+0.01	8.550842e-01	7.646561e-01	3.773285e+00	+393.46%	+341.28%	8.465920e-01	1.208953e+00	5.715949e+00	0.29x	0.40x	0.38x
+0.02	1.119769e+00	1.133394e+00	1.109435e+00	-2.11%	-0.92%	1.021742e+00	1.570798e+00	1.374036e+00	0.54x	0.78x	0.72x
+0.04	1.084121e+00	1.086255e+00	2.219740e+00	+104.35%	+104.75%	1.542732e+00	1.287105e+00	2.421958e+00	1.02x	1.54x	1.53x
+0.08	9.860638e-01	9.890699e-01	9.679291e-01	-2.14%	-1.84%	1.021742e+00	1.623559e+00	1.225807e+00	2.13x	2.81x	2.84x
+0.1	nan	1.081235e+00	1.043566e+00	-3.48%	nan	nan	1.427401e+00	1.836760e+00	nan	3.31x	3.26x
+
+Interpretation: negative percentage means v4 improves time_avg_rms; positive means v4 is worse.

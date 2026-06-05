@@ -1,0 +1,1 @@
+step_idx,substep_idx,t_yr,dt_step,pair_i,pair_j,r_au,v_rad_norm,v_tan_norm,m_i,m_j,c_pred,c_anal_softening,gate_fallback,strong_approach,n_zone3_pairs_this_step,encounter_gate_suppressed

@@ -1,0 +1,74 @@
+====================================================================
+EXPERIMENT B — MODERATE-SCATTERING STRESS POPULATION — SUMMARY
+====================================================================
+
+SETUP
+  N_POP          : 500
+  Valid ICs       : 500  (failed: 0)
+  T=100yr, dt=0.08yr  (speed-oriented stress-test timestep)
+  Masses          : m0 log-U[0.50,2.00], m1 log-U[0.005,0.50],
+                    m2 log-U[0.001,0.10] Msun (within training range)
+  Separations     : r1 U[0.8,2.0] AU,  r2 U[1.5,4.0] AU
+  Velocity factors: f1 U[0.8,1.3],  f2 U[0.6,1.1]
+  IC filters      : q_inner >= 0.15 AU, 0.15 <= q_outer <= 1.35 r1, initial min pair distance >= 0.25 AU
+  Seed            : 42
+
+OUTCOME CLASSIFICATION
+  ias15 ejection rate  : 28.6%  (143/500 ICs)
+  SIMON ejection rate  : 50.4%  (252/500 ICs)
+  Agreement rate       : 66.6%  (333/500 ICs)
+
+  Confusion matrix (ias15 rows × SIMON cols):
+    Both bounded    :  219  (43.8%)
+    ias15 ej, SIMON bnd :   29  (5.8%)
+    ias15 bnd, SIMON ej :  138  (27.6%)
+    Both ejected    :  114  (22.8%)
+
+DIVERGENCE RATE AND RMS ERROR (both-bounded ICs only)
+  Population λ    : 0.0458 ± 0.0386 /yr  (N=219)
+  7-IC reference  : 0.0916 ± 0.0682 /yr
+  Consistent      : True
+  Final RMS       : 1.4776 ± 1.5564 AU  (median 0.9171 AU)
+  Mean RMS        : 0.6022 AU
+  Max RMS         : 1.9589 AU
+
+COMPUTATIONAL PERFORMANCE
+  Mean speedup    : 0.311× ± 0.115
+  Median speedup  : 0.283×
+  Total ias15     : 4.8 s  (0.08 min)
+  Total SIMON     : 15.4 s  (0.26 min)
+  Population speedup : 0.310×
+
+PAPER PARAGRAPH (use only if agreement and speedup are acceptable):
+────────────────────────────────────────────────────────────────────
+To test whether the speed--accuracy behaviour observed on IC1
+generalises beyond a single hand-selected case, we constructed a
+moderate-scattering stress population of 500 compact three-body
+configurations using only pre-integration geometric filters. Masses
+were sampled log-uniformly from [0.50--2.0],
+[0.005--0.50], and
+[0.001--0.10]~M_{\odot}, keeping all bodies
+inside the scalar network's training range. The stress filter required
+negative total energy, safe initial separations, and an estimated outer
+periapsis inside the inner interaction zone, so the sample is designed
+to test moderate three-body scattering rather than broad hierarchical
+population performance.
+At $dt=0.08$~yr, SIMON and \texttt{ias15} agreed on the
+bounded/ejected classification for 66.6% of configurations
+(\texttt{ias15} ejection rate 28.6%; SIMON ejection
+rate 50.4%). For the 219 configurations
+bounded in both solvers, the mean divergence-rate proxy was
+$\lambda = 0.046 \pm 0.039$~yr$^{-1}$ and the
+mean final RMS separation from \texttt{ias15} was
+1.478 \pm 1.556~AU. The mean per-IC
+speed ratio relative to \texttt{ias15} was 0.31\times
+(median 0.28\times; population total 0.31\times).
+────────────────────────────────────────────────────────────────────
+
+OUTPUTS
+  pop_data.csv              -- per-IC raw data
+  fig1_agreement_matrix.png -- 2x2 outcome matrix
+  fig2_speedup_distribution.png
+  fig3_lambda_distribution.png
+  fig4_rms_distribution.png
+====================================================================

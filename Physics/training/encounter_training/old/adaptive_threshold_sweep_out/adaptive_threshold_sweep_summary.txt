@@ -1,0 +1,44 @@
+Adaptive threshold sweep: direct Newtonian force everywhere
+==============================================================================
+T_years: 100.0
+n_samples: 5000
+dt_values: [0.005, 0.01, 0.02, 0.04, 0.08]
+thresholds_AU: [0.05, 0.08, 0.1, 0.12, 0.15]
+max_substeps: 16
+method: exact Newtonian pairwise force; adaptive sub-stepping only changes dt
+neural_network: none
+
+Baseline IAS15:
+  total_time_sec: 0.150315
+
+Representative dt threshold sweep:
+adapt_thresh	final_err	time_avg_rms	div_slope	total_time	speedup	macro_adapt_frac	avg_substeps	max_substeps	min_r	ejected
+0.05	1.690669e+00	1.089361e+00	1.655325e-01	0.119602	1.257x	0.001200	1.001200	2	3.217532e-02	False
+0.08	2.682189e+00	1.872480e+00	1.639483e-01	0.114986	1.307x	0.002400	1.003200	3	3.190749e-02	False
+0.1	3.438171e+01	1.842680e+01	1.643708e-01	0.096801	1.553x	0.015049	1.030097	16	5.392753e-03	True
+0.12	1.577155e+00	1.193463e+00	1.637604e-01	0.123697	1.215x	0.008000	1.013600	5	2.511892e-02	False
+0.15	1.906404e+00	1.693146e+00	1.638158e-01	0.117485	1.279x	0.005600	1.010000	5	3.181620e-02	False
+
+Best representative threshold by time_avg_rms:
+  adapt_thresh=0.05 AU
+  time_avg_rms=1.089361e+00
+  final_err=1.690669e+00
+  speedup=1.257x
+  avg_substeps_per_macro=1.001200
+
+Best representative threshold by final_err:
+  adapt_thresh=0.12 AU
+  final_err=1.577155e+00
+  time_avg_rms=1.193463e+00
+  speedup=1.215x
+
+Comparison against previous Run D summary:
+  previous summary not found or could not be parsed: perf_summary_T100_timeavg.txt
+
+Full frontier sweep:
+adapt_thresh	dt	final_err	time_avg_rms	throughput	time_per_step	total_time	steps	speedup	macro_adapt_frac	avg_substeps	max_substeps	min_r	ejected
+0.05	0.04	1.690669e+00	1.089361e+00	41805.391	4.784072e-05	0.119602	2500	1.257x	0.001200	1.001200	2	3.217532e-02	False
+0.08	0.04	2.682189e+00	1.872480e+00	43483.592	4.599436e-05	0.114986	2500	1.307x	0.002400	1.003200	3	3.190749e-02	False
+0.1	0.04	3.438171e+01	1.842680e+01	51652.359	4.699078e-05	0.096801	2060	1.553x	0.015049	1.030097	16	5.392753e-03	True
+0.12	0.04	1.577155e+00	1.193463e+00	40421.450	4.947868e-05	0.123697	2500	1.215x	0.008000	1.013600	5	2.511892e-02	False
+0.15	0.04	1.906404e+00	1.693146e+00	42558.769	4.699384e-05	0.117485	2500	1.279x	0.005600	1.010000	5	3.181620e-02	False

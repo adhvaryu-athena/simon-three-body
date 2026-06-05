@@ -1,0 +1,102 @@
+Encounter-level surrogate v1 gated evaluation
+================================================================================
+data              : encounter_surrogate_v1_large1.npz
+predictions       : encounter_surrogate_v1_large1_predictions_test.npz
+test samples      : 355
+gate rule         : use NN iff v_rad_norm < -0.6000
+gate used         : 138/355 (38.87%)
+unsafe factor     : 2x noNN error
+
+Held-out test distribution
+--------------------------------------------------------------------------------
+  r_pair      : min=5.685363e-02 med=1.146535e-01 max=1.474361e-01
+  v_rad_norm  : min=-0.8311 med=-0.2548 max=+1.4678
+  v_tan_norm  : min=0.1151 med=0.8946 max=1.5378
+  relE_nonn   : max=4.961e-02 med=9.514e-03
+  strong_approach :   138
+  weak_side       :   101
+  recede          :   116
+
+FULL NN correction -- position error
+--------------------------------------------------------------------------------
+  base_mean                   :  1.61687165e-02
+  method_mean                 :  9.35202273e-03
+  base_median                 :  5.03976023e-03
+  method_median               :  8.97037573e-04
+  base_p95                    :  5.92602149e-02
+  method_p95                  :  4.35348258e-02
+  improvement_mean_pct        :     -17.49%
+  improvement_median_pct      :     +40.77%
+  success_frac                :     72.96%
+  unsafe_frac                 :     12.68%
+  ratio_median                :  5.92342850e-01
+  ratio_p95                   :  5.37672967e+00
+
+GATED correction -- position error
+--------------------------------------------------------------------------------
+  base_mean                   :  1.61687165e-02
+  method_mean                 :  1.05549753e-02
+  base_median                 :  5.03976023e-03
+  method_median               :  1.02777109e-03
+  base_p95                    :  5.92602149e-02
+  method_p95                  :  5.26422686e-02
+  improvement_mean_pct        :     +27.71%
+  improvement_median_pct      :      +0.00%
+  success_frac                :     35.21%
+  unsafe_frac                 :      0.00%
+  ratio_median                :  9.99999998e-01
+  ratio_p95                   :  1.00000000e+00
+
+FULL NN correction -- velocity error
+--------------------------------------------------------------------------------
+  base_mean                   :  8.20436171e-02
+  method_mean                 :  7.76476141e-02
+  base_median                 :  2.00523727e-02
+  method_median               :  7.92908592e-03
+  base_p95                    :  6.02196791e-01
+  method_p95                  :  3.89682299e-01
+  improvement_mean_pct        :    -505.23%
+  improvement_median_pct      :     -14.61%
+  success_frac                :     43.94%
+  unsafe_frac                 :     37.46%
+  ratio_median                :  1.14608096e+00
+  ratio_p95                   :  2.15879389e+01
+
+GATED correction -- velocity error
+--------------------------------------------------------------------------------
+  base_mean                   :  8.20436171e-02
+  method_mean                 :  7.19548894e-02
+  base_median                 :  2.00523727e-02
+  method_median               :  5.73839790e-03
+  base_p95                    :  6.02196791e-01
+  method_p95                  :  6.02196791e-01
+  improvement_mean_pct        :      +6.08%
+  improvement_median_pct      :      +0.00%
+  success_frac                :     30.42%
+  unsafe_frac                 :      7.61%
+  ratio_median                :  1.00000000e+00
+  ratio_p95                   :  2.76567950e+00
+
+Position category breakdown
+--------------------------------------------------------------------------------
+  category             n    gate% | base_pos_med full_pos_med gated_pos_med  gated_impr  gated_succ  gated_unsafe
+  ---------------------------------------------------------------------------------------------------------------
+  strong_approach    138   100.0% |   5.0415e-03   5.6520e-04    5.6520e-04     +90.74%      90.6%         0.0%
+  weak_side          101     0.0% |   4.3690e-03   1.5066e-03    4.3690e-03      +0.00%       0.0%         0.0%
+  recede             116     0.0% |   1.8764e-03   1.4242e-03    1.8764e-03      +0.00%       0.0%         0.0%
+
+  Threshold-derived groups
+  strong vr<-0.60    138   100.0% |   5.0415e-03   5.6520e-04    5.6520e-04     +90.74%      90.6%         0.0%
+  not strong         217     0.0% |   2.8243e-03   1.4957e-03    2.8243e-03      +0.00%       0.0%         0.0%
+  approach vr<0      214    64.5% |   5.0407e-03   6.8692e-04    7.4974e-04     +65.59%      58.4%         0.0%
+  recede/side vr>=0   141     0.0% |   1.9194e-03   1.4499e-03    1.9194e-03      +0.00%       0.0%         0.0%
+
+Decision check
+--------------------------------------------------------------------------------
+  Full NN improves median position error?   True
+  Gated improves median position error?     True
+  Gated success fraction > 50%?             False
+  Gated unsafe fraction < 20%?              True
+
+VERDICT: PARTIAL PASS. The gate improves median error, but safety/success is not yet strong enough.
+Next step: tighten gate or train only on strong-approach cases.

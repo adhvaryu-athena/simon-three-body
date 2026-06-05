@@ -1,0 +1,11 @@
+[VALIDATION] noNN  pos_final                                     fresh=+1.537100e+00  base=+1.537100e+00  diff=0.000%  PASS
+[VALIDATION] noNN  pos_timeavg                                   fresh=+1.486906e+00  base=+1.486906e+00  diff=0.000%  PASS
+[VALIDATION] noNN  vel_final                                     fresh=+1.045236e+00  base=+1.045236e+00  diff=0.000%  PASS
+[VALIDATION] noNN  vel_timeavg                                   fresh=+9.300987e-01  base=+9.300987e-01  diff=0.000%  PASS
+[VALIDATION] noNN  speedup (informational only)                   fresh=+1.668842e+00  base=+1.687772e+00  diff=1.122%  NOT USED FOR PASS/FAIL
+[VALIDATION] encNN pos_final                                     fresh=+1.684546e+00  base=+1.684546e+00  diff=0.000%  PASS
+[VALIDATION] encNN pos_timeavg                                   fresh=+1.401660e+00  base=+1.401660e+00  diff=0.000%  PASS
+[VALIDATION] encNN pos_final_gain %                              fresh=-9.592461e+00  base=-9.592461e+00  diff=0.000%  PASS
+[VALIDATION] encNN pos_timeavg_gain%                             fresh=+5.733131e+00  base=+5.733131e+00  diff=0.000%  PASS
+
+ALL VALIDATION CHECKS PASSED

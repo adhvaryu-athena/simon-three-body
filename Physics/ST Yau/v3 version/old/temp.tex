@@ -1,0 +1,65 @@
+\subsubsection{Computational Performance: Speed-Accuracy Frontier}
+\label{sec:perf}
+
+In this measurement, we observe the final position deviation of the bodies predicted
+by \texttt{SIMON}, in comparison with \texttt{ias15}, over a 100 year time horizon.
+The x-axis is the throughput, which is how often the current state of the system is
+sampled, \texttt{Rebound}, and the y-axis is RMS position error, on a logarithmic
+scale. The total number of samples is fixed across all simulations. The timestep $dt$
+is the timestep size the hybrid model uses internally. Points toward the lower-right
+of the graph are better (higher throughput, lower error). Throughput is computed as
+$\frac{n_{\mathrm{samples}}}{t_{\mathrm{total}}}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\linewidth]{speed_accuracy_frontier_T100_after_adaptive.png}
+    \caption{Speed--accuracy trade-off across timesteps $dt$ for \texttt{SIMON} with
+    adaptive sub-stepping. Points towards the lower-right are better (higher
+    throughput, lower error). \texttt{SIMON} outperforms \texttt{ias15} at
+    $dt = 0.04$ ($1.12\times$ speedup) and $dt = 0.08$ ($2.18\times$ speedup).
+    The lowest final RMS error is $0.847$\,AU at $dt = 0.01$.}
+    \label{fig:frontier}
+\end{figure}
+
+The \texttt{ias15} baseline completes in $0.080$ seconds. \texttt{SIMON} outperforms
+\texttt{ias15} at $dt = 0.04$ ($1.12\times$ speedup) and $dt = 0.08$ ($2.18\times$
+speedup). The lowest final RMS error is $0.847$ at $dt = 0.01$. This is the optimal
+point for accuracy, but it is approximately $3.4\times$ slower than \texttt{ias15}.
+The errors at $dt = 0.005$, $0.02$, and $0.08$ are all approximately $1.02$,
+reflecting the chaotic saturation scale. After 100 years, any two different integrations
+of the same system will diverge to roughly one orbital radius, regardless of timestep.
+$dt = 0.04$ shows a slightly higher error of $1.54$, which is a chaotic fluctuation
+(a different phase of the orbit was reached at $T = 100$).
+
+Table~\ref{tab:frontier} provides the full quantitative results for the frontier sweep.
+
+\begin{table}[H]
+\centering
+\caption{Speed-accuracy frontier results for \texttt{SIMON} with adaptive
+sub-stepping, $T = 100$\,yr. \texttt{ias15} baseline: $0.080$\,s total,
+$\lambda = 0.1655$\,yr$^{-1}$ at $dt = 0.04$\,yr. Bold row = operational timestep.}
+\label{tab:frontier}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+$dt$ (yr) & Final RMS (AU) & Throughput (samp/s) & Time/step ($\mu$s) & Total time (s) & Steps & Speedup \\
+\midrule
+$0.005$  & $1.022$ & $9{,}285$   & $26.9$ & $0.538$ & $20{,}000$ & $0.15\times$ \\
+$0.010$  & $0.847$ & $18{,}307$  & $27.3$ & $0.273$ & $10{,}000$ & $0.29\times$ \\
+$0.020$  & $1.022$ & $35{,}672$  & $28.0$ & $0.140$ & $5{,}000$  & $0.57\times$ \\
+$\mathbf{0.040}$ & $\mathbf{1.543}$ & $\mathbf{69{,}880}$ & $\mathbf{28.6}$ & $\mathbf{0.072}$ & $\mathbf{2{,}500}$ & $\mathbf{1.12\times}$ \\
+$0.080$  & $1.022$ & $135{,}629$ & $29.5$ & $0.037$ & $1{,}250$  & $2.18\times$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+The per-step time ranges from $26.9\,\mu$s at $dt = 0.005$ to $29.5\,\mu$s at
+$dt = 0.08$: a range of only $2.6\,\mu$s across a $16\times$ change in timestep.
+This nearly flat profile indicates that the cost of an individual \texttt{SIMON}
+step is approximately constant and is dominated by force evaluation, pairwise
+distance checks, and occasional adaptive sub-stepping. Therefore, the observed
+runtime improvement at larger $dt$ comes primarily from taking fewer macro steps,
+not from making each individual step substantially cheaper. For a fixed
+$T = 100$\,yr horizon, the number of macro steps scales approximately as $T/dt$,
+so total runtime scales roughly as $(T/dt)$ times the near-constant per-step cost.

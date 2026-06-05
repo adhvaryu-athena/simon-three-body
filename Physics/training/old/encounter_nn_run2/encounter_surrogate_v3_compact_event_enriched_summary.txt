@@ -1,0 +1,142 @@
+Encounter-level surrogate v3 compact-input training summary
+============================================================================================
+data: encounter_surrogate_v2_event_enriched.npz
+output: encounter_surrogate_v3_compact_event_enriched.pt
+samples: 2870
+train/val/test: 2009 / 431 / 430
+model: MLP 8 -> hidden=128 -> 18
+features: r_pair, v_rad_norm, v_tan_norm, min_r_nonn, relE_nonn, log_m0, log_m1, log_m2
+epochs requested: 3000
+best_epoch: 10
+best_selection_score: 9.11190064e-02
+lr: 0.001
+batch_size: 256
+loss: SmoothL1/Huber on normalized residuals, pos_weight=1.0, vel_weight=1.0
+physical penalties: com_position_weight=0.05, com_velocity_weight=0.05
+validation score: pos_med + 0.5*vel_med + 0.05*pos_p95 + 0.05*vel_p95 + 0.05*unsafe_pos + 0.1*unsafe_vel
+unsafe_factor: 2.0x baseline error
+device: cuda
+elapsed_sec: 26.620
+
+Input normalization
+--------------------------------------------------------------------------------------------
+  r_pair        : raw min= 5.685363e-02 med= 1.147703e-01 max= 1.474361e-01 | train mean= 1.174516e-01 std= 1.689505e-02
+  v_rad_norm    : raw min=-1.396190e+00 med=-5.775967e-01 max= 1.664024e+00 | train mean=-3.009433e-01 std= 6.872246e-01
+  v_tan_norm    : raw min= 9.363582e-02 med= 8.958015e-01 max= 1.797679e+00 | train mean= 8.869944e-01 std= 2.469441e-01
+  min_r_nonn    : raw min= 2.273388e-02 med= 7.537198e-02 max= 1.474361e-01 | train mean= 8.560115e-02 std= 2.658203e-02
+  relE_nonn     : raw min= 6.996144e-08 med= 5.883974e-03 max= 4.993353e-02 | train mean= 1.128973e-02 std= 1.273499e-02
+  log_m0        : raw min=-6.896132e+00 med=-2.566172e+00 max= 6.926799e-01 | train mean=-2.748360e+00 std= 2.281714e+00
+  log_m1        : raw min=-6.882267e+00 med=-4.645009e+00 max= 1.707004e-02 | train mean=-4.542529e+00 std= 1.372930e+00
+  log_m2        : raw min=-6.896132e+00 med=-5.286271e+00 max= 9.770884e-02 | train mean=-5.162803e+00 std= 1.389629e+00
+
+Dataset checks
+--------------------------------------------------------------------------------------------
+r_pair: min=5.685363e-02 med=1.147703e-01 max=1.474361e-01
+v_rad_norm: min=-1.3962 med=-0.5776 max=+1.6640
+v_tan_norm: min=0.0936 med=0.8958 max=1.7977
+min_r_nonn: min=2.273388e-02 med=7.537198e-02 max=1.474361e-01
+relE_nonn: max=4.993e-02 med=5.884e-03 p95=3.741e-02
+category counts:
+  strong_approach : 1421
+  weak_side       : 677
+  recede          : 772
+
+TRAIN metrics
+--------------------------------------------------------------------------------------------
+  base_pos_mean                     : 0.022639776
+  corr_pos_mean                     : 0.023636446
+  base_pos_median                   : 0.0075662089
+  corr_pos_median                   : 0.008277638
+  base_pos_p95                      : 0.089627438
+  corr_pos_p95                      : 0.088686217
+  pos_improvement_mean_pct          : -517.37394
+  pos_improvement_median_pct        : -7.5665302
+  pos_success_frac                  : 0.2244898
+  unsafe_pos_frac                   : 0.26331508
+  base_vel_mean                     : 0.10888235
+  corr_vel_mean                     : 0.10953829
+  base_vel_median                   : 0.02527965
+  corr_vel_median                   : 0.025865044
+  base_vel_p95                      : 0.56944502
+  corr_vel_p95                      : 0.56256998
+  vel_improvement_mean_pct          : -307.13961
+  vel_improvement_median_pct        : -2.8770633
+  vel_success_frac                  : 0.35340966
+  unsafe_vel_frac                   : 0.19263315
+  unsafe_any_frac                   : 0.28123444
+  resid_pos_err_median              : 0.008277638
+  resid_vel_err_median              : 0.025865044
+  com_pos_err_median                : 0.0013204317
+  com_vel_err_median                : 0.0016950471
+  com_pos_err_p95                   : 0.0074312922
+  com_vel_err_p95                   : 0.0061578454
+
+VAL metrics
+--------------------------------------------------------------------------------------------
+  base_pos_mean                     : 0.027564558
+  corr_pos_mean                     : 0.02858132
+  base_pos_median                   : 0.006670868
+  corr_pos_median                   : 0.0076631357
+  base_pos_p95                      : 0.10259761
+  corr_pos_p95                      : 0.10227644
+  pos_improvement_mean_pct          : -425.23485
+  pos_improvement_median_pct        : -8.7564028
+  pos_success_frac                  : 0.21809745
+  unsafe_pos_frac                   : 0.25522042
+  base_vel_mean                     : 0.13202794
+  corr_vel_mean                     : 0.13279067
+  base_vel_median                   : 0.022289459
+  corr_vel_median                   : 0.022462135
+  base_vel_p95                      : 0.74606233
+  corr_vel_p95                      : 0.73897136
+  vel_improvement_mean_pct          : -268.63343
+  vel_improvement_median_pct        : -2.8049941
+  vel_success_frac                  : 0.35266821
+  unsafe_vel_frac                   : 0.17401392
+  unsafe_any_frac                   : 0.2737819
+  resid_pos_err_median              : 0.0076631357
+  resid_vel_err_median              : 0.022462135
+  com_pos_err_median                : 0.0013054629
+  com_vel_err_median                : 0.0016155782
+  com_pos_err_p95                   : 0.0071087832
+  com_vel_err_p95                   : 0.0062580176
+
+TEST metrics
+--------------------------------------------------------------------------------------------
+  base_pos_mean                     : 0.022992299
+  corr_pos_mean                     : 0.023903159
+  base_pos_median                   : 0.0087295808
+  corr_pos_median                   : 0.0086854076
+  base_pos_p95                      : 0.092016554
+  corr_pos_p95                      : 0.092281853
+  pos_improvement_mean_pct          : -413.34979
+  pos_improvement_median_pct        : -5.8613193
+  pos_success_frac                  : 0.27906977
+  unsafe_pos_frac                   : 0.22325581
+  base_vel_mean                     : 0.12250496
+  corr_vel_mean                     : 0.12352541
+  base_vel_median                   : 0.032094078
+  corr_vel_median                   : 0.032003718
+  base_vel_p95                      : 0.617459
+  corr_vel_p95                      : 0.61502783
+  vel_improvement_mean_pct          : -269.16566
+  vel_improvement_median_pct        : -2.9378937
+  vel_success_frac                  : 0.34883721
+  unsafe_vel_frac                   : 0.15348837
+  unsafe_any_frac                   : 0.24651163
+  resid_pos_err_median              : 0.0086854076
+  resid_vel_err_median              : 0.032003718
+  com_pos_err_median                : 0.0014343678
+  com_vel_err_median                : 0.0015929166
+  com_pos_err_p95                   : 0.0083688784
+  com_vel_err_p95                   : 0.0064431383
+
+TEST category breakdown
+--------------------------------------------------------------------------------------------
+  strong_approach  n=  213 pos_med 8.7312e-03->9.3967e-03 vel_med 3.4732e-02->3.4527e-02 pos_impr=  -2.00% vel_impr=  -1.75% unsafe_pos=11.7% unsafe_vel=5.6%
+  weak_side        n=  101 pos_med 7.6300e-03->1.0054e-02 vel_med 3.7054e-02->4.1096e-02 pos_impr=  -8.38% vel_impr=  -2.21% unsafe_pos=31.7% unsafe_vel=18.8%
+  recede           n=  116 pos_med 3.5210e-03->5.5751e-03 vel_med 9.8058e-03->1.3063e-02 pos_impr= -32.67% vel_impr= -17.60% unsafe_pos=33.6% unsafe_vel=30.2%
+
+Verdict
+--------------------------------------------------------------------------------------------
+STOP/REASSESS: compact surrogate does not improve held-out encounter-exit position error.

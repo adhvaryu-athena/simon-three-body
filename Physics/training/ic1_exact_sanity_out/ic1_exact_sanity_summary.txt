@@ -1,0 +1,52 @@
+==============================================================================
+EXACT IC1 SANITY BENCHMARK — SUMMARY
+==============================================================================
+
+SETUP
+  Exact IC1 only; repeats per dt = 5
+  T = 100.0 yr, samples/IC = 5000
+  dt values tested = [0.04, 0.08]
+  Ejection threshold = 10.0 AU
+  CENTER_TO_COM_BEFORE_BOTH = False
+  Initial total energy = -0.00717368
+  Initial min pair distance = 1 AU
+
+RESULTS
+dt = 0.04 yr
+  repeats                 : 5
+  agreement               : 5/5 = 100.0%
+  ias15 ejections         : 0/5
+  SIMON ejections         : 0/5
+  mean speedup            : 1.102x +/- 0.022
+  median speedup          : 1.092x
+  total/population speedup: 1.103x
+  total ias15 time        : 0.3500 s
+  total SIMON time        : 0.3174 s
+  lambda                  : 0.0790 +/- 0.0000 /yr
+  final RMS               : 1.0164 AU
+
+dt = 0.08 yr
+  repeats                 : 5
+  agreement               : 5/5 = 100.0%
+  ias15 ejections         : 0/5
+  SIMON ejections         : 0/5
+  mean speedup            : 2.015x +/- 0.137
+  median speedup          : 2.034x
+  total/population speedup: 2.006x
+  total ias15 time        : 0.3512 s
+  total SIMON time        : 0.1751 s
+  lambda                  : 0.0493 +/- 0.0000 /yr
+  final RMS               : 1.2257 AU
+
+INTERPRETATION
+  Exact IC1 classification sanity pass? YES
+  If this is YES, the perturbation-benchmark failures are not caused by a
+  basic code mismatch in the exact IC1 setup. They instead indicate that the
+  perturbations moved the system outside the locally safe IC1 operating region.
+  If this is NO, compare this script line-by-line with the original speed-frontier
+  / multi_ic_eval_v3 code before making any paper claim.
+
+OUTPUT FILES
+  ic1_exact_sanity_data.csv
+  ic1_exact_sanity_summary.txt
+==============================================================================

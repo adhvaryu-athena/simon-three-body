@@ -1,0 +1,12 @@
+======================================================================
+FINE-STEPPING VS ENCOUNTERNN — SUMMARY VERDICT  (dt=0.08)
+======================================================================
+
+Global pos_final gains vs noNN:
+  EncounterNN  : +11.864%  speedup=2.00x  relE=1.697e-06
+  finer-k2     : -7.912%  speedup=2.18x  relE_drift=4.997e-03
+  finer-k4     : -8.252%  speedup=2.25x  relE_drift=6.446e-03
+
+Isolated exit-state winner  : EncounterNN
+Ensemble global mean winner : EncounterNN
+

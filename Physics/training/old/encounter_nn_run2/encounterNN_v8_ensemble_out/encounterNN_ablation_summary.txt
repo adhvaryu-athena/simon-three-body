@@ -1,0 +1,107 @@
+SIMON encounterNN ablation v7 fast-gate no-scalar NumPy with corrected isolated local replay
+================================================================================================
+Purpose: compare IAS15, SIMON-noNN, and SIMON-encounterNN on IC1, then isolate the EncounterNN effect by restarting all local branches from the same encounter-entry state.
+Only the encounter-level residual NN is evaluated here; scalarNN is not loaded or run.
+EncounterNN deployment formula: corrected_exit = noNN_exit + predicted_residual.
+Full rollout inference uses NumPy weights only; no torch/CUDA call occurs inside the timed rollout.
+Corrected local methodology: the local IAS15, local noNN, and local EncounterNN branches all start from the identical noNN event-entry state. This removes all pre-encounter drift and isolates the NN effect during the encounter period.
+
+Configuration
+------------------------------------------------------------------------------------------------
+encounter_model: encounter_surrogate_v3_rollout_local_velocitysafe.pt
+dt: 0.08000000
+T_years_global: 100.00000000
+n_samples_global: 5000
+window_years_training_residual: 0.50000000
+physical_window_steps_half_width_from_discussion: 25
+isolated_forward_physical_horizon_years: 4.00000000
+post_window_steps: 25
+post_window_years: 2.00000000
+local_n_samples: 1001
+vr_thresh: -0.40000000
+energy_gate: 0.20000000
+encounter_inference: numpy_weights_no_torch_in_hot_loop
+
+Global runtime
+------------------------------------------------------------------------------------------------
+IAS15_total_time_sec: 0.099865900
+SIMON_noNN_total_time_sec: 0.044253600
+SIMON_noNN_speedup_vs_IAS15: 2.256673
+SIMON_encounterNN_total_time_sec: 0.047036400
+SIMON_encounterNN_speedup_vs_IAS15: 2.123162
+
+Global accuracy vs global IAS15 branch
+------------------------------------------------------------------------------------------------
+method	pos_final	pos_timeavg	pos_med	pos_p95	vel_final	vel_timeavg	vel_med	vel_p95	total_time_sec	speedup_vs_ias15
+SIMON-noNN	1.402162650e+00	9.737460223e-01	4.809421585e-01	1.820192393e+00	1.296568709e+00	8.483834338e-01	3.843860369e-01	1.544943263e+00	0.044253600	2.256673
+SIMON-encounterNN	1.317732583e+00	9.912063633e-01	6.315927949e-01	1.866475935e+00	1.151842053e+00	8.573804579e-01	4.360242676e-01	1.565289739e+00	0.047036400	2.123162
+
+Global delta vs SIMON-noNN
+------------------------------------------------------------------------------------------------
+SIMON-encounterNN_pos_final_gain_pct: +6.021417
+SIMON-encounterNN_pos_timeavg_gain_pct: -1.793110
+SIMON-encounterNN_vel_final_gain_pct: +11.162282
+SIMON-encounterNN_vel_timeavg_gain_pct: -1.060490
+
+Global EncounterNN event stats
+------------------------------------------------------------------------------------------------
+gate_candidates: 1
+encounter_attempts: 1
+encounter_used: 1
+encounter_fallback: 0
+first_used_t: 82.71999999999859
+last_used_t: 82.71999999999859
+pred_pos_norm_mean: 0.005896018938192963
+pred_vel_norm_mean: 0.035874410486843776
+min_r: 0.10050680539977669
+max_radius: 1.1941293086713463
+event_csv: encounterNN_v8_ensemble_out\encounter_events_global.csv
+
+Correct isolated local replay methodology
+------------------------------------------------------------------------------------------------
+The previous global-window method looked only at samples near the encounter but still used trajectories that had already evolved for 82.56 yr from t=0. That does not fully isolate the NN effect because pre-encounter branch drift is already present.
+This v7 method reconstructs the exact noNN event-entry state at the first used event, then launches three new local branches from that identical state: LOCAL-IAS15, LOCAL-noNN, and LOCAL-EncounterNN-once.
+The EncounterNN branch runs noNN for the trained 0.5 yr window, applies the predicted 18D residual at the exit, and then continues with noNN for the rest of the local physical horizon.
+Positive gain_pct means EncounterNN is closer to the LOCAL IAS15 branch than LOCAL noNN. Negative gain_pct means it is worse in that isolated local test.
+
+Reconstructed event-entry state
+------------------------------------------------------------------------------------------------
+global_event_time_yr: 82.719999999999
+advance_to_event_steps: 1034
+r_pair_entry: 1.383162194560e-01
+v_rad_norm_entry: -8.616293589018e-01
+v_tan_norm_entry: 1.202737986302e+00
+local_correction_used: 1
+local_correction_reason: used
+local_correction_relE_corr: 0.015381250392163988
+
+Exact isolated exit-state metric
+------------------------------------------------------------------------------------------------
+scope	t_start_local	t_exit_local	pos_noNN_exit_error	pos_encounterNN_exit_error	pos_gain_pct	vel_noNN_exit_error	vel_encounterNN_exit_error	vel_gain_pct	accepted_by_safety
+isolated_exact_exit_state	0.000000000	0.500000000	1.375717723e-03	5.901845061e-03	-329.001165	5.691019200e-03	4.004277475e-02	-603.613419	1
+
+isolated_exact_exit_metrics_csv: encounterNN_v8_ensemble_out\isolated_exact_exit_metrics.csv
+
+Isolated local trajectory-window metrics
+------------------------------------------------------------------------------------------------
+scope	t_start_local	t_end_local	n_samples	pos_noNN_timeavg	pos_encounterNN_timeavg	pos_gain_pct	vel_noNN_timeavg	vel_encounterNN_timeavg	vel_gain_pct	pos_final_gain_pct	vel_final_gain_pct
+isolated_training_window_0_to_exit	0.000000000	0.500000000	126	3.218055202e-02	3.068169027e-02	+4.657663	3.244394034e-02	3.113934201e-02	+4.021085	+86.402684	+8.880271
+isolated_physical_forward_window	0.000000000	4.000000000	1001	6.668408227e-02	3.468824132e-01	-420.187729	7.828095407e-02	4.050788112e-01	-417.467903	-507.290232	-485.866159
+isolated_post_correction_to_physical_end	0.500000000	4.000000000	876	7.024592698e-02	3.706238704e-01	-427.609053	8.278360754e-02	4.328576049e-01	-422.878403	-507.290232	-485.866159
+isolated_post_correction_fixed_steps	0.500000000	2.500000000	501	4.029948207e-02	9.979206138e-02	-147.626164	4.727984527e-02	1.634972225e-01	-245.807440	-220.485070	-280.880837
+
+isolated_local_replay_metrics_csv: encounterNN_v8_ensemble_out\isolated_local_replay_metrics.csv
+isolated_local_replay_timeseries_csv: encounterNN_v8_ensemble_out\isolated_local_replay_timeseries.csv
+isolated_local_replay_plot_png: encounterNN_v8_ensemble_out\isolated_local_replay_errors.png
+
+Paper-story interpretation guide
+------------------------------------------------------------------------------------------------
+1. Use the exact isolated exit-state metric as the cleanest proof of whether the residual model learned the 0.5 yr encounter map.
+2. Use the isolated physical forward-window metric to test whether that correction remains beneficial over the physically motivated encounter timescale.
+3. Use the full 100 yr global rollout only as a branch-sensitivity / deployment result, not as the clean local NN-effect metric.
+4. The scalar Zone-3 production baseline remains separate; this file intentionally does not load or run it.
+
+Notes
+- This evaluator is intentionally focused on the encounterNN method only.
+- Step-level Zone-3 NN comparisons should be taken from the established v4/v5 evaluator outputs, not rerun here.
+- EncounterNN is currently validated for dt=0.08, IC1, active pair 1-2, window_years=0.5.

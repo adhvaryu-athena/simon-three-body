@@ -1,0 +1,32 @@
+==================================================================================================================================
+FINE-STEPPING VS ENCOUNTERNN  —  GLOBAL T=100yr COMPARISON  (dt=0.1)
+==================================================================================================================================
+
+Method                        pos_final(AU)  pos_timeavg(AU)    vel_final  vel_timeavg  Time(s)  Speedup         relE  Zone3 fine
+----------------------------------------------------------------------------------------------------------------------------------
+noNN                             1.4274e+00       1.0812e+00 *   9.2238e-01   8.9508e-01   0.0393     2.47x    5.368e-03           -
+EncounterNN                      1.5336e+00       1.2143e+00     1.1447e+00   9.8250e-01   0.0386     2.52x    2.339e-02       enc=1
+finer-Zone3-k2                   1.0852e+00 *     1.1371e+00     8.6503e-01   9.3618e-01   0.0371     2.61x    5.759e-03           4
+finer-Zone3-k4                   1.6434e+01       5.2320e+00     1.0359e+00   8.5655e-01   0.0372     2.61x    1.618e+00           9
+
+  * = best value in column
+  IAS15 reference time: 0.0970s
+
+Method                        pos_final gain%  pos_timeavg gain%  vel_final gain%  vel_timeavg gain%
+----------------------------------------------------------------------------------------
+EncounterNN                            -7.438%           -12.309%         -24.108%            -9.767%
+finer-Zone3-k2                        +23.972%            -5.166%          +6.218%            -4.591%
+finer-Zone3-k4                      -1051.316%          -383.890%         -12.307%            +4.306%
+
+CONCLUSIONS
+------------------------------------------------------------
+  !! ENERGY UNSAFE: finer-Zone3-k4 (relE=1.618e+00 > 10%) — DISQUALIFIED
+
+  Runtime-matched comparison (energy-safe methods only):
+    EncounterNN    : 0.0386s  pos_final=1.5336e+00  relE=2.339e-02
+    finer-Zone3-k2: 0.0371s  pos_final=1.0852e+00  relE=5.759e-03
+  >> RUNTIME WINNER: finer-Zone3-k2 (lower pos_final error at similar compute)
+
+  Accuracy-only (energy-safe methods, ignoring NN inference cost):
+  >> ACCURACY WINNER: finer-Zone3-k2 (pos_final=1.0852e+00)
+==================================================================================================================================

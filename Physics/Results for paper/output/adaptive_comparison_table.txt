@@ -1,0 +1,25 @@
+=================================================================
+ADAPTIVE SUB-STEPPING: BEFORE vs AFTER COMPARISON
+T = 100 yr  |  m = [1.0, 0.01, 0.005] M_sun
+=================================================================
+
+Metric                                 Before        After     Change
+--------------------------------------------------------------------
+Bodies bounded at T=100yr?       NO (ejection)          YES           
+Divergence slope lambda (1/yr)         0.1712       0.1655        -3%
+Worst-case error (AU, any dt)           161.7        1.543 105x lower
+Error range across dt values     [1.02, 161.7] [0.847, 1.543]           
+Best speedup vs ias15                   2.85x        2.18x           
+Per-step time (rep dt=0.02)           19.2 us      27.7 us       +44%
+Adaptive activations             0% (no mechanism) 0.2-1.1% of steps           
+
+=================================================================
+KEY NUMBERS FOR PAPER:
+  Worst-case error reduction: 161.7 -> 1.543 AU  (105x improvement)
+  Divergence slope reduction: 0.171 -> 0.166 /yr  (3% improvement)
+  Per-step overhead added:    19.2 -> 27.7 us  (+44%)
+  Bodies bounded:             NO -> YES
+
+SOURCE FILES:
+  Before: C:\Aarush\Physics\set 2_before_adaptive\hybrid_eval_out_v3_dt04\perf_summary_T100_before_adaptive_dt04.txt
+  After:  C:\Aarush\Physics\set 3_after_adaptive\hybrid_eval_out_v3_dt04\perf_summary_T100_after_adaptive_dt04.txt

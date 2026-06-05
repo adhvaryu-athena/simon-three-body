@@ -1,0 +1,4 @@
+Comparison: previous Run D summary vs revised v4 Zone 3 evaluator
+Previous summary file: NOT FOUND
+
+No matching previous rows found. Place perf_summary_T100_timeavg.txt in this folder or pass --old_summary.

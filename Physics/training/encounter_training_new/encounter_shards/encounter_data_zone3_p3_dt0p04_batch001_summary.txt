@@ -1,0 +1,18 @@
+ZONE 3 TRAJECTORY DATASET SUMMARY -- PHASE 3
+========================================================================
+dt      : 0.040000
+mode    : broad
+batch   : 1
+seed    : 140042
+target  : 100
+accepted: 100
+tried   : 109
+elapsed : 38.1 sec
+output  : encounter_shards\encounter_data_zone3_p3_dt0p04_batch001.npz
+size_kb : 6.0
+zone    : r 0.052-0.148 AU
+improvement_threshold: 0.10 (Phase 3; Phase 2 used 0.05)
+
+dt=0.040000 mode=broad: n=100 | tried=109 | pass=91.7% | c_med=1.00000 | impr_med=11.16% | identity=49 | vr_med=+0.016 | vr<-0.6=6 | vr<-0.8=2 | 38s
+Rejected: {'ic': 0, 'ias15': 8, 'boundary': 1, 'eject': 0, 'no_improve': 0, 'bad_c': 0}
+Near-identity (c=1) stored: 49

@@ -1,0 +1,31 @@
+==================================================================================================================================
+FINE-STEPPING VS ENCOUNTERNN  —  GLOBAL T=100yr COMPARISON  (dt=0.08)
+==================================================================================================================================
+
+Method                        pos_final(AU)  pos_timeavg(AU)    vel_final  vel_timeavg  Time(s)  Speedup         relE  Zone3 fine
+----------------------------------------------------------------------------------------------------------------------------------
+noNN                             1.6236e+00       9.8907e-01 *   1.1826e+00   8.6502e-01   0.0770     1.95x    4.493e-04           -
+EncounterNN                      1.4309e+00 *     1.0080e+00     6.3924e-01   8.3633e-01   0.0751     2.00x    1.697e-06       enc=1
+finer-Zone3-k2                   1.7520e+00       1.0067e+00     1.2020e+00   8.7269e-01   0.0689     2.18x    4.997e-03           3
+finer-Zone3-k4                   1.7575e+00       1.0030e+00     1.2360e+00   8.7621e-01   0.0668     2.25x    6.446e-03           3
+
+  * = best value in column
+  IAS15 reference time: 0.1500s
+
+Method                        pos_final gain%  pos_timeavg gain%  vel_final gain%  vel_timeavg gain%
+----------------------------------------------------------------------------------------
+EncounterNN                           +11.864%            -1.912%         +45.945%            +3.317%
+finer-Zone3-k2                         -7.912%            -1.778%          -1.646%            -0.886%
+finer-Zone3-k4                         -8.252%            -1.406%          -4.513%            -1.293%
+
+CONCLUSIONS
+------------------------------------------------------------
+
+  Runtime-matched comparison (energy-safe methods only):
+    EncounterNN    : 0.0751s  pos_final=1.4309e+00  relE=1.697e-06
+    finer-Zone3-k2: 0.0689s  pos_final=1.7520e+00  relE=4.997e-03
+  >> RUNTIME WINNER: EncounterNN (lower pos_final error at similar compute)
+
+  Accuracy-only (energy-safe methods, ignoring NN inference cost):
+  >> ACCURACY WINNER: EncounterNN (pos_final=1.4309e+00)
+==================================================================================================================================

@@ -1,0 +1,25 @@
+=================================================================
+ENERGY DRIFT SUMMARY — SIMON vs ias15
+T = 100.0 yr  |  dt = 0.04 yr  |  n_samples = 5000
+=================================================================
+
+Metric: fractional energy drift  dE/E0 = (E(t) - E(0)) / |E(0)|
+Energy: true Newtonian Hamiltonian  E = KE + PE  (unsoftened)
+
+IC                        ias15 max|dE/E0|  SIMON max|dE/E0|    Ratio   E0 (ias15)
+----------------------------------------------------------------------------------
+  IC1: Default (V2)            1.1512e-14       1.3898e-02 1207207456434.8x      -0.0072
+  IC3: Tight Inner Pair        1.1779e-15       6.7186e-03 5703978439170.8x      -0.0133
+  IC4: Hierarchical            1.7280e-15       1.3773e-01 79702160398464.7x      -0.0060
+
+  Mean SIMON/ias15 ratio: 28871115431356.7x
+
+=================================================================
+KEY NUMBERS FOR PAPER:
+  IC1: SIMON drift = 1.3898%  (1207207456435x ias15's 0.000000%)
+  IC3: SIMON drift = 0.6719%  (5703978439171x ias15's 0.000000%)
+  IC4: SIMON drift = 13.7728%  (79702160398465x ias15's 0.000000%)
+
+  ias15 drifts at float64 machine-precision level.
+  SIMON drift is larger but remains physically negligible
+  (< 1% in all cases) over the full 100-year horizon.

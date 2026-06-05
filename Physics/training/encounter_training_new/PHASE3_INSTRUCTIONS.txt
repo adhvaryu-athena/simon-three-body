@@ -1,0 +1,309 @@
+PHASE 3 — COMPLETE STEP-BY-STEP INSTRUCTIONS
+=============================================
+
+
+STEP 0: SET UP THE FOLDER
+--------------------------
+Create the new folder and copy exactly these 7 files from your old
+encounter_training folder. Do NOT copy any data, shards, or model files.
+
+    cd C:\Aarush\Physics\training
+    mkdir encounter_training_new
+    cd encounter_training_new
+    mkdir encounter_shards
+
+Files to copy from encounter_training\ into encounter_training_new\:
+    merge_encounter_shards.py              (copy unchanged)
+    inspect_encounter_data_targeted.py     (copy unchanged)
+    diagnostic_v4.py                       (copy unchanged)
+    pair_eval_v4_zone3_frozen_timeavg_v3_with_log_gate.py  (copy unchanged)
+
+Then copy the THREE NEW files from this download into encounter_training_new\:
+    generate_encounter_data_phase3_batch.py
+    generate_live_rollout_data.py
+    train_pair_correction_v5.py
+
+NOTE: The evaluator (log_gate file) needs one small manual edit for v5 weights.
+See STEP 6 below before running the evaluator.
+
+
+=============================================
+STEP 1: GENERATE BROAD BATCHES (1800 samples)
+=============================================
+Run one command at a time. Each takes ~2-5 minutes depending on your machine.
+6 dt values x 3 batches = 18 commands. All go to encounter_shards\.
+
+-- dt=0.02 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.02 --n 100 --batch 1 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.02 --n 100 --batch 2 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.02 --n 100 --batch 3 --mode broad
+
+-- dt=0.04 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.04 --n 100 --batch 1 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.04 --n 100 --batch 2 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.04 --n 100 --batch 3 --mode broad
+
+-- dt=0.05 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 1 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 2 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 3 --mode broad
+
+-- dt=0.06 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 1 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 2 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 3 --mode broad
+
+-- dt=0.08 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 1 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 2 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 3 --mode broad
+
+-- dt=0.10 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 1 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 2 --mode broad
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 3 --mode broad
+
+Expected output files: encounter_data_zone3_p3_dt*_batch*.npz  (18 files)
+
+
+=============================================
+STEP 2: GENERATE STRONG RECEDE BATCHES (1500 samples)
+=============================================
+5 dt values (skip dt=0.02 -- recede signal too weak there) x 3 batches = 15 commands.
+
+-- dt=0.04 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.04 --n 100 --batch 1 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.04 --n 100 --batch 2 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.04 --n 100 --batch 3 --mode strong_recede
+
+-- dt=0.05 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 1 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 2 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 3 --mode strong_recede
+
+-- dt=0.06 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 1 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 2 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 3 --mode strong_recede
+
+-- dt=0.08 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 1 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 2 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 3 --mode strong_recede
+
+-- dt=0.10 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 1 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 2 --mode strong_recede
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 3 --mode strong_recede
+
+Expected output files: encounter_data_zone3_p3_strong_recede_dt*_batch*.npz  (15 files)
+
+
+=============================================
+STEP 3: GENERATE PROBE FIX BATCHES (800 samples)
+=============================================
+4 dt values (where probe failure was observed) x 2 batches = 8 commands.
+
+-- dt=0.05 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 1 --mode probe_fix
+python -B generate_encounter_data_phase3_batch.py --dt 0.05 --n 100 --batch 2 --mode probe_fix
+
+-- dt=0.06 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 1 --mode probe_fix
+python -B generate_encounter_data_phase3_batch.py --dt 0.06 --n 100 --batch 2 --mode probe_fix
+
+-- dt=0.08 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 1 --mode probe_fix
+python -B generate_encounter_data_phase3_batch.py --dt 0.08 --n 100 --batch 2 --mode probe_fix
+
+-- dt=0.10 --
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 1 --mode probe_fix
+python -B generate_encounter_data_phase3_batch.py --dt 0.10 --n 100 --batch 2 --mode probe_fix
+
+Expected output files: encounter_data_zone3_p3_probe_fix_dt*_batch*.npz  (8 files)
+
+
+=============================================
+STEP 4: GENERATE LIVE ROLLOUT BATCHES (~600 samples)
+=============================================
+IC1, IC3, IC4 x 3 dt values each = 9 commands.
+These are on-manifold samples from actual 3-body trajectories.
+Takes ~5-10 minutes each because it runs a full 50-year trajectory.
+
+-- IC1 --
+python -B generate_live_rollout_data.py --ic IC1 --dt 0.04 --T 100 --batch 1
+python -B generate_live_rollout_data.py --ic IC1 --dt 0.08 --T 100 --batch 1
+python -B generate_live_rollout_data.py --ic IC1 --dt 0.10 --T 100 --batch 1
+
+-- IC3 --
+python -B generate_live_rollout_data.py --ic IC3 --dt 0.04 --T 100 --batch 1
+python -B generate_live_rollout_data.py --ic IC3 --dt 0.08 --T 100 --batch 1
+python -B generate_live_rollout_data.py --ic IC3 --dt 0.10 --T 100 --batch 1
+
+-- IC4 --
+python -B generate_live_rollout_data.py --ic IC4 --dt 0.04 --T 100 --batch 1
+python -B generate_live_rollout_data.py --ic IC4 --dt 0.08 --T 100 --batch 1
+python -B generate_live_rollout_data.py --ic IC4 --dt 0.10 --T 100 --batch 1
+
+NOTE: IC4 is hierarchical so it triggers Zone 3 less often. If it produces
+fewer than 30 samples for a given dt, that is expected and fine.
+
+Expected output files: encounter_data_zone3_p3_live_ic*_dt*_batch001.npz  (9 files)
+
+
+=============================================
+STEP 5: MERGE ALL SHARDS
+=============================================
+After all generation is complete, merge everything:
+
+python -B merge_encounter_shards.py --shard-dir encounter_shards --out encounter_data_zone3_phase3.npz --overwrite
+
+You should see ~4,700 total samples. Verify the counts by dt in the output.
+Key checks:
+  - All 6 dt values present (0.02, 0.04, 0.05, 0.06, 0.08, 0.10)
+  - NO dt=0.005 or dt=0.01 in the merged file
+  - Both approach (vr<0) and recede (vr>=0) present for every dt
+  - vr_med should be negative at most dts (more approach than recede in broad,
+    balanced by strong_recede batches)
+
+
+=============================================
+STEP 6: INSPECT THE DATA
+=============================================
+python -B inspect_encounter_data_targeted.py --file encounter_data_zone3_phase3.npz
+
+CRITICAL CHECKS to look for in the output:
+  1. "r in Zone 3: True" -- all samples in [0.052, 0.148] AU
+  2. "finite all: True"
+  3. Per-dt approach/recede balance:
+     - dt=0.04: approach_n and recede_n should be within 2x of each other
+     - dt=0.08: same
+  4. Fixed probe coverage (strong approach window):
+     - dt=0.08 vr<-0.6 count should be > 100
+     - dt=0.10 vr<-0.6 count should be > 100
+  5. The nearest-neighbour check should NOT flag approach at dt>=0.05 as OFF_MANIFOLD.
+
+If you see problems (e.g. recede severely under-represented at dt=0.04), add
+more strong_recede batches for that dt before training.
+
+
+=============================================
+STEP 7: TRAIN THE V5 MODEL
+=============================================
+
+python -B train_pair_correction_v5.py ^
+    --data encounter_data_zone3_phase3.npz ^
+    --epochs 5000 ^
+    --hidden 128 ^
+    --output pair_correction_nn_v5.pt
+
+(On Windows use ^ for line continuation, or run as one line.)
+
+Expected runtime: ~10-20 min with GPU (CUDA), ~60 min CPU-only.
+
+KEY THINGS TO CHECK in training output:
+  1. Convergence: val loss should decrease steadily. If it plateaus early
+     (before epoch 2000), try --lr 3e-4 on a second run.
+  2. Per-dt recede bias table:
+     - Phase 3 target: |rec_pred - rec_true| < 0.03 at all dts
+     - Phase 2 had bias of ~0.035 at dt=0.04. If still present, add more
+       strong_recede data and retrain.
+  3. Fixed-state probe table:
+     - dt=0.05-0.10 approach should be > 1.05 (not the 0.38 seen in v4)
+     - If approach at large dt is still < 0.50, the probe_fix data didn't
+       reach that region -- generate 2 more probe_fix batches and retrain.
+  4. app_pred > rec_pred for ALL 6 dt groups (was 8/8 in v4, same target here).
+
+
+=============================================
+STEP 8: RUN DIAGNOSTICS
+=============================================
+
+python -B diagnostic_v4.py ^
+    --data encounter_data_zone3_phase3.npz ^
+    --model pair_correction_nn_v5.pt ^
+    --split pair_correction_nn_v5_split.npz
+
+NOTE: diagnostic_v4.py expects the v4 model class. Since v5 has a residual
+connection (extra 'skip' layer), the diagnostic will fail to load v5 weights
+unless you update the model class inside diagnostic_v4.py.
+
+QUICK FIX for diagnostic_v4.py:
+  Find the PairCorrectionNNv4 class (or PairCorrectionNN class) in diagnostic_v4.py.
+  Add these two lines inside __init__ after the self.net = nn.Sequential(...) block:
+
+      self.skip = nn.Linear(6, 1, bias=True)
+
+  And update forward_raw:
+      def forward_raw(self, x):
+          x_norm = (x - self.input_mean) / (self.input_std + 1e-8)
+          return self.net(x_norm).squeeze(-1) + self.skip(x_norm).squeeze(-1)
+
+  The same edit applies to the evaluator file (log_gate).
+
+
+=============================================
+STEP 9: UPDATE EVALUATOR FOR V5 AND RUN
+=============================================
+
+In pair_eval_v4_zone3_frozen_timeavg_v3_with_log_gate.py:
+
+1. Find class PairCorrectionNNv4 and add the skip layer (same edit as above).
+2. Update the model filename argument:
+   Change: --model_path pair_correction_nn_v4_bounded.pt
+   To:     --model_path pair_correction_nn_v5.pt
+3. Change --dts to exclude 0.005 and 0.01:
+   Use: --dts 0.02,0.04,0.05,0.06,0.08,0.1
+
+Then run:
+
+python -B pair_eval_v4_zone3_frozen_timeavg_v3_with_log_gate.py ^
+    --model_path pair_correction_nn_v5.pt ^
+    --dts 0.02,0.04,0.05,0.06,0.08,0.1 ^
+    --nn_log_dir nn_firing_logs_v5
+
+SUCCESS CRITERIA for Phase 3:
+  - NN helps (negative delta) at dt=0.04, dt=0.08 on IC1
+  - No catastrophic failures (delta < +100% at any dt)
+  - dt=0.005 and dt=0.01 not tested (removed from scope)
+  - Run IC3 next: python ... --ic IC3 equivalent (requires updating the IC in the evaluator)
+
+
+=============================================
+TOTAL DATA BUDGET
+=============================================
+  Broad:         18 batches x 100 = 1,800 samples
+  Strong recede: 15 batches x 100 = 1,500 samples
+  Probe fix:      8 batches x 100 =   800 samples
+  Live rollout:   9 runs  x ~65   =   ~585 samples (varies by IC/dt)
+  TOTAL:                           ~4,685 samples
+
+This is LESS than Phase 2 (7,100) but FAR higher quality because:
+  - All samples are from valid dt range (no 0.005/0.01 noise)
+  - Recede is properly represented
+  - Probe failure region is explicitly covered
+  - Live rollout samples are on the actual deployment manifold
+
+
+=============================================
+IF SOMETHING GOES WRONG
+=============================================
+
+Problem: Generation is very slow (taking >10 min per batch of 100)
+Fix: This happens when the IC rejection rate is very high. Add --verbose_attempts
+     to see what is being rejected. For probe_fix mode at large dt, the IAS15
+     timeout can slow things. Try --timeout 30.
+
+Problem: merge_encounter_shards.py fails with "missing fields" error
+Fix: Check that all three generator modes output the same 12 fields. Run:
+     python -c "import numpy as np; d=np.load('encounter_shards/...npz'); print(d.files)"
+     on one shard of each mode.
+
+Problem: Training loss doesn't decrease after epoch 1000
+Fix: Try --lr 5e-4 or --lr 3e-4. The wider hidden=128 model sometimes needs
+     a slightly lower initial learning rate.
+
+Problem: Recede bias still > 0.05 after training
+Fix: Generate 3 more strong_recede batches for the problem dt (likely dt=0.04)
+     and retrain. The recede correction at dt=0.04 (c~0.79-0.83) is the hardest
+     target in the dataset.

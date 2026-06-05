@@ -1,0 +1,85 @@
+Encounter timing audit: dt=0.04 failure vs dt=0.08 improvement
+======================================================================================
+Method: revised Zone 2 direct Newtonian + sub-stepping; compare no-Zone-3-NN vs frozen v4 Zone 3 NN
+
+Main performance summary
+dt	noNN_time_avg	v4_time_avg	v4_minus_noNN	noNN_final	v4_final	noNN_min_t	v4_min_t	noNN_min_r	v4_min_r	noNN_pair	v4_pair
+0.04	1.086255e+00	2.219740e+00	+1.133485e+00	1.287105e+00	2.421958e+00	33.766753	33.726745	3.217533e-02	3.056519e-02	1-2	1-2
+0.08	9.890699e-01	9.679291e-01	-2.114080e-02	1.623559e+00	1.225807e+00	82.736547	82.736547	6.226249e-02	5.691049e-02	1-2	1-2
+
+--------------------------------------------------------------------------------------
+dt = 0.04
+--------------------------------------------------------------------------------------
+noNN: time_avg_rms=1.086255e+00, final_err=1.287105e+00
+v4  : time_avg_rms=2.219740e+00, final_err=2.421958e+00
+v4_minus_noNN_time_avg = +1.133485e+00
+
+IAS15 global min: t=33.766753 yr, r=1.332886e-02 AU, pair=1-2, sampled Zone2 count=10, sampled Zone3 count=43
+noNN  global min: t=33.766753 yr, r=3.217533e-02 AU, pair=1-2, sampled Zone2 count=6, sampled Zone3 count=56
+v4    global min: t=33.726745 yr, r=3.056519e-02 AU, pair=1-2, sampled Zone2 count=6, sampled Zone3 count=20
+
+Timing shifts: v4_min - noNN_min = -0.040008 yr; noNN_min - IAS15_min = +0.000000 yr; v4_min - IAS15_min = -0.040008 yr
+
+First sampled Zone 3 interval [start, end, count]:
+  IAS15: 33.506701 to 33.686737, count=10
+  noNN : 33.486697 to 33.706741, count=12
+  v4   : 33.486697 to 33.666733, count=10
+
+RMS errors around v4 global closest-encounter time:
+offset	noNN_err	v4_err	v4_minus_noNN
+plus_0yr	1.695036e-02	1.807308e-02	+1.122713e-03
+plus_0.2yr	2.840668e-02	3.470934e-02	+6.302658e-03
+plus_1yr	5.608666e-02	1.541623e-01	+9.807563e-02
+plus_5yr	1.041906e+00	2.092291e+00	+1.050385e+00
+
+RMS errors around noNN global closest-encounter time:
+offset	noNN_err	v4_err	v4_minus_noNN
+plus_0yr	1.054171e-02	1.037822e-02	-1.634900e-04
+plus_0.2yr	3.026150e-02	3.951771e-02	+9.256214e-03
+plus_1yr	5.785339e-02	1.625278e-01	+1.046744e-01
+plus_5yr	1.053459e+00	2.112549e+00	+1.059090e+00
+
+Performance counters:
+  v4 zone3_nn_frac=0.001199, gate_frac=0.000000, strong_frac=0.500000
+  noNN zone3_no_nn_frac=0.003662
+
+--------------------------------------------------------------------------------------
+dt = 0.08
+--------------------------------------------------------------------------------------
+noNN: time_avg_rms=9.890699e-01, final_err=1.623559e+00
+v4  : time_avg_rms=9.679291e-01, final_err=1.225807e+00
+v4_minus_noNN_time_avg = -2.114080e-02
+
+IAS15 global min: t=33.766753 yr, r=1.332886e-02 AU, pair=1-2, sampled Zone2 count=10, sampled Zone3 count=43
+noNN  global min: t=82.736547 yr, r=6.226249e-02 AU, pair=1-2, sampled Zone2 count=0, sampled Zone3 count=32
+v4    global min: t=82.736547 yr, r=5.691049e-02 AU, pair=1-2, sampled Zone2 count=0, sampled Zone3 count=28
+
+Timing shifts: v4_min - noNN_min = +0.000000 yr; noNN_min - IAS15_min = +48.969794 yr; v4_min - IAS15_min = +48.969794 yr
+
+First sampled Zone 3 interval [start, end, count]:
+  IAS15: 33.506701 to 33.686737, count=10
+  noNN : 82.496499 to 83.116623, count=32
+  v4   : 82.496499 to 83.036607, count=28
+
+RMS errors around v4 global closest-encounter time:
+offset	noNN_err	v4_err	v4_minus_noNN
+plus_0yr	1.460257e+00	1.461730e+00	+1.473412e-03
+plus_0.2yr	1.475812e+00	1.478275e+00	+2.463874e-03
+plus_1yr	1.396625e+00	1.431947e+00	+3.532258e-02
+plus_5yr	1.628605e+00	1.657957e+00	+2.935142e-02
+
+RMS errors around noNN global closest-encounter time:
+offset	noNN_err	v4_err	v4_minus_noNN
+plus_0yr	1.460257e+00	1.461730e+00	+1.473412e-03
+plus_0.2yr	1.475812e+00	1.478275e+00	+2.463874e-03
+plus_1yr	1.396625e+00	1.431947e+00	+3.532258e-02
+plus_5yr	1.628605e+00	1.657957e+00	+2.935142e-02
+
+Performance counters:
+  v4 zone3_nn_frac=0.001733, gate_frac=0.000000, strong_frac=0.461538
+  noNN zone3_no_nn_frac=0.002000
+
+Interpretation guide:
+- If v4 and noNN have similar closest-encounter timing but different post-encounter error, the NN changes the branch after the same encounter.
+- If v4 shifts closest-encounter timing, the NN changes the phase/geometry of the encounter itself.
+- Use the PNG plots to see whether the error gap appears suddenly near the encounter or grows later.

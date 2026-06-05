@@ -1,0 +1,603 @@
+================================================================================
+ENCOUNTER NN DATA GENERATION — SET 2
+Multi-dt expansion: dt=0.06, dt=0.08 (wider perturbation), dt=0.10
+================================================================================
+
+WORKING DIRECTORY: C:\Aarush\Physics\training\encounter_nn\
+SCALAR DATA (proposal): encounter_data_zone3_v3_augmented.npz (default, 7100 samples)
+SHARD OUTPUT DIR: encounter_surrogate_shards\
+
+OVERVIEW OF ACTIONS:
+  Action A : dt=0.08, 5 new v3 rollout-local batches with wider perturbation
+             (fixes ensemble seeds 4 and 9 catastrophic failure)
+  Action B : dt=0.06, 35 new batches (v1×20 + v2×5 + v3×10)
+             (first encounter at t≈33.6 yr for IC1 at dt=0.06)
+  Action C : dt=0.10, 35 new batches (v1×20 + v2×5 + v3×10)
+             (first encounter at t≈36.9 yr for IC1 at dt=0.10)
+
+TOTAL NEW BATCHES: 5 + 35 + 35 = 75 batches
+TOTAL NEW SAMPLES: ~7500 (at --n 100 per batch)
+
+FINAL DATASET DISTRIBUTION (after all actions):
+  dt=0.08 : 30 existing + 5 new = 35 batches ≈ 3870 samples
+  dt=0.06 :  0 existing + 35 new = 35 batches ≈ 3500 samples
+  dt=0.10 :  0 existing + 35 new = 35 batches ≈ 3500 samples
+
+BATCH NUMBER ALLOCATION (no collisions):
+  Existing dt=0.08:
+    v1_strong:  002,004,010-013,030-033
+    v1_mixed:   001,003,005-009,020-022
+    v2_event:   101-105
+    v3_rollout: 202-206
+  New dt=0.08 Action A:
+    v3_rollout: 207-211   (wider sigma)
+  New dt=0.06 Action B:
+    v1_strong:  034-043
+    v1_mixed:   044-053
+    v2_event:   106-110
+    v3_rollout: 212-221
+  New dt=0.10 Action C:
+    v1_strong:  054-063
+    v1_mixed:   064-073
+    v2_event:   111-115
+    v3_rollout: 222-231
+
+NOTE: Different dt values produce different filename tokens (dt0p06, dt0p08, dt0p1)
+      so files are guaranteed unique even if batch numbers were shared. Batch numbers
+      are kept non-overlapping anyway to avoid any seed ambiguity.
+
+================================================================================
+PREREQUISITE CHECK
+================================================================================
+
+Confirm these files exist in your working directory before starting:
+  generate_encounter_surrogate_data_v1.py
+  generate_encounter_surrogate_data_v2_event_targeted_fixed.py
+  generate_encounter_surrogate_data_v3_rollout_local.py
+  merge_encounter_surrogate_shards_v1.py  (updated pattern version)
+  inspect_encounter_surrogate_data_v1.py
+  train_encounter_surrogate_v2_velocitysafe_fixed2.py
+  encounter_data_zone3_v3_augmented.npz  (7100 original scalar data, already in working dir)
+  encounter_surrogate_shards\             (existing shard folder)
+
+================================================================================
+ACTION A: dt=0.08 — 5 NEW V3 ROLLOUT-LOCAL BATCHES (WIDER PERTURBATION)
+================================================================================
+
+PURPOSE: Fixes ensemble seeds 4 and 9 catastrophic failure by covering the wider
+range of encounter geometries that arise from IC1 Lyapunov evolution.
+CHANGE FROM EXISTING: pos-sigma 5e-4 → 5e-3 (10x wider), vel-sigma 2e-3 → 2e-2
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 207 --dt 0.08 --window-years 0.5 ^
+    --t-lo 82.20 --t-hi 82.90 --event-time 82.56 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 208 --dt 0.08 --window-years 0.5 ^
+    --t-lo 82.20 --t-hi 82.90 --event-time 82.56 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 209 --dt 0.08 --window-years 0.5 ^
+    --t-lo 82.20 --t-hi 82.90 --event-time 82.56 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 210 --dt 0.08 --window-years 0.5 ^
+    --t-lo 82.20 --t-hi 82.90 --event-time 82.56 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 211 --dt 0.08 --window-years 0.5 ^
+    --t-lo 82.20 --t-hi 82.90 --event-time 82.56 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+================================================================================
+ACTION B: dt=0.06 — 35 NEW BATCHES
+================================================================================
+
+IC1 first Zone 3 encounter at dt=0.06: t≈33.60 yr (from nn_log_dt0.06)
+Encounter entry: r≈0.141 AU, vr≈-1.00, vt≈1.19
+
+--- B1: v1 STRONG APPROACH (10 batches, batch 034-043) ---
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 34 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 35 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 36 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 37 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 38 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 39 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 40 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 41 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 42 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 43 --dt 0.06 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+--- B2: v1 MIXED (10 batches, batch 044-053) ---
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 44 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 45 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 46 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 47 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 48 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 49 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 50 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 51 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 52 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 53 --dt 0.06 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+--- B3: v2 EVENT STRONG APPROACH (5 batches, batch 106-110) ---
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 106 --dt 0.06 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 107 --dt 0.06 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 108 --dt 0.06 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 109 --dt 0.06 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 110 --dt 0.06 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+--- B4: v3 ROLLOUT LOCAL dt=0.06 (10 batches, batch 212-221) ---
+IC1 encounter at t≈33.60 yr (from nn_log_dt0.06_IC1.csv)
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 212 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 213 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 214 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 215 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 216 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 217 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 218 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 219 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 220 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 221 --dt 0.06 --window-years 0.5 ^
+    --t-lo 33.20 --t-hi 34.00 --event-time 33.60 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+================================================================================
+ACTION C: dt=0.10 — 35 NEW BATCHES
+================================================================================
+
+IC1 first Zone 3 encounter at dt=0.10: t≈36.90 yr (from nn_log_dt0.10_IC1.csv)
+Encounter entry: r≈0.141 AU, vr≈-0.99, vt≈1.18
+
+--- C1: v1 STRONG APPROACH (10 batches, batch 054-063) ---
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 54 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 55 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 56 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 57 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 58 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 59 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 60 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 61 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 62 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 63 --dt 0.10 --mode strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_strong_approach
+
+--- C2: v1 MIXED (10 batches, batch 064-073) ---
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 64 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 65 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 66 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 67 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 68 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 69 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 70 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 71 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 72 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+python -B generate_encounter_surrogate_data_v1.py ^
+    --n 100 --batch 73 --dt 0.10 --mode mixed ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v1_mixed
+
+--- C3: v2 EVENT STRONG APPROACH (5 batches, batch 111-115) ---
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 111 --dt 0.10 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 112 --dt 0.10 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 113 --dt 0.10 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 114 --dt 0.10 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+python -B generate_encounter_surrogate_data_v2_event_targeted_fixed.py ^
+    --n 100 --batch 115 --dt 0.10 --mode event_strong_approach ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v2_event_strong_approach
+
+--- C4: v3 ROLLOUT LOCAL dt=0.10 (10 batches, batch 222-231) ---
+IC1 encounter at t≈36.90 yr (from nn_log_dt0.1_IC1.csv)
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 222 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 223 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 224 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 225 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 226 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 227 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 228 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 229 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 230 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+python -B generate_encounter_surrogate_data_v3_rollout_local.py ^
+    --n 100 --batch 231 --dt 0.10 --window-years 0.5 ^
+    --t-lo 36.50 --t-hi 37.30 --event-time 36.90 ^
+    --pos-sigma 5e-3 --vel-sigma 2e-2 --radial-sigma 5e-3 --tangential-sigma 2e-2 ^
+    --out-dir encounter_surrogate_shards ^
+    --prefix encounter_surrogate_v3_rollout_local
+
+================================================================================
+STEP 4: MERGE ALL SHARDS
+================================================================================
+
+Run this ONCE after all batches above are complete.
+The updated merger pattern catches v1, v2, and v3 shards.
+
+python -B merge_encounter_surrogate_shards_v1.py ^
+    --shard-dir encounter_surrogate_shards ^
+    --pattern "encounter_surrogate_v*_*_pair12_dt*_w*_batch*.npz" ^
+    --out encounter_surrogate_merged_set2.npz ^
+    --overwrite
+
+Expected output:
+  dt=0.06 : ~3500 samples (35 batches)
+  dt=0.08 : ~3870 samples (35 batches: 30 original + 5 new Action A)
+  dt=0.10 : ~3500 samples (35 batches)
+  Total   : ~10870 samples
+
+================================================================================
+STEP 5: INSPECT MERGED DATA
+================================================================================
+
+python -B inspect_encounter_surrogate_data_v1.py ^
+    --file encounter_surrogate_merged_set2.npz ^
+    --out-dir encounter_surrogate_inspect_set2
+
+CHECK the inspector output for:
+  1. SUMMARY BY dt table — confirm all 3 dts present with correct sample counts
+  2. RED FLAGS — must show "None" for all checks
+  3. strong approach fraction >= 20% per dt
+  4. receding fraction >= 15% per dt
+  5. noNN energy p95 < 5e-2
+  6. No large residual outlier > 5 AU
+
+================================================================================
+STEP 6: RETRAIN
+================================================================================
+
+python -B train_encounter_surrogate_v2_velocitysafe_fixed2.py ^
+    --data encounter_surrogate_merged_set2.npz ^
+    --output encounter_surrogate_v3_set2.pt ^
+    --epochs 3000 ^
+    --hidden 128 ^
+    --batch-size 256 ^
+    --lr 1e-3
+
+NOTE: No trainer changes needed. The trainer handles multi-dt data automatically.
+      The dt value is embedded in X_rel18 so the model learns dt-conditioning.
+      The stratified split uses category_id (strong/weak/recede) which is
+      defined per-sample and does not need dt labels.
+
+After training, update the evaluator to use:
+  --encounter_model encounter_surrogate_v3_set2.pt
+
+================================================================================
+SUMMARY TABLE OF ALL NEW BATCH COMMANDS
+================================================================================
+
+Action  | Generator | Mode               | dt   | Batches  | Count
+--------|-----------|------------------  |------|----------|------
+A       | v3        | rollout_local      | 0.08 | 207-211  | 5
+B1      | v1        | strong_approach    | 0.06 | 034-043  | 10
+B2      | v1        | mixed              | 0.06 | 044-053  | 10
+B3      | v2        | event_strong_appr  | 0.06 | 106-110  | 5
+B4      | v3        | rollout_local      | 0.06 | 212-221  | 10
+C1      | v1        | strong_approach    | 0.10 | 054-063  | 10
+C2      | v1        | mixed              | 0.10 | 064-073  | 10
+C3      | v2        | event_strong_appr  | 0.10 | 111-115  | 5
+C4      | v3        | rollout_local      | 0.10 | 222-231  | 10
+--------|-----------|------------------  |------|----------|------
+TOTAL   |           |                    |      | 75 batches| ~7500
+
+================================================================================
+END OF INSTRUCTIONS
+================================================================================

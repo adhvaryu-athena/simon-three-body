@@ -1,0 +1,33 @@
+Real Sun-Earth-Moon validation using JPL Horizons initial conditions
+========================================================================
+
+T                       = 1.00 yr
+dt                      = 0.0010 yr
+G_REAL                  = 39.47841760
+ias15 runtime            = 0.049835 s
+
+Adaptive ON:
+SIMON runtime            = 1.738392 s
+SIMON close-pair fraction= 0.333333
+SIMON total substeps     = 16000
+Time-averaged RMS        = 3.578000e-03 AU
+Final RMS                = 2.930907e-03 AU
+Max RMS                  = 5.294562e-03 AU
+
+Adaptive OFF:
+SIMON runtime            = 0.147061 s
+SIMON close-pair fraction= 0.333333
+SIMON total substeps     = 1000
+Time-averaged RMS        = 3.504243e-03 AU
+Final RMS                = 2.888652e-03 AU
+Max RMS                  = 5.294861e-03 AU
+
+Distance ranges over simulation:
+ias15 Sun-Earth   : 0.983302 to 1.016583 AU
+SIMON Sun-Earth   : 0.983302 to 1.016620 AU
+ias15 Earth-Moon  : 0.002384 to 0.002716 AU
+SIMON Earth-Moon  : 0.002380 to 0.002638 AU
+
+Boundedness check:
+ias15 max distance from COM = 1.019192 AU
+SIMON max distance from COM = 1.018803 AU

@@ -1,0 +1,59 @@
+Single-event replay diagnostic summary
+========================================================================================
+model              : encounter_surrogate_v3_rollout_local_velocitysafe.pt
+ic                 : IC1
+event_time         : 82.560000 yr
+dt/window/T        : 0.080000 / 0.500000 / 100.000000 yr
+device             : cuda
+COM projection     : True
+
+Event features
+----------------------------------------------------------------------------------------
+r_pair             : 0.13896513 AU
+v_rad_norm         : -1.11482716
+v_tan_norm         : 0.84931896
+min_r at event     : 0.13896513 AU
+window min_r IAS15 : 0.05564652 AU
+window min_r noNN  : 0.06226252 AU
+
+Surrogate residual and safety
+----------------------------------------------------------------------------------------
+true residual pos RMS : 6.27095485e-03
+pred residual pos RMS : 7.23296946e-03
+residual pos error    : 1.25545274e-03
+true residual vel RMS : 2.85510762e-02
+pred residual vel RMS : 2.74930127e-02
+residual vel error    : 1.40240205e-03
+relE noNN exit        : 2.62640906e-04
+relE corrected exit   : 6.56597606e-04
+accepted by safety    : True (used)
+
+Local 0.5-year window exit vs local IAS15 from exact event state
+----------------------------------------------------------------------------------------
+noNN pos exit error       : 6.27095485e-03
+surrogate pos exit error  : 1.39569146e-03
+local pos gain            : +77.74%
+noNN vel exit error       : 2.85510762e-02
+surrogate vel exit error  : 1.39594437e-03
+local vel gain            : +95.11%
+
+Post-window branch replay to T
+----------------------------------------------------------------------------------------
+Against LOCAL IAS15 branch from exact event state:
+  noNN pos timeavg        : 8.34830377e-01
+  surrogate pos timeavg   : 3.25336823e-02
+  noNN vel timeavg        : 6.97440993e-01
+  surrogate vel timeavg   : 3.25015405e-02
+Against GLOBAL IAS15 branch from original IC:
+  noNN pos timeavg        : 1.53703791e+00
+  surrogate pos timeavg   : 1.57419017e+00
+  noNN vel timeavg        : 1.22111627e+00
+  surrogate vel timeavg   : 1.07168852e+00
+
+Decision
+----------------------------------------------------------------------------------------
+local pos improved?       : True
+local vel improved?       : True
+post local pos improved?  : True
+post global pos improved? : False
+VERDICT: CHAOTIC BRANCH ISSUE: surrogate improves local exit but worsens later global rollout.

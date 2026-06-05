@@ -1,0 +1,22 @@
+ZONE 3 TRAJECTORY DATASET SUMMARY — BATCH v3
+========================================================================
+dt      : 0.050000
+batch   : 4
+seed    : 450042
+target  : 100
+accepted: 100
+tried   : 158
+elapsed : 19.0 sec
+output  : encounter_shards\encounter_data_zone3_v3_dt0p05_batch004.npz
+size_kb : 6.4
+zone    : r 0.052-0.148 AU
+fields  : r_AU r_soft log_mi log_mj log_dt v_rad_norm v_tan_norm c_opt log_c_opt c_ana log_c_ana improvement
+
+dt=0.050000: n=100 | tried=158 | pass=63.3% | c_opt_med=0.92727 | c_ana_med=1.000013 | impr_med=78.78% | identity=9 | v_rad_norm_med=+0.05811 | v_tan_norm_med=0.58470 | 19s
+Rejected: {'ic': 38, 'ias15': 1, 'boundary': 19, 'eject': 0, 'no_improve': 0, 'bad_c': 0}
+Near-identity stored samples: 9
+
+Velocity feature definitions:
+  v_rad_norm = dot(v_rel, r_hat) / sqrt(G*(m0+m1)/r)
+  v_tan_norm = ||v_rel - v_rad*r_hat|| / sqrt(G*(m0+m1)/r)
+  v_rad_norm < 0 means approaching; > 0 means receding.

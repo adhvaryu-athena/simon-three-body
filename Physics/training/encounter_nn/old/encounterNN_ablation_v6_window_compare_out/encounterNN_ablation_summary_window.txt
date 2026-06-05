@@ -1,0 +1,89 @@
+SIMON encounterNN ablation v6 fast-gate no-scalar NumPy with encounter-window comparisons
+========================================================================================
+Purpose: compare IAS15, SIMON-noNN, and SIMON-encounterNN on IC1.
+Only the encounter-level residual NN is evaluated here; scalarNN is not loaded or run.
+EncounterNN deployment formula: corrected_exit = noNN_exit + predicted_residual.
+EncounterNN inference uses NumPy weights only; no torch/CUDA call occurs inside timed rollout. Full X_rel18 features are built only when the cheap pair-1/2 gate passes.
+This v6 report adds local encounter-window metrics so the NN effect during the encounter is not hidden by long-horizon chaotic branch divergence.
+
+encounter_model: encounter_surrogate_v3_rollout_local_velocitysafe.pt
+dt: 0.08000000
+T_years: 100.00000000
+n_samples: 5000
+window_years_training_residual: 0.50000000
+physical_window_steps_half_width: 25
+physical_window_half_width_years: 2.00000000
+post_window_steps: 25
+post_window_years: 2.00000000
+vr_thresh: -0.40000000
+energy_gate: 0.20000000
+encounter_inference: numpy_weights_no_torch_in_hot_loop
+
+Runtime
+----------------------------------------------------------------------------------------
+IAS15_total_time_sec: 0.072707400
+SIMON_noNN_total_time_sec: 0.033711200
+SIMON_noNN_speedup_vs_IAS15: 2.156773
+SIMON_encounterNN_total_time_sec: 0.032628000
+SIMON_encounterNN_speedup_vs_IAS15: 2.228374
+
+Accuracy vs IAS15
+----------------------------------------------------------------------------------------
+method	pos_final	pos_timeavg	pos_med	pos_p95	vel_final	vel_timeavg	vel_med	vel_p95	total_time_sec	speedup_vs_ias15
+SIMON-noNN	1.623558607e+00	9.890699386e-01	6.703518724e-01	1.694171640e+00	1.182585762e+00	8.650211065e-01	4.549183358e-01	1.539884282e+00	0.033711200	2.156773
+SIMON-encounterNN	1.430212814e+00	1.008840204e+00	6.703518724e-01	1.744244283e+00	6.290512188e-01	8.365985754e-01	4.549183358e-01	1.539884282e+00	0.032628000	2.228374
+
+EncounterNN event stats
+----------------------------------------------------------------------------------------
+gate_candidates: 3
+encounter_attempts: 1
+encounter_used: 1
+encounter_fallback: 0
+first_used_t: 82.5599999999986
+last_used_t: 82.5599999999986
+pred_pos_norm_mean: 0.007232966384503031
+pred_vel_norm_mean: 0.027493032770088768
+min_r: 0.0622624895281709
+max_radius: 1.194129313717568
+event_csv: encounterNN_ablation_v6_window_compare_out\encounter_events.csv
+
+Delta vs SIMON-noNN
+----------------------------------------------------------------------------------------
+SIMON-encounterNN_pos_final_gain_pct: +11.908766
+SIMON-encounterNN_pos_timeavg_gain_pct: -1.998874
+SIMON-encounterNN_vel_final_gain_pct: +46.807137
+SIMON-encounterNN_vel_timeavg_gain_pct: +3.285762
+
+Encounter-window comparison methodology
+----------------------------------------------------------------------------------------
+Why this exists: the full 0-100 yr metric can be dominated by chaotic branch divergence after the encounter. These local windows ask whether the EncounterNN helped during the encounter itself.
+Definitions:
+  event_training_window_entry_to_exit: from gated encounter entry t_start to corrected exit t_exit. This is the model's own 0.5 yr residual window.
+  event_exit_nearest_sample: nearest stored sample to t_exit; useful as a sampled proxy for the exact exit-state correction.
+  event_physical_window_entry_centered: [t_start - W*dt, t_start + W*dt], with W = physical_window_steps. This follows the physically motivated equivalent-step window.
+  event_post_correction_to_physical_end: [t_exit, t_start + W*dt]. This removes the pre-correction part and asks what happens after the correction until the end of the physical encounter window.
+  event_post_correction_fixed_steps: [t_exit, t_exit + post_window_steps*dt]. This is a fixed post-correction persistence test.
+Positive gain_pct means EncounterNN is closer to IAS15 than SIMON-noNN. Negative gain_pct means EncounterNN is worse in that window.
+window_metrics_csv: encounterNN_ablation_v6_window_compare_out\encounter_window_metrics.csv
+window_timeseries_csv: encounterNN_ablation_v6_window_compare_out\encounter_window_timeseries.csv
+window_plot_png: encounterNN_ablation_v6_window_compare_out\encounter_window_errors.png
+
+Key local-window rows
+----------------------------------------------------------------------------------------
+scope	event_index	t_start	t_end	n_samples	pos_noNN_timeavg	pos_encounterNN_timeavg	pos_gain_pct	vel_noNN_timeavg	vel_encounterNN_timeavg	vel_gain_pct
+ALL_training_window_entry_to_exit_union	ALL_USED	82.560000000	83.060000000	25	1.470472194e+00	1.471633767e+00	-0.078993	1.111454281e+00	1.112515615e+00	-0.095491
+ALL_physical_window_entry_centered_union	ALL_USED	80.560000000	84.560000000	200	1.414710693e+00	1.413320453e+00	+0.098270	1.254714403e+00	1.255984529e+00	-0.101228
+ALL_post_correction_to_physical_end_union	ALL_USED	83.060000000	84.560000000	75	1.384874468e+00	1.380671487e+00	+0.303492	1.198284193e+00	1.201499878e+00	-0.268357
+ALL_post_correction_fixed_steps_union	ALL_USED	83.060000000	85.060000000	100	1.363563165e+00	1.360709620e+00	+0.209271	1.217974971e+00	1.220807056e+00	-0.232524
+
+How to interpret for paper story
+----------------------------------------------------------------------------------------
+1. If exit/proximal post-correction gains are positive, the EncounterNN learned a meaningful local residual correction.
+2. If the physical-window gain is weaker than the exit gain, the correction helps locally but is already being diluted by pre-correction samples and early phase drift.
+3. If full 100-year gain disagrees with local gain, report this as chaotic branch sensitivity rather than as direct failure of the local NN correction.
+4. The strongest evidence for the NN mechanism is the combination of exit/proximal-window improvement and the event log showing exactly when the model fired.
+
+Notes
+- This evaluator is intentionally focused on the encounterNN method only.
+- Step-level Zone-3 NN comparisons should be taken from the established v4 evaluator, not rerun here.
+- EncounterNN is currently validated for dt=0.08, IC1, active pair 1-2, window_years=0.5.

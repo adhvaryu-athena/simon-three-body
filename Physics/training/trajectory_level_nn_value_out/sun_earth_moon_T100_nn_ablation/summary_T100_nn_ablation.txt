@@ -1,0 +1,63 @@
+Real Sun-Earth-Moon T=100 trajectory-level NN ablation
+==============================================================================
+
+Purpose:
+  Compare ias15, SIMON with NN correction, and a No-NN baseline on real
+  Sun-Earth-Moon JPL Horizons initial conditions. Both SIMON variants keep
+  adaptive sub-stepping ON and analytic force direction; the only intended
+  difference is whether c is predicted by the NN or fixed at c=1.
+
+Epoch                   = 2026-01-01
+T                       = 100.00 yr
+n_samples               = 5000
+dt_values               = 0.0080, 0.0120, 0.0160 yr
+G_REAL                  = 39.47841760
+eps                     = 3.00000000e-04 AU
+NN threshold            = 1.50000000e-01 AU
+adaptive threshold      = 5.00000000e-02 AU
+r_soft_min              = 5.00000000e-04 AU
+ejection_threshold      = 10.00 AU from COM
+ias15 runtime            = 0.194726 s
+
+Validation against previous Appendix-A adaptive-ON run:
+  Compared against previous Appendix-A CSV: real_system_validation\sun_earth_moon_T100_selected_adaptive_frontier_energy_final\T100_adaptive_frontier_results.csv
+  Overall validation pass: True
+  Validation checks: 39 total, 0 failed.
+
+Initial-condition sanity checks after COM centering:
+Sun-Earth distance      = 0.983327 AU
+Earth-Moon distance     = 0.002413 AU
+Masses                  = [1.00000000e+00 3.00348961e-06 3.69430335e-08]
+
+ias15 reference ranges over simulation:
+Sun-Earth distance      = 0.983302 to 1.016624 AU
+Earth-Moon distance     = 0.002384 to 0.002718 AU
+Max distance from COM   = 1.019213 AU
+Max energy drift        = 7.764168e-06%
+Final energy drift      = -4.828871e-06%
+
+Main table:
+mode                   dt   runtime(s)     speed     close        NN  fallback    c_mean     RMS0T(AU)      Emax(%)    final(AU)      max(AU)     EM_min     EM_max  bounded    lunar outcome           
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SIMON_with_NN      0.0080    11.203717     0.017    0.3333    0.3333    0.0000    1.0369  2.305644e-02 1.713605e-05 2.582470e-03 4.268096e-02   0.002376   0.002644     True     True Valid             
+SIMON_with_NN      0.0120     7.621085     0.026    0.3333    0.3333    0.0000    1.0368  3.397165e-02 3.779499e-05 3.969836e-02 6.335372e-02   0.002376   0.002647     True     True Valid             
+SIMON_with_NN      0.0160     5.728999     0.034    0.3333    0.3333    0.0000    1.0367  4.450821e-02 6.641540e-05 5.558885e-03 8.462460e-02   0.002378   0.002652     True     True Valid             
+
+No_NN_baseline     0.0080     5.416593     0.036    0.3333    0.0000    0.0000       nan  2.306269e-02 1.573250e-05 2.228686e-03 4.316777e-02   0.002376   0.002842     True     True Valid             
+No_NN_baseline     0.0120     3.648476     0.053    0.3333    0.0000    0.0000       nan  3.397538e-02 3.653130e-05 3.772639e-02 6.348957e-02   0.002375   0.002845     True     True Valid             
+No_NN_baseline     0.0160     2.747330     0.071    0.3333    0.0000    0.0000       nan  4.451303e-02 6.565081e-05 5.464417e-03 8.428561e-02   0.002375   0.002850     True     True Valid             
+
+Direct NN-vs-NoNN comparison by timestep:
+      dt     RMS ratio NoNN/SIMON    RMS reduction    Final ratio    Final reduction
+--------------------------------------------------------------------------------------------
+  0.0080                 1.000271           0.027%       0.863005           -15.874%
+  0.0120                 1.000110           0.011%       0.950326            -5.227%
+  0.0160                 1.000108           0.011%       0.983006            -1.729%
+
+Interpretation guide:
+- RMS0T is sqrt(mean_t delta(t)^2), where delta(t) is RMS position error vs ias15.
+- close is the fraction of pair evaluations with r < 0.15 AU.
+- NN is the fraction of pair evaluations where the NN correction was accepted and applied.
+- fallback is the fraction of pair evaluations using exact Newtonian fallback inside the close region.
+- Both SIMON and No-NN retain adaptive stepping and analytic force direction.
+- If SIMON is not better than No-NN here, the real Sun-Earth-Moon system should remain a real-data validation rather than an NN-value claim.

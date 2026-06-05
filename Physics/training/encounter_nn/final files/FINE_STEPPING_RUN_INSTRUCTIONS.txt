@@ -1,0 +1,157 @@
+================================================================================
+FINE-STEPPING EVALUATOR — RUN INSTRUCTIONS
+evaluation_encounter_fine_stepping.py
+================================================================================
+
+WORKING DIRECTORY: C:\Aarush\Physics\training\encounter_nn\
+STORE THIS FILE:   C:\Aarush\Physics\training\encounter_nn\evaluation_encounter_fine_stepping.py
+OUTPUT FOLDER:     C:\Aarush\Physics\training\encounter_nn\comp_encounter_stepping\
+
+WHAT THIS SCRIPT DOES:
+  For each dt (0.06, 0.08, 0.10) compares five methods:
+    1. IAS15             — reference integrator
+    2. SIMON-noNN        — coarse leapfrog, no correction
+    3. SIMON-encounterNN — Fix 1 base model (1 correction max)
+    4. finer-Zone3-k2    — noNN + 2 sub-steps in Zone 3 when gate fires
+    5. finer-Zone3-k4    — noNN + 4 sub-steps in Zone 3 when gate fires
+  Gate (same for both): pair 1-2 in Zone 3 AND vr_norm < -0.40.
+
+  Three levels:
+    Level 1 (Global)   — T=100yr single-seed rollout
+    Level 2 (Isolated) — all methods from same event-entry state
+    Level 3 (Ensemble) — 10 IC-perturbed seeds
+
+IMPORTANT: Script re-runs noNN and encounterNN and validates them against your
+  base A and B files before any fine-stepping comparison. If validation fails
+  (diff > 0.5%) the script stops. Both validation passes confirm a fair comparison.
+
+================================================================================
+RUN COMMANDS
+================================================================================
+
+--- dt=0.08 (primary operating point) ---
+
+python -B evaluation_encounter_fine_stepping.py ^
+  --dt 0.08 ^
+  --T 100 ^
+  --n_samples 5000 ^
+  --window_years 0.5 ^
+  --physical_window_steps 25 ^
+  --post_window_steps 25 ^
+  --local_n_samples 1001 ^
+  --encounter_model encounter_surrogate_v3_set2.pt ^
+  --base_a_file "final results\encounterNN_ablation_summary_1A.txt" ^
+  --base_b_file "final results\encounterNN_ablation_summary_1B.txt" ^
+  --out_dir comp_encounter_stepping ^
+  --k_list 2 4 ^
+  --n_seeds 10 ^
+  --perturb_scale 1e-8 ^
+  --skip_ensemble
+
+
+--- dt=0.06 ---
+
+python -B evaluation_encounter_fine_stepping.py ^
+  --dt 0.06 ^
+  --T 100 ^
+  --n_samples 5000 ^
+  --window_years 0.5 ^
+  --physical_window_steps 34 ^
+  --post_window_steps 34 ^
+  --local_n_samples 1001 ^
+  --encounter_model encounter_surrogate_v3_set2.pt ^
+  --base_a_file "final results\encounterNN_ablation_summary_2A.txt" ^
+  --base_b_file "final results\encounterNN_ablation_summary_2B.txt" ^
+  --out_dir comp_encounter_stepping ^
+  --k_list 2 4 ^
+  --n_seeds 10 ^
+  --perturb_scale 1e-8 ^
+  --skip_ensemble
+
+--- dt=0.10 ---
+
+python -B evaluation_encounter_fine_stepping.py ^
+  --dt 0.10 ^
+  --T 100 ^
+  --n_samples 5000 ^
+  --window_years 0.5 ^
+  --physical_window_steps 20 ^
+  --post_window_steps 20 ^
+  --local_n_samples 1001 ^
+  --encounter_model encounter_surrogate_v3_set2.pt ^
+  --base_a_file "final results\encounterNN_ablation_summary_3A.txt" ^
+  --base_b_file "final results\encounterNN_ablation_summary_3B.txt" ^
+  --out_dir comp_encounter_stepping ^
+  --k_list 2 4 ^
+  --n_seeds 10 ^
+  --perturb_scale 1e-8 ^
+  --skip_ensemble
+
+OPTIONAL — quick test (skip ensemble, faster):
+  Add flag: --skip_ensemble
+  This runs Level 1 and Level 2 only. Use for a quick check before the full run.
+
+================================================================================
+VALIDATION MESSAGES TO LOOK FOR ON SCREEN
+================================================================================
+
+You will see lines like:
+  [VALIDATION] noNN  pos_final       fresh=1.623559e+00  base=1.623559e+00  diff=0.00%  PASS
+  [VALIDATION] noNN  pos_timeavg     fresh=9.890699e-01  base=9.890699e-01  diff=0.00%  PASS
+  [VALIDATION] encNN pos_final       fresh=1.430946e+00  base=1.430946e+00  diff=0.00%  PASS
+  [VALIDATION] encNN pos_final_gain% fresh=+11.863581    base=+11.863581    diff=0.00%  PASS
+  [VALIDATION] ALL CHECKS PASSED
+
+If any check shows FAIL the script stops. This means the comparison would not be
+fair. In that case, check that you are pointing to the correct base A/B files for
+the dt you are running.
+
+================================================================================
+FILES TO UPLOAD TO CLAUDE AFTER RUNNING
+================================================================================
+
+After all three dt runs complete, upload these 12 files from:
+  C:\Aarush\Physics\training\encounter_nn\comp_encounter_stepping\
+
+  comparison_global_dt0.06.txt
+  comparison_isolated_dt0.06.txt
+  comparison_ensemble_dt0.06.txt
+  summary_winner_dt0.06.txt
+
+  comparison_global_dt0.08.txt
+  comparison_isolated_dt0.08.txt
+  comparison_ensemble_dt0.08.txt
+  summary_winner_dt0.08.txt
+
+  comparison_global_dt0.1.txt
+  comparison_isolated_dt0.1.txt
+  comparison_ensemble_dt0.1.txt
+  summary_winner_dt0.1.txt
+
+Also upload the three validation files:
+  validation_dt0.06.txt
+  validation_dt0.08.txt
+  validation_dt0.1.txt
+
+The PNG files (speed_accuracy_dt*.png) are optional — upload if you want them
+included in the paper figures.
+
+================================================================================
+NOTE ON BASE FILE NAMES
+================================================================================
+
+The script expects your Fix 1 final results. Check that your 'final results'
+folder contains files with EXACTLY these names:
+  encounterNN_ablation_summary_1A.txt  (dt=0.08 v5 output)
+  encounterNN_ablation_summary_1B.txt  (dt=0.08 v7 output)
+  encounterNN_ablation_summary_2A.txt  (dt=0.06 v5 output)
+  encounterNN_ablation_summary_2B.txt  (dt=0.06 v7 output)
+  encounterNN_ablation_summary_3A.txt  (dt=0.10 v5 output)
+  encounterNN_ablation_summary_3B.txt  (dt=0.10 v7 output — Fix 1 run)
+
+For dt=0.10, use the Fix 1 result (encounterNN_ablation_summary_3B with
+encounter_used=1, not the original with encounter_used=2).
+
+================================================================================
+END
+================================================================================

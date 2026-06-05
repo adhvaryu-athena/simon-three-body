@@ -1,0 +1,73 @@
+T_years: 100.0
+n_samples: 5000
+method: Revised Zone 2/Zone 3 frozen-c
+deployment_note: Zone 3 c is computed once at the start of each macro/sub-step and reused for both leapfrog acceleration calls.
+zone1: r < 4e-4 AU -> direct Newtonian hard fallback
+zone2: 4e-4 AU <= r < 0.05 AU -> direct Newtonian + adaptive sub-steps, no NN
+zone3: 0.05 AU <= r < 0.15 AU -> bounded v4 trajectory NN frozen per macro/sub-step
+zone4: r >= 0.15 AU -> direct Newtonian
+
+Model: pair_correction_nn_v4_bounded.pt
+
+Baseline (REBOUND IAS15):
+  total_time_sec: 0.072169
+
+Representative v4 run (dt_rep=0.04):
+  final_err: 2.421958e+00
+  time_avg_rms: 2.219740e+00
+  steps: 2500
+  total_time_sec: 0.046914
+  time_per_step_sec: 1.876572e-05
+  divergence_slope_1_per_yr: 1.873748e-01
+  divergence_fit_window_years: (10.0, 50.0)
+  speedup_vs_ias15: 1.54x
+  zone2_frac: 0.000799
+  zone3_nn_frac: 0.001199
+  zone3_gate_fallback_frac: 0.000000
+  strong_approach_zone3_frac: 0.500000
+  c_pred_min/mean/max: 0.780099 / 1.000117 / 1.263162
+  frozen_steps_with_zone3: 10
+
+Representative revised no-NN Zone 3 baseline (dt_rep=0.04):
+  final_err: 1.287105e+00
+  time_avg_rms: 1.086255e+00
+  v4_time_avg_rms_improvement_vs_revised_no_nn: -104.35%
+
+Frontier sweep (v4 Zone 3 frozen-c NN):
+dt	final_err	time_avg_rms	throughput(samp/s)	time_per_step(s)	total_time(s)	steps	zone2_frac	zone3_nn_frac	zone3_gate_frac	strong_app_zone3_frac	c_min	c_mean	c_max	speedup
+0.005	1.848354e+00	1.023727e+00	14185.693	1.762339e-05	0.352468	20000	0.000965	0.001348	0.000000	0.487654	0.950465	0.997224	1.063064	0.20x
+0.01	5.715949e+00	3.773285e+00	27333.920	1.829229e-05	0.182923	10000	0.000965	0.002445	0.000000	0.346939	0.920790	1.000663	1.131189	0.39x
+0.02	1.374036e+00	1.109435e+00	51273.374	1.950330e-05	0.097517	5000	0.001993	0.003920	0.000000	0.516949	0.865124	1.005824	1.174558	0.74x
+0.04	2.421958e+00	2.219740e+00	103574.351	1.930980e-05	0.048275	2500	0.000799	0.001199	0.000000	0.500000	0.780099	1.000117	1.263162	1.49x
+0.08	1.225807e+00	9.679291e-01	196087.659	2.039904e-05	0.025499	1250	0.000000	0.001733	0.000000	0.461538	0.739999	1.002665	1.246506	2.83x
+0.1	1.836760e+00	1.043566e+00	227972.187	2.193250e-05	0.021932	1000	0.000333	0.004496	0.000000	0.481481	0.651208	1.017797	1.348552	3.29x
+
+Frontier sweep (no-NN Zone 3 baseline, c=1 in Zone 3):
+dt	final_err	time_avg_rms	throughput(samp/s)	time_per_step(s)	total_time(s)	speedup
+0.005	1.543911e+00	7.526556e-01	14348.787	1.742308e-05	0.348462	0.21x
+0.01	1.208953e+00	7.646561e-01	28409.656	1.759965e-05	0.175996	0.41x
+0.02	1.570798e+00	1.133394e+00	55621.622	1.797862e-05	0.089893	0.80x
+0.04	1.287105e+00	1.086255e+00	105507.046	1.895608e-05	0.047390	1.52x
+0.08	1.623559e+00	9.890699e-01	201675.520	1.983384e-05	0.024792	2.91x
+0.1	1.427401e+00	1.081235e+00	247136.919	2.023170e-05	0.020232	3.57x
+
+NN vs no-NN comparison at each dt (time_avg_rms only; negative delta means NN helped):
+dt	NN_time_avg_rms	no_NN_time_avg_rms	delta_pct	verdict
+0.005	1.023727e+00	7.526556e-01	+36.02%	NN_hurts
+0.01	3.773285e+00	7.646561e-01	+393.46%	NN_hurts
+0.02	1.109435e+00	1.133394e+00	-2.11%	NN_helps
+0.04	2.219740e+00	1.086255e+00	+104.35%	NN_hurts
+0.08	9.679291e-01	9.890699e-01	-2.14%	NN_helps
+0.1	1.043566e+00	1.081235e+00	-3.48%	NN_helps
+
+NN-vs-no-NN summary across 6 dt values: NN_helps=3, NN_hurts=3, tie=0 (threshold: |delta|>0.5%)
+
+Notes:
+- final_err is RMS(model - IAS15) at T=100 years.
+- time_avg_rms is sqrt(mean_t RMS(model - IAS15)^2) over 0-T.
+- zone2_frac is the pair-evaluation fraction in 4e-4 <= r < 0.05 AU; force is direct Newtonian.
+- zone3_nn_frac is the pair-evaluation fraction in 0.05 <= r < 0.15 AU where v4 is eligible.
+- zone3_gate_frac is the fraction of Zone 3 NN calls rejected by hard safety gate.
+- no-NN baseline uses the same Zone 2/3/4 zone gating but sets c=1 in Zone 3
+  (Zone 3 pairs get softened force without NN correction). Zone 2 remains direct
+  Newtonian + sub-stepping in both NN and no-NN paths.

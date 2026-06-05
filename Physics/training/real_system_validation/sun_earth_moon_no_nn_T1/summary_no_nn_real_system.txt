@@ -1,0 +1,53 @@
+Real Sun-Earth-Moon Full SIMON vs No-NN ablation
+======================================================================================
+
+Epoch                   = 2026-01-01
+T                       = 1.00 yr
+n_samples               = 1000
+dt_values               = 0.0010, 0.0020, 0.0040, 0.0080, 0.0100, 0.0120, 0.0140, 0.0160 yr
+G_REAL                  = 39.47841760
+ias15 runtime            = 0.044145 s
+
+Experiment definition:
+- Full SIMON: adaptive ON + analytic direction + NN scalar correction.
+- No-NN baseline: adaptive ON + analytic direction + softened close-pair force with c=1.
+- Both modes use identical initial conditions, dt values, adaptive sub-stepping, and safety fallback.
+
+Initial-condition sanity checks after COM centering:
+Sun-Earth distance      = 0.983327 AU
+Earth-Moon distance     = 0.002413 AU
+Masses                  = [1.00000000e+00 3.00348961e-06 3.69430335e-08]
+
+ias15 reference ranges over simulation:
+Sun-Earth distance      = 0.983302 to 1.016583 AU
+Earth-Moon distance     = 0.002384 to 0.002716 AU
+Max distance from COM   = 1.019192 AU
+Max energy drift        = 7.740911e-06%
+Final energy drift      = -5.138214e-06%
+
+Main table:
+mode                 dt   runtime(s)     speed   substeps   NN_frac     RMS0T(AU)      Emax(%)    final(AU)      max(AU)     EM_min     EM_max  bounded
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+full_SIMON       0.0010     1.425786     0.031      16000  0.333333  3.578000e-03 9.683637e-06 2.930907e-03 5.294562e-03   0.002380   0.002638     True
+full_SIMON       0.0020     0.715651     0.062       8000  0.333333  6.268817e-03 9.314303e-06 2.930705e-03 1.059779e-02   0.002380   0.002638     True
+full_SIMON       0.0040     0.366752     0.120       4000  0.333333  1.203128e-02 9.061179e-06 2.929827e-03 2.121113e-02   0.002381   0.002639     True
+full_SIMON       0.0080     0.188881     0.234       2000  0.333333  2.377682e-02 1.527684e-05 2.925194e-03 4.233432e-02   0.002382   0.002640     True
+full_SIMON       0.0100     0.139444     0.317       1600  0.333333  2.967086e-02 2.457484e-05 2.920540e-03 5.278607e-02   0.002383   0.002642     True
+full_SIMON       0.0120     0.129853     0.340       1344  0.333333  3.563970e-02 3.569494e-05 3.982884e-02 6.315237e-02   0.002382   0.002643     True
+full_SIMON       0.0140     0.107604     0.410       1152  0.333333  4.156932e-02 4.932685e-05 3.978917e-02 7.364269e-02   0.002381   0.002645     True
+full_SIMON       0.0160     0.090357     0.489       1008  0.333333  4.749723e-02 6.335066e-05 3.974677e-02 8.428689e-02   0.002384   0.002646     True
+
+no_NN            0.0010     0.790662     0.056      16000  0.000000  3.699250e-03 6.390195e-07 2.751966e-03 5.294222e-03   0.002379   0.002838     True
+no_NN            0.0020     0.392754     0.112       8000  0.000000  6.319984e-03 1.407539e-07 2.751320e-03 1.059654e-02   0.002380   0.002838     True
+no_NN            0.0040     0.192536     0.229       4000  0.000000  1.203879e-02 3.257140e-06 2.748687e-03 2.120721e-02   0.002379   0.002836     True
+no_NN            0.0080     0.105773     0.417       2000  0.000000  2.376280e-02 1.572599e-05 2.737429e-03 4.233325e-02   0.002395   0.002838     True
+no_NN            0.0100     0.082459     0.535       1600  0.000000  2.965337e-02 2.507822e-05 2.728219e-03 5.279973e-02   0.002383   0.002841     True
+no_NN            0.0120     0.069723     0.633       1344  0.000000  3.562018e-02 3.651637e-05 3.977417e-02 6.318681e-02   0.002398   0.002841     True
+no_NN            0.0140     0.060853     0.725       1152  0.000000  4.154908e-02 5.003601e-05 3.975193e-02 7.349399e-02   0.002384   0.002844     True
+no_NN            0.0160     0.054742     0.806       1008  0.000000  4.747703e-02 6.557935e-05 3.972855e-02 8.385845e-02   0.002397   0.002847     True
+
+Interpretation guide:
+- RMS0T is the paper-consistent time-averaged RMS: sqrt(mean_t delta(t)^2).
+- Emax is max_t |(E(t)-E(0))/E(0)| in percent using softened PE.
+- NN_frac is non-zero only for Full SIMON; it is 0 for the No-NN baseline by definition.
+- This ablation keeps adaptive sub-stepping ON for both models, isolating the learned scalar correction.

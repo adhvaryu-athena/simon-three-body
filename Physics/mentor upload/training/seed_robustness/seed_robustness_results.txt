@@ -1,0 +1,25 @@
+============================================================
+SIMON TRAINING SEED ROBUSTNESS RESULTS
+PairCorrectionNN  |  hidden=32  |  epochs=5000
+device=cuda  |  n_train=40000  |  n_val=10000
+Data seed fixed at 42 (tests model init sensitivity only)
+============================================================
+
+    Seed |   Best Val MSE |  Final Val MSE |   Time (s)
+--------------------------------------------------------
+      42 |     0.00001113 |     0.00001113 |       10.4
+     123 |     0.00001723 |     0.00001723 |        9.5
+     456 |     0.00001754 |     0.00001754 |        9.0
+     789 |     0.00001683 |     0.00001683 |       10.1
+    1000 |     0.00001430 |     0.00001430 |        9.6
+--------------------------------------------------------
+    Mean |     0.00001541 |     0.00001541 |        9.7
+     Std |     0.00000243 |     0.00000243 |        0.5
+     CV% |         15.75% |
+
+Coefficient of Variation: 15.75%
+Verdict: SENSITIVE — consider reporting mean +/- std and discussion.
+
+KEY NUMBERS FOR PAPER:
+  Best val MSE: 1.54e-05 +/- 2.43e-06  (CV = 15.8%)
+  All seeds converge to similar accuracy.

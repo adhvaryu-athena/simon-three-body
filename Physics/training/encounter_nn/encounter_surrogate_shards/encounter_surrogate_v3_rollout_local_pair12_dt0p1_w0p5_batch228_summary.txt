@@ -1,0 +1,20 @@
+================================================================================================
+ROLLOUT-LOCAL ENCOUNTER SURROGATE SHARD SUMMARY
+file: encounter_surrogate_shards\encounter_surrogate_v3_rollout_local_pair12_dt0p1_w0p5_batch228.npz
+n=100 tried=532 pass_rate=18.8% elapsed=1.5s
+dt=0.100000 window=0.500000 active_pair=1-2 source=IC1 revised noNN rollout
+anchor_time: min=36.820000 med=36.980000 max=37.200000
+r_pair: min=0.077338 med=0.122301 max=0.147918
+v_rad_norm: min=-0.811 med=-0.589 max=-0.414
+v_tan_norm: min=0.834 med=0.925 max=1.239
+category counts: strong=43, weak_side=57, recede=0, broad=0
+min_r_ias: min=0.052136 med=0.059178 max=0.084301
+min_r_nonn: min=0.059355 med=0.066213 max=0.088193
+relE_ias: max=1.018e-15 med=2.266e-16
+relE_nonn: max=7.156e-03 med=7.018e-04
+pos_residual_rms: min=2.309e-03 med=7.349e-03 max=1.972e-02
+vel_residual_rms: min=1.544e-02 med=4.237e-02 max=7.030e-02
+noNN zone counts total: z1=0, z2=0, z3=591, z4=1209
+rejections: {'anchor_filter': 0, 'perturb_bad': 0, 'z3': 36, 'vr_vt': 13, 'ias15': 0, 'ias15_eject': 0, 'ias15_min_r': 355, 'target_min_r_low': 27, 'target_min_r_high': 1, 'ias15_energy': 0, 'nonn': 0, 'nonn_eject': 0, 'nonn_energy': 0, 'residual_outlier': 0, 'nonfinite': 0}
+sidecar diagnostics: encounter_surrogate_shards\encounter_surrogate_v3_rollout_local_pair12_dt0p1_w0p5_batch228_local_diag.csv
+================================================================================================

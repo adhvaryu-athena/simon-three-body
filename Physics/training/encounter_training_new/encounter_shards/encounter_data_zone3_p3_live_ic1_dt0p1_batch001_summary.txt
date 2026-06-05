@@ -1,0 +1,10 @@
+LIVE ROLLOUT ZONE 3 DATASET SUMMARY -- PHASE 3 v2
+========================================================================
+IC      : IC1
+dt      : 0.100000
+T       : 100.0 yr
+batch   : 1
+output  : encounter_shards\encounter_data_zone3_p3_live_ic1_dt0p1_batch001.npz
+size_kb : 2.5
+
+IC=IC1 dt=0.100000: zone3_states_harvested=9 | accepted=9 | skipped=0 | c_med=1.00000 | impr_med=71.74% | identity=1 | approach=5 recede=4 | pairs: (0,1)=0 (0,2)=0 (1,2)=9 | total_time=2s

@@ -1,0 +1,138 @@
+==============================================================================
+Multi-IC evaluation of gated v4 Zone-3 NN
+==============================================================================
+
+Model: pair_correction_nn_v4_bounded.pt
+T = 100.0 yr,  n_samples = 5000
+dts = [0.005, 0.01, 0.02, 0.04, 0.08, 0.1]
+Total wall-clock time = 17.0 s
+
+Modes:
+  NN_on  = trajectory NN with encounter gate ENABLED
+  NN_off = trajectory NN with encounter gate DISABLED (un-gated)
+  no_NN  = c=1 in Zone 3 (softened force without NN)
+
+Verdict thresholds on delta_on_vs_noNN%:
+  CATASTROPHIC: > 500%
+  NN_hurts:     > 10%
+  NN_hurts_mild: > 0.5%
+  tie: -0.5 .. +0.5%
+  NN_helps_mild: < -0.5%
+  NN_helps:     < -10%
+
+------------------------------------------------------------------------------
+IC1: Default  -- Moderate three-body scattering
+  m = [1.0, 0.01, 0.005], stable = True
+  IAS15 time = 0.070 s
+       dt       NN_on      NN_off       no_NN    on-vs-noNN    on-vs-off           verdict
+   0.0050  9.1146e-01  1.0237e+00  7.5266e-01       +21.10%      -10.97%          NN_hurts
+   0.0100  1.0625e+00  3.7733e+00  7.6466e-01       +38.95%      -71.84%          NN_hurts
+   0.0200  1.0008e+00  1.1094e+00  1.1334e+00       -11.70%       -9.79%          NN_helps
+   0.0400  1.4658e+00  2.2197e+00  1.0863e+00       +34.94%      -33.97%          NN_hurts
+   0.0800  9.4727e-01  9.6793e-01  9.8907e-01        -4.23%       -2.13%     NN_helps_mild
+   0.1000  2.5068e+01  1.0436e+00  1.0812e+00        +2218%       +2302%      CATASTROPHIC
+
+------------------------------------------------------------------------------
+IC2: Near-Equal Mass  -- Strongly interacting -- PHYSICALLY UNSTABLE (IAS15 also ejects)
+  m = [1.0, 0.5, 0.25], stable = False
+  IAS15 time = 0.108 s
+       dt       NN_on      NN_off       no_NN    on-vs-noNN    on-vs-off           verdict
+   0.0050  5.6818e+03  1.6567e+02  1.9337e+01       +29284%       +3330%      CATASTROPHIC
+   0.0100  1.2251e+02  1.1510e+02  1.5062e+03       -91.87%       +6.44%          NN_helps
+   0.0200  2.0986e+02  2.1180e+02  1.3771e+02       +52.39%       -0.91%          NN_hurts
+   0.0400  3.0660e+01  3.8501e+01  1.4863e+02       -79.37%      -20.37%          NN_helps
+   0.0800  1.5938e+02  1.5938e+02  1.5938e+02        +0.00%       +0.00%               tie
+   0.1000  1.0681e+02  1.3935e+02  1.0681e+02        +0.00%      -23.35%               tie
+
+------------------------------------------------------------------------------
+IC3: Tight Inner Pair  -- Tight inner pair -- continuous close encounters
+  m = [1.0, 0.01, 0.005], stable = True
+  IAS15 time = 0.075 s
+       dt       NN_on      NN_off       no_NN    on-vs-noNN    on-vs-off           verdict
+   0.0050  4.4998e-01  4.4998e-01  4.4998e-01        +0.00%       +0.00%               tie
+   0.0100  2.1383e-01  2.1383e-01  2.1383e-01        +0.00%       +0.00%               tie
+   0.0200  1.0662e+00  1.0662e+00  1.0662e+00        +0.00%       +0.00%               tie
+   0.0400  1.5994e+00  1.5994e+00  1.5994e+00        +0.00%       +0.00%               tie
+   0.0800  9.7267e-01  9.7267e-01  9.7267e-01        +0.00%       +0.00%               tie
+   0.1000  1.1727e+00  1.1727e+00  1.1727e+00        +0.00%       +0.00%               tie
+
+------------------------------------------------------------------------------
+IC4: Hierarchical  -- Hierarchical -- weakly coupled outer body
+  m = [1.0, 0.01, 0.005], stable = True
+  IAS15 time = 0.071 s
+       dt       NN_on      NN_off       no_NN    on-vs-noNN    on-vs-off           verdict
+   0.0050  4.3070e-01  4.3070e-01  4.3070e-01        +0.00%       +0.00%               tie
+   0.0100  1.3275e+00  1.3275e+00  1.3275e+00        +0.00%       +0.00%               tie
+   0.0200  1.0918e+00  1.0918e+00  1.0918e+00        +0.00%       +0.00%               tie
+   0.0400  1.4197e+00  1.4197e+00  1.4197e+00        +0.00%       +0.00%               tie
+   0.0800  6.7092e+00  6.7092e+00  6.7092e+00        +0.00%       +0.00%               tie
+   0.1000  1.3808e+01  1.3808e+01  1.3808e+01        +0.00%       +0.00%               tie
+
+------------------------------------------------------------------------------
+IC5: High Ecc (unstable)  -- High eccentricity -- PHYSICALLY UNSTABLE (IAS15 ejects at t=34.8 yr)
+  m = [1.0, 0.01, 0.005], stable = False
+  IAS15 time = 0.084 s
+       dt       NN_on      NN_off       no_NN    on-vs-noNN    on-vs-off           verdict
+   0.0050  1.4072e+01  1.4072e+01  1.5922e+01       -11.62%       +0.00%          NN_helps
+   0.0100  1.4179e+01  1.4179e+01  1.4267e+01        -0.62%       +0.00%     NN_helps_mild
+   0.0200  1.4485e+01  1.4485e+01  1.5618e+01        -7.25%       +0.00%     NN_helps_mild
+   0.0400  1.0824e+01  1.1804e+01  1.0824e+01        +0.00%       -8.30%               tie
+   0.0800  1.5696e+01  1.5696e+01  1.5696e+01        +0.00%       +0.00%               tie
+   0.1000  2.8815e+01  5.6413e+01  1.5223e+01       +89.29%      -48.92%          NN_hurts
+
+------------------------------------------------------------------------------
+IC6: Near-Circular  -- Near-circular coplanar -- low chaos, NN rarely invoked
+  m = [1.0, 0.01, 0.005], stable = True
+  IAS15 time = 0.067 s
+       dt       NN_on      NN_off       no_NN    on-vs-noNN    on-vs-off           verdict
+   0.0050  1.6243e-03  1.6243e-03  1.6243e-03        +0.00%       +0.00%               tie
+   0.0100  3.1884e-03  3.1884e-03  3.1884e-03        +0.00%       +0.00%               tie
+   0.0200  6.2625e-03  6.2625e-03  6.2625e-03        +0.00%       +0.00%               tie
+   0.0400  1.1570e-02  1.1570e-02  1.1570e-02        +0.00%       +0.00%               tie
+   0.0800  2.1671e-02  2.1671e-02  2.1671e-02        +0.00%       +0.00%               tie
+   0.1000  2.7827e-02  2.7827e-02  2.7827e-02        +0.00%       +0.00%               tie
+
+------------------------------------------------------------------------------
+IC7: High Ecc (redesign)  -- High eccentricity -- redesigned for stability (e~0.52)
+  m = [1.0, 0.01, 0.005], stable = True
+  IAS15 time = 0.069 s
+       dt       NN_on      NN_off       no_NN    on-vs-noNN    on-vs-off           verdict
+   0.0050  1.4517e+00  1.5281e+00  1.4106e+00        +2.91%       -5.00%     NN_hurts_mild
+   0.0100  3.5427e+00  3.5596e+00  3.4991e+00        +1.25%       -0.47%     NN_hurts_mild
+   0.0200  3.1332e+00  3.1332e+00  3.1332e+00        +0.00%       +0.00%               tie
+   0.0400  2.9535e+00  2.9535e+00  2.9535e+00        +0.00%       +0.00%               tie
+   0.0800  3.5937e+00  3.5937e+00  3.5937e+00        +0.00%       +0.00%               tie
+   0.1000  3.5953e+01  3.5953e+01  3.5953e+01        +0.00%       +0.00%               tie
+
+==============================================================================
+CROSS-IC MATRIX: delta time_avg_rms (NN_on - no_NN)/no_NN, in %
+  Negative = NN helps, Positive = NN hurts.
+  Catastrophic (>500%) is bracketed in [].
+==============================================================================
+  IC                      dt=0.005   dt=0.01    dt=0.02    dt=0.04    dt=0.08    dt=0.1     verdict_count            
+  IC1_default               +21.1%    +39.0%    -11.7%    +34.9%    -4.23%  [+2218%]  helps=2/hurts=4/tie=0/cat=1
+  IC2_near_equal (unstable)  [+29284%]    -91.9%    +52.4%    -79.4%    +0.00%    +0.00%  helps=2/hurts=2/tie=2/cat=1
+  IC3_tight                 +0.00%    +0.00%    +0.00%    +0.00%    +0.00%    +0.00%  helps=0/hurts=0/tie=6/cat=0
+  IC4_hierarchical          +0.00%    +0.00%    +0.00%    +0.00%    +0.00%    +0.00%  helps=0/hurts=0/tie=6/cat=0
+  IC5_high_ecc (unstable)    -11.6%    -0.62%    -7.25%    +0.00%    +0.00%    +89.3%  helps=3/hurts=1/tie=2/cat=0
+  IC6_near_circular         +0.00%    +0.00%    +0.00%    +0.00%    +0.00%    +0.00%  helps=0/hurts=0/tie=6/cat=0
+  IC7_high_ecc_stable       +2.91%    +1.25%    +0.00%    +0.00%    +0.00%    +0.00%  helps=0/hurts=2/tie=4/cat=0
+
+==============================================================================
+PER-DT AGGREGATE OVER BOUNDED ICs (5 ICs): ['IC1_default', 'IC3_tight', 'IC4_hierarchical', 'IC6_near_circular', 'IC7_high_ecc_stable']
+==============================================================================
+       dt     med_delta     max_delta  helps hurts   tie   cat
+   0.0050        +0.00%       +21.10%      0     2     3     0
+   0.0100        +0.00%       +38.95%      0     2     3     0
+   0.0200        +0.00%        +0.00%      1     0     4     0
+   0.0400        +0.00%       +34.94%      0     1     4     0
+   0.0800        +0.00%        +0.00%      1     0     4     0
+   0.1000        +0.00%        +2218%      0     1     4     1
+
+==============================================================================
+OVERALL VERDICT COUNTS over bounded ICs x all dts (N = 30):
+  NN helps      :   2 / 30  (6.7%)
+  NN hurts      :   6 / 30  (20.0%)
+  tie           :  22 / 30  (73.3%)
+  catastrophic  :   1 / 30  (3.3%)
+==============================================================================

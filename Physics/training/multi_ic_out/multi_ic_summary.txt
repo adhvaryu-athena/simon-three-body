@@ -1,0 +1,50 @@
+====================================================================
+MULTI-INITIAL-CONDITION EVALUATION SUMMARY
+SIMON  |  T=100.0yr  |  dt=0.04yr  |  n_samples=5000
+Model: pair_correction_nn.pt
+====================================================================
+
+INITIAL CONDITIONS:
+
+  IC1: Default (V2)
+    m=[1.0, 0.01, 0.005] M☉  |  Same as V2 paper
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.0072  (negative = bound)
+
+  IC2: Near-Equal Mass
+    m=[1.0, 0.5, 0.25] M☉  |  All bodies interact comparably
+    m  = [1.0, 0.5, 0.25]
+    E_total = -0.7346  (negative = bound)
+
+  IC3: Tight Inner Pair
+    m=[1.0, 0.01, 0.005] M☉  |  Bodies 0,1 start at 0.5 AU
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.0133  (negative = bound)
+
+  IC4: Hierarchical
+    m=[1.0, 0.01, 0.005] M☉  |  Body 2 starts at 5 AU
+    m  = [1.0, 0.01, 0.005]
+    E_total = -0.0060  (negative = bound)
+
+
+RESULTS:
+
+  IC                        lambda(/yr)    final_RMS   bounded   speedup   NN_frac
+  -----------------------------------------------------------------------------
+  IC1: Default (V2)              0.1655       1.5427       YES     1.10x    0.0045
+  IC2: Near-Equal Mass           0.0430     116.8717        NO     1.56x    0.0015
+  IC3: Tight Inner Pair          0.1207       3.4534       YES     1.17x    0.0000
+  IC4: Hierarchical              0.0990       1.5981       YES     1.18x    0.0000
+  -----------------------------------------------------------------------------
+  Mean (bounded only)            0.1284       2.1981
+  Std  (bounded only)            0.0277       0.8879
+
+  Fraction bounded: 3/4
+
+====================================================================
+KEY NUMBERS FOR PAPER:
+  lambda range:  [0.0990, 0.1655] /yr
+  lambda mean:   0.1284 +/- 0.0277 /yr
+  RMS range:     [1.543, 3.453] AU
+  Bodies bounded: 3/4 ICs
+  Speedup range: [1.10x, 1.56x]

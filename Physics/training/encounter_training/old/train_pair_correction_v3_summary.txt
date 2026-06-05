@@ -1,0 +1,48 @@
+Zone 3 v3 training summary
+========================================================================
+data: encounter_data_zone3_v3_augmented.npz
+hidden: 64
+epochs: 5000
+lr: 0.001
+batch_size: 1024
+seed: 42
+device: cuda
+output: pair_correction_nn_v3_augmented.pt
+
+Metrics
+------------------------------------------------------------------------
+best_val_mse: 0.0029467062558978796
+elapsed_sec: 36.022980600000665
+n_test: 1065.0
+n_train: 4970.0
+n_val: 1065.0
+test_corr_c: 0.9809129908650093
+test_mae_c: 0.023006216955610188
+test_mae_log: 0.024957500475659932
+test_median_abs_c: 0.004658157578634081
+test_mse_log: 0.004743008146674466
+test_p95_abs_c: 0.11988933989960031
+test_pred_c_max: 2.2336493544642266
+test_pred_c_med: 0.9823300309501806
+test_pred_c_min: 0.1859378783341143
+test_rmse_log: 0.06886950084525417
+train_corr_c: 0.9950728950565192
+train_mae_c: 0.013873193078330386
+train_mae_log: 0.01466652242546682
+train_median_abs_c: 0.004254603243718236
+train_mse_log: 0.001097469383987674
+train_p95_abs_c: 0.06504752892605367
+train_pred_c_max: 2.5058907231538363
+train_pred_c_med: 0.9855343634917402
+train_pred_c_min: 0.2190136796252316
+train_rmse_log: 0.033128075464591566
+val_corr_c: 0.9894160915117896
+val_mae_c: 0.019505909669699815
+val_mae_log: 0.02157266219154748
+val_median_abs_c: 0.004478105625256745
+val_mse_log: 0.0029467060649829373
+val_p95_abs_c: 0.09778072657582458
+val_pred_c_max: 2.200597714807496
+val_pred_c_med: 0.9871336353679846
+val_pred_c_min: 0.2200543735942133
+val_rmse_log: 0.054283570856963136

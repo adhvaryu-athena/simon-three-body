@@ -1,0 +1,26 @@
+ZONE 3 TRAJECTORY DATASET SUMMARY — BATCH v3
+========================================================================
+dt      : 0.080000
+batch   : 9
+seed    : 37980042
+mode    : strong_approach
+target  : 100
+accepted: 100
+tried   : 507
+elapsed : 121.7 sec
+output  : encounter_shards\encounter_data_zone3_v3_strong_approach_dt0p08_batch009.npz
+size_kb : 6.2
+zone    : r 0.052-0.148 AU
+fields  : r_AU r_soft log_mi log_mj log_dt v_rad_norm v_tan_norm c_opt log_c_opt c_ana log_c_ana improvement
+
+dt=0.080000: n=100 | tried=507 | pass=19.7% | c_opt_med=1.26804 | c_ana_med=1.000013 | impr_med=51.73% | identity=22 | v_rad_norm_med=-0.88279 | v_tan_norm_med=0.66777 | vr<-0.6=100 | vr<-0.8=70 | target_window=100 | 122s
+Rejected: {'ic': 4, 'ias15': 11, 'boundary': 392, 'eject': 0, 'no_improve': 0, 'bad_c': 0}
+Near-identity stored samples: 22
+Strong approach samples v_rad_norm < -0.6: 100
+Strong approach samples v_rad_norm < -0.8: 70
+Target-window samples (r 0.08-0.12, vr<-0.6, vt 0.4-0.9): 100
+
+Velocity feature definitions:
+  v_rad_norm = dot(v_rel, r_hat) / sqrt(G*(m0+m1)/r)
+  v_tan_norm = ||v_rel - v_rad*r_hat|| / sqrt(G*(m0+m1)/r)
+  v_rad_norm < 0 means approaching; > 0 means receding.

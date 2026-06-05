@@ -1,0 +1,81 @@
+Event nearest-neighbor diagnostic summary
+========================================================================================
+data                      : encounter_surrogate_v2_event_enriched.npz
+samples                   : 2870
+event_time                : 82.56000000 yr
+dt/window                 : 0.08000000 / 0.50000000 yr
+k                         : 40
+
+Exact event features
+----------------------------------------------------------------------------------------
+r_pair                   : 0.13896513 AU
+v_rad_norm               : -1.11482716
+v_tan_norm               : 0.84931896
+min_r_event              : 0.13896513 AU
+window min_r IAS15       : 0.05564652 AU
+window min_r noNN        : 0.06226252 AU
+true residual pos RMS    : 6.27095485e-03
+true residual vel RMS    : 2.85510762e-02
+event pos residual percentile in dataset: 44.91%
+event vel residual percentile in dataset: 51.95%
+
+Model prediction on exact event
+----------------------------------------------------------------------------------------
+pred residual pos RMS    : 2.04563539e-01  (32.62x true)
+pred residual vel RMS    : 3.93278778e-01  (13.77x true)
+pred-vs-true pos err RMS : 2.08560792e-01
+pred-vs-true vel err RMS : 3.93087262e-01
+
+Dataset residual distribution
+----------------------------------------------------------------------------------------
+pos residual RMS p05/med/p95 : 1.38187746e-04 / 7.62990839e-03 / 9.11719009e-02
+vel residual RMS p05/med/p95 : 4.87141579e-04 / 2.57513020e-02 / 5.96040478e-01
+
+Nearest neighbors in full X_rel18 model-input space
+----------------------------------------------------------------------------------------
+nearest distance min/med/max : 2.397293e+00 / 3.043533e+00 / 3.163836e+00
+neighbor pos residual med    : 8.36004280e-02  (event true=6.27095485e-03, ratio=13.33x)
+neighbor pos residual p10-p90: 1.54008818e-02 .. 3.34621277e-01
+neighbor vel residual med    : 6.18482172e-01  (event true=2.85510762e-02, ratio=21.66x)
+neighbor vel residual p10-p90: 9.82767269e-02 .. 2.11001532e+00
+residual direction cos pos   : med=+0.181, p10=-0.655, p90=+0.796
+residual direction cos vel   : med=-0.125, p10=-0.813, p90=+0.872
+category counts              : {'recede': 8, 'strong_approach': 10, 'weak_side': 22}
+
+Nearest neighbors in compact [r_pair, v_rad_norm, v_tan_norm] space
+----------------------------------------------------------------------------------------
+nearest distance min/med/max : 1.055016e-01 / 1.986852e-01 / 2.488149e-01
+neighbor pos residual med    : 7.15595740e-03  (event true=6.27095485e-03, ratio=1.14x)
+neighbor pos residual p10-p90: 2.75286078e-03 .. 1.33624161e-02
+neighbor vel residual med    : 2.83004493e-02  (event true=2.85510762e-02, ratio=0.99x)
+neighbor vel residual p10-p90: 1.85751185e-02 .. 4.40516707e-02
+residual direction cos pos   : med=+0.456, p10=-0.830, p90=+0.914
+residual direction cos vel   : med=+0.078, p10=-0.856, p90=+0.920
+category counts              : {'strong_approach': 40}
+
+Nearest neighbors in diagnostic [r, vr, vt, min_r_ias, min_r_nonn] space
+----------------------------------------------------------------------------------------
+nearest distance min/med/max : 8.423409e-02 / 1.688282e-01 / 2.206981e-01
+neighbor pos residual med    : 7.17329746e-03  (event true=6.27095485e-03, ratio=1.14x)
+neighbor pos residual p10-p90: 2.75286078e-03 .. 1.34902779e-02
+neighbor vel residual med    : 2.86922473e-02  (event true=2.85510762e-02, ratio=1.00x)
+neighbor vel residual p10-p90: 1.79855891e-02 .. 4.68664248e-02
+residual direction cos pos   : med=+0.170, p10=-0.830, p90=+0.904
+residual direction cos vel   : med=+0.053, p10=-0.931, p90=+0.938
+category counts              : {'strong_approach': 40}
+
+Interpretation flags
+----------------------------------------------------------------------------------------
+closest X_rel18 distance     : 2.397293e+00
+X-neighbor pos median / event: 13.33x
+X-neighbor vel median / event: 21.66x
+diagnostic-minr pos median / event: 1.14x
+diagnostic-minr vel median / event: 1.00x
+X-neighbor residual cosine med pos/vel: +0.181 / -0.125
+DIAGNOSIS                  : COVERAGE ISSUE: nearest full-state neighbors are not very close; generate states closer in full X_rel18, not just r/vr/vt.
+
+Files written
+----------------------------------------------------------------------------------------
+event_nn_diag_t82p56\nearest_neighbors_event_t82p56_nearest_Xrel18.csv
+event_nn_diag_t82p56\nearest_neighbors_event_t82p56_nearest_r_vr_vt.csv
+event_nn_diag_t82p56\nearest_neighbors_event_t82p56_nearest_with_minr.csv

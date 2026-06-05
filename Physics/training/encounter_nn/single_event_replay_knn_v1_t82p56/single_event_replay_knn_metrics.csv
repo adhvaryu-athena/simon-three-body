@@ -1,0 +1,8 @@
+section,method,pos_err,vel_err,relE,accepted
+local_exit,noNN,0.006270954854668509,0.028551076184162825,0.000262640905972138,baseline
+local_exit,kNN_raw_candidate,0.09364493749772675,0.24887511515449637,0.025445108834280906,True
+local_exit,kNN_or_fallback_branch,0.09364493749772675,0.24887511515449637,0.025445108834280906,True
+post_window_timeavg,noNN_branch,0.6496209335456952,0.5195164548850258,,baseline
+post_window_timeavg,kNN_or_fallback_branch,1.0786743148415463,0.610110593901047,,True
+post_window_final,noNN_branch,1.7854537728427518,1.2629924062641595,,baseline
+post_window_final,kNN_or_fallback_branch,1.509011757180556,1.6553939618721132,,True

@@ -1,0 +1,16 @@
+=================================================================
+3-MODEL COMPARISON SUMMARY
+=================================================================
+
+T=100.0yr  dt=0.04yr  n_samples=5000
+m=[1.0, 0.01, 0.005] Msun
+
+Gates:
+  SIMON:     c outside [0.2, 5.0] → Newtonian
+  Vector NN: cos(dir) < 0.866 (>30°) → Newtonian
+
+Model                   lambda(/yr)    final_RMS    speedup    NN_frac   bounded
+-----------------------------------------------------------------------------
+ias15                            --        0.000      1.00x         --       YES
+SIMON                        0.1655       1.5427      1.04x     0.0045       YES
+Vector NN                    0.1656      83.0155      1.01x     0.0101        NO

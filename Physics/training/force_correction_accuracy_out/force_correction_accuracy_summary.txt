@@ -1,0 +1,57 @@
+FORCE-LEVEL NN CORRECTION ACCURACY VALIDATION
+========================================================================
+
+Purpose:
+This experiment directly compares local pairwise force magnitude accuracy in the close-encounter regime where SIMON invokes the NN.
+
+Masses tested: mi=1.0, mj=0.01
+Softening eps=0.0003
+NN threshold=0.15 AU
+
+Close regime: r < 0.15 AU
+Mean relative error, No-NN softened: 3.85855277e-01
+Mean relative error, SIMON corrected: 2.16693219e-01
+Mean error reduction factor: 1.7807x
+
+Median relative error, No-NN softened: 8.39487093e-02
+Median relative error, SIMON corrected: 1.96994007e-03
+Median error reduction factor: 42.6149x
+
+Max relative error, No-NN softened: 9.99963025e-01
+Max relative error, SIMON corrected: 9.98486324e-01
+
+------------------------------------------------------------------------
+Operational correction regime: 5e-4 AU <= r < 0.15 AU
+This excludes the extreme safety-fallback region and corresponds to the regime where the NN correction is intended to operate.
+
+Mean relative error, No-NN softened: 3.92185609e-02
+Mean relative error, SIMON corrected: 1.31205615e-03
+Mean error reduction factor: 29.8909x
+
+Median relative error, No-NN softened: 1.80319265e-03
+Median relative error, SIMON corrected: 1.42824175e-03
+Median error reduction factor: 1.2625x
+
+Max relative error, No-NN softened: 3.69466327e-01
+Max relative error, SIMON corrected: 3.84125705e-03
+
+------------------------------------------------------------------------
+Transition regime: eps <= r < 0.15 AU
+This regime begins at the softening length eps and measures the region where softening error is significant but not dominated by extreme near-zero separations.
+
+Mean relative error, No-NN softened: 7.74687152e-02
+Mean relative error, SIMON corrected: 1.47525157e-03
+Mean error reduction factor: 52.5122x
+
+Median relative error, No-NN softened: 2.99160168e-03
+Median relative error, SIMON corrected: 1.50323410e-03
+Median error reduction factor: 1.9901x
+
+------------------------------------------------------------------------
+Multi-mass robustness: operational correction regime
+Regime: 5e-4 AU <= r < 0.15 AU
+
+mi,mj,mean_no_nn,mean_simon,mean_reduction,median_no_nn,median_simon,median_reduction,max_no_nn,max_simon
+1.00000000e+00,1.00000000e-02,3.92185609e-02,1.31205615e-03,29.8909x,1.80319265e-03,1.42824175e-03,1.2625x,3.69466327e-01,3.84125705e-03
+1.00000000e+00,5.00000000e-01,3.92185609e-02,9.07485311e-04,43.2167x,1.80319265e-03,8.67214629e-04,2.0793x,3.69466327e-01,2.89334529e-03
+7.00000000e-01,4.00000000e-01,3.92185609e-02,8.82242975e-04,44.4532x,1.80319265e-03,8.78934029e-04,2.0516x,3.69466327e-01,2.54811028e-03
