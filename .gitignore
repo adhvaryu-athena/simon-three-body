@@ -11,6 +11,8 @@ PROGRESS.md
 **/*.log
 # binary working documents (excluded from the public record)
 **/*.docx
+# except the generated St. Yau submission DOCX
+!abstract/Research_Outline_Aarush_Gupta.docx
 # redundant top-level result copies (kept under experiments/)
 /weekend_phaseC/
 /weekend_phaseD/
