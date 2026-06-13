@@ -27,6 +27,8 @@ These are the full-SIMON (NN + adaptive) runs at the operational dt = 0.04.
 
 ## Finding 1 — Time-reversal symmetry governs energy drift
 
+> **Correction — pure-Newton re-run** (`abstract/soft_vs_newton_diff.txt`). Finding 1 was originally computed in softened mode. Re-run in pure Newtonian (the advocated method): the IC1 fixed-step dt=0.005 “128% ejection” is a softening artifact — in pure Newton that run is bounded at 0.19% (switching discontinuity in the softened force at the 0.15 AU / 5×10⁻⁴ boundaries, not the dynamics). tsalf is mode-independent (IC1 0.087 / IC4 0.224 / IC6 0.003%); IC3, IC6 and wide binaries are bit-identical soft↔newton. Findings 2 and 3 unaffected.
+
 ### Core claim: tsalf (η=0.05) stays bounded across all regimes at one setting
 
 **Source:** `abstract/frontier_table.txt`
