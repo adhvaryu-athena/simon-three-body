@@ -1,0 +1,16 @@
+METRIC-TRAP RESULT — real Sun-Earth-Moon (JPL Horizons ICs), Newtonian point masses, T=100 yr
+Global energy verdict vs pair-separation truth. True Earth-Moon distance ~ 0.00257 AU.
+====================================================================================================
+method               max|dE/E0|  bounded          EM-sep range [AU]  peak/true  verdict
+ias15 (ref)          7.764e-06%      yes [0.00238, 0.00272]         1x  PHYSICAL
+tsalf                2.364e-05%      yes [0.00238, 0.00272]         1x  PHYSICAL
+heuristic-adapt      6.549e-05%      yes [0.00238, 0.00273]         1x  PHYSICAL
+leapfrog dt=0.005     0.001679%      yes [0.00237, 0.00298]         1x  PHYSICAL
+leapfrog dt=0.01      0.007867%      yes [0.00203, 1.98950]       774x  LUNAR ORBIT UNBOUND
+leapfrog dt=0.04        0.1974%      yes [0.00241, 2.42365]       943x  LUNAR ORBIT UNBOUND
+====================================================================================================
+THE TRAP: leapfrog dt=0.01 reports max|dE/E0|=0.007867% and bounded=True (global metric: 'fine'),
+  yet the Earth-Moon separation runs out to 1.99 AU = 774x the true 0.00257 AU (the Moon is ejected from Earth).
+  ias15 / tsalf / heuristic-adaptive keep it physical at ~[0.0024, 0.0027] AU.
+  => A global energy/boundedness check certifies a run whose internal hierarchical structure is destroyed.
+     A pair-separation metric is REQUIRED to catch this; it is the headline 'metric trap'.

@@ -1,0 +1,26 @@
+LEARNED-CORRECTION EVALUATION — equal-compute, pre-registered, held-out (27 configs: IC1/IC4/IC6 + 24 unseen TEST)
+A1 = per-step scalar c_opt (reference-matched).  A2 = state-to-state residual.  Charge NN at kappa = FLOP-per-call / force-eval.
+A corrector 'CLICKS' only if it beats the plain-leapfrog cost-accuracy frontier (i.e. wins > half) on a metric. Short-horizon RMS is the honest chaos metric.
+================================================================================================
+metric              kappa=0   kappa=10   kappa=90   (held-out configs beating equal-compute finer step, of 27)
+------------------------------------------------------------------------------------------------
+A1  short-horiz         0/27        0/27        0/27   <- 0/27 even when NN is FREE
+A1  max|dE|             8/27        4/27        1/27   <- weak energy 'wins' vanish once compute is charged
+A2  short-horiz         2/27        1/27        1/27
+A2  max|dE|             5/27        3/27        1/27
+------------------------------------------------------------------------------------------------
+VERDICT A1 (c_opt): NULL    VERDICT A2 (residual): NULL
+
+BINARY-SINGLE ORACLE (upper bound = perfect encounter correction), masses[1,0.5,0.1], perturber@3AU:
+   r_bin  oracle improve%  gate fires%  heuristic |dE|%    tsalf |dE|%
+    0.01             0.0%         0.0%       6.581e+04%     0.0004915%
+    0.03             0.0%         0.0%       2.205e+04%     0.0001933%
+    0.05             0.0%         0.0%            4905%     0.0001692%
+    0.10             0.0%         0.0%            2535%       0.00016%
+    0.20             0.0%         0.0%           434.8%     0.0001722%
+    0.40             0.0%         0.0%             119%     0.0003754%
+
+ORACLE VERDICT: FOLD — NN (even oracle) improvement null across all r_bin; failure is binary under-resolution (timestep problem), unfixable by any force/encounter correction. Fix = adaptive resolution (tsalf/ias15).
+=> Even a PERFECT force/encounter correction yields 0.0% improvement at every separation: the binary failure is
+   temporal under-resolution, not force-model error. No learned force correction can fix a timestep problem;
+   adaptive resolution (tsalf / ias15) can and does (see frontier_table).

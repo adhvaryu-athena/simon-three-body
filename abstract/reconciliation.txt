@@ -1,0 +1,18 @@
+RECONCILIATION NOTE (internal) — matched-dt ablation on IC1.  Run A = no-adaptive (NN, fixed dt); D = full SIMON.
+Purpose: pin down what is / isn't real about the old 'no-adaptive ejects to 161.7 AU' claim. Tells us what NOT to claim.
+============================================================================================
+run                               dt   |dE/E0|max  bounded  final_rms[AU]      fe
+--------------------------------------------------------------------------------------------
+A_no_adaptive(NN,fixed)         0.04      0.6845%      yes           1.69    2501
+C_no_nn(soft,adaptive)          0.04      1.2397%      yes           1.68    2504
+D_full_SIMON(NN,adaptive)       0.04      1.3895%      yes           1.53    2504
+A_no_adaptive(NN,fixed)         0.02      417.22%       NO         104.76    5001
+A_no_adaptive(NN,fixed)         0.01      9253.2%       NO         428.38   10001
+============================================================================================
+At the OPERATIONAL dt=0.04, Run A (no-adaptive) is BOUNDED at 0.6845% — the LOWEST drift of the three runs.
+It only destabilises at finer FIXED dt (0.02, 0.01). The specific '161.7 AU' value is NOT reproduced at matched dt
+(it is a finer-dt / sampling-bug artifact).
+
+DO-NOT-CLAIM : 'the un-adapted run ejects to 161.7 AU at the operating dt'  (false: bounded at 0.68% at dt=0.04).
+CAN-NOTE     : a naive fixed scheme destabilises as dt is refined into close encounters, where time-symmetric /
+               adaptive integration stays controlled (see frontier_table & track2).

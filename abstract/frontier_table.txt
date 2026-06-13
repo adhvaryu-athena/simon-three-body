@@ -1,0 +1,66 @@
+SIMON OPERATING-ENVELOPE FRONTIER  —  abstract table
+panel per (config,method): max|dE/E0| (softened PE) | force-evals/yr (cost) | bounded | pair-range[AU] (hierarchical only)
+methods: ias15 (15th-order Gauss-Radau reference) | tsalf (time-symmetric adaptive leapfrog, eta=0.05) | leapfrog fixed dt=0.04 | leapfrog fixed dt=0.005 | heuristic inverse-distance adaptive
+setup: toy ICs softened eps=3e-4 G=1 ; binary-single masses[1,0.5,0.1] G=4pi^2 perturber@3AU ; SEM=Newtonian point masses ; T=100 yr
+============================================================================================================
+config   method                  max|dE/E0|     fe/yr    bnd             pair_range[AU]
+------------------------------------------------------------------------------------------------------------
+IC1      ias15 (ref)               0.01313%     813.8     ok                          -
+IC1      tsalf eta=0.05            0.08715%      87.5     ok                          -
+IC1      leapfrog dt=0.04            3.856%      25.0     ok                          -
+IC1      leapfrog dt=0.005           128.4%     200.0  EJECT                          -
+IC1      heuristic-adaptive           1.24%      25.0     ok                          -
+------------------------------------------------------------------------------------------------------------
+IC3      ias15 (ref)             5.544e-05%     800.0     ok                          -
+IC3      tsalf eta=0.05              0.042%     210.7     ok                          -
+IC3      leapfrog dt=0.04           0.6718%      25.0     ok                          -
+IC3      leapfrog dt=0.005        0.005842%     200.0     ok                          -
+IC3      heuristic-adaptive         0.6718%      25.0     ok                          -
+------------------------------------------------------------------------------------------------------------
+IC4      ias15 (ref)             0.0006863%     800.0     ok                          -
+IC4      tsalf eta=0.05             0.2236%      75.3     ok                          -
+IC4      leapfrog dt=0.04            13.77%      25.0     ok                          -
+IC4      leapfrog dt=0.005          0.2592%     200.0     ok                          -
+IC4      heuristic-adaptive          13.77%      25.0     ok                          -
+------------------------------------------------------------------------------------------------------------
+IC6      ias15 (ref)             2.985e-07%     800.0     ok                          -
+IC6      tsalf eta=0.05           0.002961%      33.4     ok                          -
+IC6      leapfrog dt=0.04        0.0006202%      25.0     ok                          -
+IC6      leapfrog dt=0.005       9.477e-06%     200.0     ok                          -
+IC6      heuristic-adaptive      0.0006202%      25.0     ok                          -
+------------------------------------------------------------------------------------------------------------
+BS_0.05  ias15 (ref)             1.099e-07%   31593.4     ok         [0.05000, 0.05000]
+BS_0.05  tsalf eta=0.05          0.0001692%   41241.2     ok         [0.04998, 0.05007]
+BS_0.05  leapfrog dt=0.04        1.905e+04%      25.0  EJECT     [0.05000, 47493.36586]
+BS_0.05  leapfrog dt=0.005             436%     200.0  EJECT      [0.05000, 6323.28081]
+BS_0.05  heuristic-adaptive           4905%      25.0  EJECT     [0.05000, 23915.90493]
+------------------------------------------------------------------------------------------------------------
+BS_0.10  ias15 (ref)             1.613e-07%   11197.8     ok         [0.09999, 0.10001]
+BS_0.10  tsalf eta=0.05            0.00016%   14582.2     ok         [0.09997, 0.10013]
+BS_0.10  leapfrog dt=0.04             2535%      25.0  EJECT     [0.10000, 12066.87367]
+BS_0.10  leapfrog dt=0.005           157.9%     200.0  EJECT      [0.10000, 1835.24850]
+BS_0.10  heuristic-adaptive           2535%      25.0  EJECT     [0.10000, 12066.87367]
+------------------------------------------------------------------------------------------------------------
+BS_0.20  ias15 (ref)             2.397e-07%    3999.3     ok         [0.19993, 0.20006]
+BS_0.20  tsalf eta=0.05          0.0001722%    5155.8     ok         [0.19991, 0.20026]
+BS_0.20  leapfrog dt=0.04            434.8%      25.0  EJECT      [0.20000, 3153.33569]
+BS_0.20  leapfrog dt=0.005          0.6591%     200.0     ok         [0.19999, 0.21786]
+BS_0.20  heuristic-adaptive          434.8%      25.0  EJECT      [0.20000, 3153.33569]
+------------------------------------------------------------------------------------------------------------
+BS_0.40  ias15 (ref)             3.834e-07%    1599.8     ok         [0.39909, 0.40076]
+BS_0.40  tsalf eta=0.05          0.0003754%    1823.2     ok         [0.39919, 0.40101]
+BS_0.40  leapfrog dt=0.04              119%      25.0  EJECT       [0.35589, 339.27076]
+BS_0.40  leapfrog dt=0.005         0.01279%     200.0     ok         [0.39987, 0.40452]
+BS_0.40  heuristic-adaptive            119%      25.0  EJECT       [0.35589, 339.27076]
+------------------------------------------------------------------------------------------------------------
+SEM      ias15 (ref)             7.764e-06%    2478.1     ok         [0.00238, 0.00272]
+SEM      tsalf eta=0.05          2.364e-05%    5037.5     ok         [0.00238, 0.00272]
+SEM      leapfrog dt=0.04           0.1974%      25.0     ok         [0.00241, 2.42365]
+SEM      leapfrog dt=0.005        0.001679%     200.0     ok         [0.00237, 0.00298]
+SEM      heuristic-adaptive      6.549e-05%    1000.0     ok         [0.00238, 0.00273]
+============================================================================================================
+THREE-REGIME ENVELOPE (read off the table):
+  REGULAR / wide (IC6): cheap leapfrog dt=0.04 already bounded at 0.0006202% for 25 fe/yr; ias15 needs 800 fe/yr for no practical gain.
+  MODERATE scattering (IC1,IC4): tsalf bounded at 0.0871%/88fe and 0.224%/75fe ;
+      fixed leapfrog dt=0.005 EJECTS IC1 (128.4%, bnd=False) at 200fe ; ias15 bounded but at 814fe.  -> tsalf is the cheap bounded option.
+  TIGHT BINARY (BS_0.05): only tsalf & ias15 survive; ias15 wall 1.635s vs tsalf 106.839s ; heuristic & fixed leapfrog EJECT.  -> ias15 wins/ties tight binaries.
