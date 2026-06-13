@@ -1,521 +1,287 @@
 """
-Generate the St. Yau Research Outline DOCX.
-Matches the 2026 S.T. Yau High School Science Award (Asia) template format.
-Run: python abstract/make_docx.py
+Generate the St. Yau 2026 Research Outline DOCX.
+Matches the official 2-page template exactly:
+  Page 1: form tables + title + Abstract heading + abstract text start
+  Page 2: abstract text cont. + Keywords + References
+Run from repo root: python abstract/make_docx.py
 Output: abstract/Research_Outline_Aarush_Gupta.docx
 """
 
 from docx import Document
-from docx.shared import Pt, Inches, RGBColor, Cm
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT
+from docx.shared import Pt, Cm, Inches
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
-import copy
 
+# ── Document and page setup ───────────────────────────────────────────────────
 doc = Document()
 
-# ── Page margins ──────────────────────────────────────────────────────────────
-for section in doc.sections:
-    section.top_margin    = Cm(2.0)
-    section.bottom_margin = Cm(2.0)
-    section.left_margin   = Cm(2.54)
-    section.right_margin  = Cm(2.54)
+for sec in doc.sections:
+    sec.page_width       = Cm(21.0)
+    sec.page_height      = Cm(29.7)
+    sec.top_margin       = Cm(2.5)
+    sec.bottom_margin    = Cm(2.5)
+    sec.left_margin      = Cm(2.5)
+    sec.right_margin     = Cm(2.5)
+    sec.header_distance  = Cm(1.25)
+    sec.footer_distance  = Cm(1.25)
 
-# ── Styles ────────────────────────────────────────────────────────────────────
-normal = doc.styles['Normal']
-normal.font.name = 'Times New Roman'
-normal.font.size = Pt(11)
+# Default style: Calibri 11 pt
+ns = doc.styles['Normal']
+ns.font.name = 'Calibri'
+ns.font.size = Pt(11)
+ns.paragraph_format.space_before      = Pt(0)
+ns.paragraph_format.space_after       = Pt(0)
+ns.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
 
-def para(text='', bold=False, italic=False, size=11, align=WD_ALIGN_PARAGRAPH.LEFT,
-         space_before=0, space_after=6, keep_with_next=False, color=None):
+CONTENT_WIDTH_CM = 16.0   # 21 - 2×2.5
+
+# ── Header: "Research Outline    2026 S.T. Yau…" ────────────────────────────
+hdr = doc.sections[0].header
+hp  = hdr.paragraphs[0]
+hp.paragraph_format.space_before = Pt(0)
+hp.paragraph_format.space_after  = Pt(0)
+# Left text
+r1 = hp.add_run('Research Outline')
+r1.font.name = 'Calibri'; r1.font.size = Pt(10)
+# Right-aligned tab + text
+tab_twips = int(Cm(CONTENT_WIDTH_CM).pt * 20 / 0.75)   # cm → twips
+pPr = hp._p.get_or_add_pPr()
+tabs_el = OxmlElement('w:tabs')
+tab_el  = OxmlElement('w:tab')
+tab_el.set(qn('w:val'),   'right')
+tab_el.set(qn('w:pos'),   str(int(Cm(CONTENT_WIDTH_CM) * 1440 / 914400)))
+# simpler: just measure in EMUs → twips.  1 EMU = 1/914400 inch; 1 twip = 1/1440 inch
+tab_el.set(qn('w:pos'),   str(int(CONTENT_WIDTH_CM / 2.54 * 1440)))  # cm→twips
+tabs_el.append(tab_el)
+pPr.append(tabs_el)
+r2 = hp.add_run('\t2026 S.T. Yau High School Science Award (Asia)')
+r2.font.name = 'Calibri'; r2.font.size = Pt(10)
+
+# ── Footer: "Page X of 2" ────────────────────────────────────────────────────
+ftr = doc.sections[0].footer
+fp  = ftr.paragraphs[0]
+fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+fp.paragraph_format.space_before = Pt(0)
+fp.paragraph_format.space_after  = Pt(0)
+
+def add_field(para, field_instr):
+    """Insert a Word field (e.g. PAGE) into a paragraph run."""
+    r = OxmlElement('w:r')
+    fld_begin = OxmlElement('w:fldChar'); fld_begin.set(qn('w:fldCharType'), 'begin')
+    instr = OxmlElement('w:instrText'); instr.text = field_instr; instr.set(qn('xml:space'), 'preserve')
+    fld_end = OxmlElement('w:fldChar'); fld_end.set(qn('w:fldCharType'), 'end')
+    r.append(fld_begin); r.append(instr); r.append(fld_end)
+    para._p.append(r)
+
+def frun(para, text, size=10, bold=False):
+    r = para.add_run(text); r.font.name = 'Calibri'; r.font.size = Pt(size); r.bold = bold; return r
+
+frun(fp, 'Page ')
+add_field(fp, 'PAGE')
+frun(fp, ' of 2')
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+def body_para(text='', bold=False, italic=False, size=11,
+              align=WD_ALIGN_PARAGRAPH.LEFT,
+              space_before=0, space_after=0):
     p = doc.add_paragraph()
     p.alignment = align
-    p.paragraph_format.space_before = Pt(space_before)
-    p.paragraph_format.space_after  = Pt(space_after)
-    p.paragraph_format.keep_with_next = keep_with_next
+    p.paragraph_format.space_before      = Pt(space_before)
+    p.paragraph_format.space_after       = Pt(space_after)
+    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
     if text:
-        run = p.add_run(text)
-        run.bold   = bold
-        run.italic = italic
-        run.font.name = 'Times New Roman'
-        run.font.size = Pt(size)
-        if color:
-            run.font.color.rgb = RGBColor(*color)
-    return p
-
-def add_run(p, text, bold=False, italic=False, size=11):
-    run = p.add_run(text)
-    run.bold   = bold
-    run.italic = italic
-    run.font.name = 'Times New Roman'
-    run.font.size = Pt(size)
-    return run
-
-def heading(text, level=1):
-    """Bold heading that matches the outline style."""
-    p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(10)
-    p.paragraph_format.space_after  = Pt(4)
-    run = p.add_run(text)
-    run.bold = True
-    run.font.name = 'Times New Roman'
-    run.font.size = Pt(11)
-    return p
-
-def bullet(text, level=1, italic_part=None):
-    """Bullet point. italic_part = substring to italicise (first occurrence)."""
-    p = doc.add_paragraph(style='List Bullet')
-    p.paragraph_format.space_before = Pt(0)
-    p.paragraph_format.space_after  = Pt(2)
-    p.paragraph_format.left_indent  = Inches(0.25 * level)
-    if italic_part and italic_part in text:
-        idx = text.index(italic_part)
-        if idx > 0:
-            r = p.add_run(text[:idx])
-            r.font.name = 'Times New Roman'; r.font.size = Pt(11)
-        r2 = p.add_run(italic_part)
-        r2.italic = True; r2.font.name = 'Times New Roman'; r2.font.size = Pt(11)
-        rest = text[idx + len(italic_part):]
-        if rest:
-            r3 = p.add_run(rest)
-            r3.font.name = 'Times New Roman'; r3.font.size = Pt(11)
-    else:
         r = p.add_run(text)
-        r.font.name = 'Times New Roman'; r.font.size = Pt(11)
+        r.bold = bold; r.italic = italic
+        r.font.name = 'Calibri'; r.font.size = Pt(size)
     return p
 
-def set_cell_border(cell, **kwargs):
-    tc = cell._tc
-    tcPr = tc.get_or_add_tcPr()
-    tcBorders = OxmlElement('w:tcBorders')
-    for edge in ('top','left','bottom','right','insideH','insideV'):
-        val = kwargs.get(edge, 'single')
-        sz  = kwargs.get(f'{edge}_sz', 4)
-        tag = OxmlElement(f'w:{edge}')
-        tag.set(qn('w:val'),   val)
-        tag.set(qn('w:sz'),    str(sz))
-        tag.set(qn('w:space'), '0')
-        tag.set(qn('w:color'), '000000')
-        tcBorders.append(tag)
-    tcPr.append(tcBorders)
+def mixed_para(align=WD_ALIGN_PARAGRAPH.LEFT, space_before=0, space_after=0):
+    """Return an empty paragraph; caller adds runs manually."""
+    p = doc.add_paragraph()
+    p.alignment = align
+    p.paragraph_format.space_before      = Pt(space_before)
+    p.paragraph_format.space_after       = Pt(space_after)
+    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+    return p
 
-def cell_text(cell, text, bold=False, align=WD_ALIGN_PARAGRAPH.LEFT, size=10):
-    cell.text = ''
+def prun(p, text, bold=False, italic=False, size=11):
+    r = p.add_run(text)
+    r.bold = bold; r.italic = italic
+    r.font.name = 'Calibri'; r.font.size = Pt(size)
+    return r
+
+def cell_fmt(cell, text='', bold=False, align=WD_ALIGN_PARAGRAPH.LEFT, size=11):
+    cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     p = cell.paragraphs[0]
     p.alignment = align
-    p.paragraph_format.space_before = Pt(1)
-    p.paragraph_format.space_after  = Pt(1)
-    run = p.add_run(text)
-    run.bold = bold
-    run.font.name = 'Times New Roman'
-    run.font.size = Pt(size)
+    p.paragraph_format.space_before      = Pt(1)
+    p.paragraph_format.space_after       = Pt(1)
+    p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
+    if text:
+        r = p.add_run(text)
+        r.bold = bold; r.font.name = 'Calibri'; r.font.size = Pt(size)
 
+# ── Title block ───────────────────────────────────────────────────────────────
+body_para('2026 S.T. Yau High School Science Award (Asia)',
+          bold=True, align=WD_ALIGN_PARAGRAPH.CENTER,
+          space_before=0, space_after=0)
+body_para('Research Outline',
+          bold=True, align=WD_ALIGN_PARAGRAPH.CENTER,
+          space_before=0, space_after=4)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PAGE HEADER (manual — Word's header/footer would require section XML; simpler
-# to put it as a styled first paragraph)
-# ══════════════════════════════════════════════════════════════════════════════
+# ── Team member table ─────────────────────────────────────────────────────────
+# 5 rows × 4 cols  (label | TM1 | TM2 | TM3)
+t1 = doc.add_table(rows=5, cols=4)
+t1.style = 'Table Grid'
+t1.alignment = WD_TABLE_ALIGNMENT.CENTER
 
-# Add actual header using the header section
-header = doc.sections[0].header
-hdr_para = header.paragraphs[0]
-hdr_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-hdr_run = hdr_para.add_run('Research Outline                    2026 S.T. Yau High School Science Award (Asia)')
-hdr_run.font.name = 'Times New Roman'
-hdr_run.font.size = Pt(10)
+# Column widths: label 3.5 cm, each TM col 4.17 cm
+col_widths = [Cm(3.5), Cm(4.17), Cm(4.17), Cm(4.16)]
+for i, w in enumerate(col_widths):
+    for cell in t1.columns[i].cells:
+        cell.width = w
 
-# Footer with page number
-footer = doc.sections[0].footer
-ftr_para = footer.paragraphs[0]
-ftr_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-ftr_run = ftr_para.add_run('Page ')
-ftr_run.font.name = 'Times New Roman'
-ftr_run.font.size = Pt(10)
-fldChar1 = OxmlElement('w:fldChar')
-fldChar1.set(qn('w:fldCharType'), 'begin')
-instrText = OxmlElement('w:instrText')
-instrText.text = 'PAGE'
-fldChar2 = OxmlElement('w:fldChar')
-fldChar2.set(qn('w:fldCharType'), 'end')
-ftr_para.runs[-1]._r.append(fldChar1)
-ftr_para.runs[-1]._r.append(instrText)
-ftr_para.runs[-1]._r.append(fldChar2)
-ftr_para.add_run(' of 4').font.size = Pt(10)
+# Row 0: header
+cell_fmt(t1.cell(0, 0), '')
+for col in (1, 2, 3):
+    cell_fmt(t1.cell(0, col), 'Team Member', align=WD_ALIGN_PARAGRAPH.CENTER)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# TITLE BLOCK
-# ══════════════════════════════════════════════════════════════════════════════
+# Rows 1-3: Name, School, City Country
+labels1 = ['Name', 'School', 'City, Country']
+values1 = ['Aarush Gupta', 'UWCSEA, East', 'Singapore']
+for row, (lbl, val) in enumerate(zip(labels1, values1), start=1):
+    cell_fmt(t1.cell(row, 0), lbl)
+    cell_fmt(t1.cell(row, 1), val)
+    cell_fmt(t1.cell(row, 2), '')
+    cell_fmt(t1.cell(row, 3), '')
 
-para('2026 S.T. Yau High School Science Award (Asia)',
-     bold=True, size=12, align=WD_ALIGN_PARAGRAPH.CENTER,
-     space_before=0, space_after=0)
-para('Research Outline',
-     bold=True, size=12, align=WD_ALIGN_PARAGRAPH.CENTER,
-     space_before=0, space_after=6)
+# Row 4: Registration No. — merge cols 1-3
+cell_fmt(t1.cell(4, 0), 'Registration No.')
+t1.cell(4, 1).merge(t1.cell(4, 3))
+cell_fmt(t1.cell(4, 1), '[Physics-0XX — assigned at registration]')
 
-# ── Registration table ────────────────────────────────────────────────────────
-tbl = doc.add_table(rows=5, cols=4)
-tbl.style = 'Table Grid'
-tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
-# Header row — Team Member ×3
-for i, col in enumerate(tbl.columns):
-    if i == 0:
-        cell_text(tbl.cell(0, 0), '', bold=True, align=WD_ALIGN_PARAGRAPH.CENTER)
-    else:
-        cell_text(tbl.cell(0, i), 'Team Member', bold=True, align=WD_ALIGN_PARAGRAPH.CENTER)
+# ── Supervising teacher table ─────────────────────────────────────────────────
+# 5 rows × 2 cols  (label | value)
+t2 = doc.add_table(rows=5, cols=2)
+t2.style = 'Table Grid'
+t2.alignment = WD_TABLE_ALIGNMENT.CENTER
 
-labels = ['Name', 'School', 'City, Country', 'Registration No.']
-values = ['Aarush Gupta', 'UWCSEA, East', 'Singapore',
-          '[Physics-0XX — assigned at registration]']
+t2.columns[0].width = Cm(3.5)
+t2.columns[1].width = Cm(12.5)
+for cell in t2.columns[0].cells:
+    cell.width = Cm(3.5)
+for cell in t2.columns[1].cells:
+    cell.width = Cm(12.5)
 
-for r, (lbl, val) in enumerate(zip(labels, values)):
-    cell_text(tbl.cell(r+1, 0), lbl)
-    cell_text(tbl.cell(r+1, 1), val)
-    cell_text(tbl.cell(r+1, 2), '')
-    cell_text(tbl.cell(r+1, 3), '')
-
-# Merge cols 1–3 for the value cells
-for r in range(1, 5):
-    tbl.cell(r, 1).merge(tbl.cell(r, 3))
-
-doc.add_paragraph()  # spacer
-
-# ── Supervising Teacher table ─────────────────────────────────────────────────
-tbl2 = doc.add_table(rows=5, cols=2)
-tbl2.style = 'Table Grid'
-tbl2.alignment = WD_TABLE_ALIGNMENT.CENTER
-
-# Merge top row for the "Supervising Teacher" heading
-tbl2.cell(0, 0).merge(tbl2.cell(0, 1))
-cell_text(tbl2.cell(0, 0), 'Supervising Teacher', bold=True,
-          align=WD_ALIGN_PARAGRAPH.CENTER)
+# Row 0: merged header
+t2.cell(0, 0).merge(t2.cell(0, 1))
+cell_fmt(t2.cell(0, 0), 'Supervising Teacher',
+         align=WD_ALIGN_PARAGRAPH.CENTER)
 
 sup_labels = ['Name', 'Position', 'School/Institution', 'City, Country']
-sup_values = ['[Name]', '[Position]', '[School / College]', '[City, Country]']
-for r, (lbl, val) in enumerate(zip(sup_labels, sup_values)):
-    cell_text(tbl2.cell(r+1, 0), lbl)
-    cell_text(tbl2.cell(r+1, 1), val)
+sup_vals   = ['[Name]', '[Position]', '[School / College]', '[City, Country]']
+for row, (lbl, val) in enumerate(zip(sup_labels, sup_vals), start=1):
+    cell_fmt(t2.cell(row, 0), lbl)
+    cell_fmt(t2.cell(row, 1), val)
 
-doc.add_paragraph()  # spacer
+doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
-# ── Paper title ───────────────────────────────────────────────────────────────
-para('Structure over Resolution: an Operating Envelope for Stable Integration of the '
-     'Chaotic Three-Body Problem',
-     bold=True, size=12, align=WD_ALIGN_PARAGRAPH.CENTER,
-     space_before=6, space_after=10)
+# ── Paper title and Abstract heading ─────────────────────────────────────────
+body_para('Structure over Resolution: an Operating Envelope for Stable Integration '
+          'of the Chaotic Three-Body Problem',
+          bold=True, align=WD_ALIGN_PARAGRAPH.CENTER,
+          space_before=0, space_after=4)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ABSTRACT
-# ══════════════════════════════════════════════════════════════════════════════
+body_para('Abstract', bold=True, align=WD_ALIGN_PARAGRAPH.CENTER,
+          space_before=0, space_after=0)
 
-heading('Abstract')
+# ── Abstract text ─────────────────────────────────────────────────────────────
+# ~290 words — condensed to fit 2 pages at 1.5 line spacing.
 
-abstract_body = [
-    ("The Newtonian three-body problem has no general closed-form solution and is a prototype of "
-     "deterministic chaos, so every quantitative statement about such a system is obtained numerically — "
-     "which makes both the integration scheme and the yardstick by which it is judged decisive. "
-     "Two difficulties are usually left implicit. Because neighbouring trajectories diverge exponentially, "
-     "the customary measure — global position error against a reference — saturates within a few Lyapunov "
-     "times and cannot rank methods over long time scales. And neural network models proposed to accelerate "
-     "integration are seldom tested at equal computational cost against the obvious alternative of taking "
-     "a finer step."),
-    ("I compare five integrator methods and two neural network correctors across three test systems — "
-     "analytic three-body configurations of varying chaoticity, binary–single scattering encounters, and "
-     "the real Sun–Earth–Moon system initialised from JPL Horizons ephemerides — using chaos-appropriate "
-     "diagnostics: maximum relative energy drift, short-horizon position RMS within one Lyapunov time, "
-     "bounded/ejected status, and — critically for hierarchical systems — the preserved separation of "
-     "bound pairs."),
+paras = [
+    # Background
+    ("The Newtonian three-body problem has no general closed-form solution and is the canonical "
+     "prototype of deterministic chaos: every quantitative statement about such a system rests on a "
+     "numerical integrator and on the yardstick by which it is judged. Two difficulties are usually "
+     "left implicit. Because neighbouring trajectories diverge exponentially, global position error "
+     "against a reference saturates within a few Lyapunov times and cannot rank methods over long "
+     "time scales. And neural network models proposed to accelerate integration are rarely "
+     "benchmarked at equal computational cost against the obvious alternative of a finer classical step."),
+    # Methods + findings lead-in
+    ("I compare five integrator methods and two neural network correctors across analytic three-body "
+     "configurations, binary–single scattering encounters, and the real Sun–Earth–Moon system "
+     "initialised from JPL Horizons ephemerides, using chaos-appropriate diagnostics: maximum "
+     "relative energy drift, short-horizon position RMS within one Lyapunov time, bounded/ejected "
+     "status, and the preserved separation of bound pairs."),
 ]
-for body in abstract_body:
-    p = para(space_before=0, space_after=4)
-    add_run(p, body)
+
+for text in paras:
+    body_para(text, space_before=0, space_after=0)
 
 # Three findings with italic lead-ins
 findings = [
     ("First, ", "time-reversal symmetry, not brute-force resolution, governs long-term energy drift",
-     ": the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across all dynamical "
-     "regimes at a single control setting, whereas a fixed step using eight times as many force "
-     "evaluations ejects the same close-encounter system at 128% energy error. The efficiency "
-     "advantage is regime-dependent — the scheme is 1.5–3.6× cheaper in force evaluations on "
-     "close-encounter and under-resolved systems but slower on near-regular orbits — so the "
-     "contribution is an operating map, not a universal speedup."),
+     ": the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across all "
+     "dynamical regimes at a single control setting, whereas a fixed step using eight times as many "
+     "force evaluations ejects the same close-encounter system at 128% energy error. The efficiency "
+     "advantage is regime-dependent (1.5–3.6× cheaper on close-encounter and under-resolved "
+     "systems; slower on near-regular orbits), so the contribution is an operating map, not a "
+     "universal speedup."),
     ("Second, ", "energy conservation can actively mislead",
-     ": a fixed-step Sun–Earth–Moon integration conserves total energy to max|ΔE/E₀| = 0.008% "
-     "and reports the system as bound, yet the Earth–Moon separation grows to 774× its true "
-     "value — a destroyed hierarchy that only a pair-separation metric detects."),
-    ("Third, ", "neural network force and state corrections do not beat physics at equal cost",
+     ": a fixed-step integration conserves total energy to 0.008% and reports the Sun–Earth–Moon "
+     "system as bound, yet the Earth–Moon separation grows to 774× its true value — a "
+     "destroyed hierarchy detectable only by a pair-separation metric."),
+    ("Third, ", "neural network force and state corrections do not beat equal-cost classical refinement",
      ": under a pre-registered equal-compute protocol on 27 held-out configurations, a per-step "
-     "scalar corrector (A1) beats an equal-cost finer leapfrog step on short-horizon position "
-     "RMS in 0 of 27 cases — even when charged no computational cost — and an encounter-triggered "
-     "state corrector (A2) in at most 2 of 27. An oracle (best-possible) correction yields 0% "
-     "improvement on under-resolved binaries at every separation tested, localising the failure "
-     "to temporal resolution, not force accuracy."),
+     "scalar corrector wins 0  of 27 on short-horizon position RMS even when charged no "
+     "computational cost; a perfect oracle correction yields 0% improvement on under-resolved "
+     "binaries, localising the failure to temporal resolution rather than force accuracy."),
 ]
-for prefix, italic, suffix in findings:
-    p = para(space_before=0, space_after=4)
-    add_run(p, prefix)
-    add_run(p, italic, italic=True)
-    add_run(p, suffix)
 
-p = para(space_before=0, space_after=6)
-add_run(p, "Together these results map an ")
-add_run(p, "operating envelope", italic=True)
-add_run(p, " — which integrator is necessary and sufficient in each dynamical regime — and "
-           "establish a selection of stability diagnostics for chaotic three-body work: stability "
-           "must be judged on preserved dynamical structure, not energy alone.")
+for prefix, italic_text, suffix in findings:
+    p = mixed_para(space_before=0, space_after=0)
+    prun(p, prefix)
+    prun(p, italic_text, italic=True)
+    prun(p, suffix)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# RESEARCH QUESTIONS
-# ══════════════════════════════════════════════════════════════════════════════
-
-heading('Research questions')
-
-rqs = [
-    ("Q1 (structure). ",
-     "Which structural property — symplecticity, time-reversal symmetry, or adaptive step-sizing — "
-     "governs stable integration, and does the answer depend on the dynamical ",
-     "regime",
-     " (the chaoticity and hierarchical structure of the initial conditions: regular, moderate "
-     "scattering, or tight binary)?"),
-    ("Q2 (measurement). ",
-     "Which diagnostics are sufficient to classify integrator ",
-     "stability",
-     " — that is, to determine whether a numerical solution preserves the physical structure of "
-     "the three-body system — when long-time position error is uninformative due to chaos?"),
-    ("Q3 (learning). ",
-     "Can a neural network force or state correction outperform spending the same compute on a "
-     "finer classical step?",
-     None, None),
-]
-for item in rqs:
-    p = doc.add_paragraph(style='List Number')
-    p.paragraph_format.space_before = Pt(0)
-    p.paragraph_format.space_after  = Pt(3)
-    label, body, italic_word, suffix = item if len(item) == 4 else (*item, None, None)
-    add_run(p, label, bold=True)
-    if italic_word:
-        add_run(p, body)
-        add_run(p, italic_word, italic=True)
-        add_run(p, suffix)
-    else:
-        add_run(p, body)
-
-# ══════════════════════════════════════════════════════════════════════════════
-# METHODS
-# ══════════════════════════════════════════════════════════════════════════════
-
-heading('Methods')
-
-heading_sub = lambda t: para(t, bold=True, space_before=4, space_after=2)
-
-heading_sub('Integrator methods — benchmarked against IAS15 (fifteenth-order Gauss–Radau, REBOUND [3,4])')
-
-methods = [
-    'Fixed-step leapfrog (dt ∈ {0.04, 0.005} yr; 25 and 200 force evaluations/yr).',
-    ('Heuristic inverse-distance adaptive leapfrog: step size scales as the cube of the minimum '
-     'inter-body separation. This is the SIMON integrator without its neural network component.'),
-    ('Time-symmetric (reversible) adaptive leapfrog [Hut, Makino & McMillan, 1995 [6]]: step size '
-     'is found by fixed-point iteration to satisfy a time-reversibility condition, bounding secular '
-     'energy drift. Tuning parameter η = 0.05 is held fixed across all regimes.'),
-    'Fourth-order symplectic integrator [Yoshida, 1990 [2]]: a composition of leapfrog steps preserving symplectic structure.',
-    ('IAS15 [3,4]: fifteenth-order Gauss–Radau adaptive reference scheme; used as the '
-     'high-accuracy standard throughout.'),
-]
-for m in methods:
-    bullet(m)
-
-heading_sub('Neural network correctors — applied to the leapfrog baseline')
-bullet('A1 — per-step scalar force-magnitude correction: outputs a scalar multiplier on the '
-       'gravitational force at every leapfrog step, trained to match IAS15 forces.')
-bullet('A2 — encounter-triggered state-to-state residual correction: activated only at close '
-       'approach, predicts the residual correction to the integrated state; fires ~once per '
-       '100-yr rollout on the test configurations (not a per-step corrector).')
-p = para(space_before=2, space_after=4)
-add_run(p, 'Each corrector is evaluated under a ')
-add_run(p, 'pre-registered equal-compute protocol', bold=True)
-add_run(p, ': the network is charged a cost κ (in units of one force evaluation) and is '
-           'deemed to "click" only if it falls below the plain-leapfrog cost–accuracy frontier '
-           'on held-out configurations not seen during training.')
-
-heading_sub('Test systems (all integrated over T = 100 yr)')
-bullet('Analytic three-body initial conditions spanning Lyapunov exponents: near-regular '
-       '(IC6, λ ≈ 0.019 yr⁻¹), moderate scattering (IC1, λ ≈ 0.17 yr⁻¹; IC4, λ ≈ 0.10 yr⁻¹).')
-bullet('Binary–single scattering: inner binary separation r_bin ∈ {0.05, 0.10, 0.20, 0.40} AU, '
-       'perturber at 3 AU.')
-bullet('Real Sun–Earth–Moon system initialised from JPL Horizons ephemerides [7].')
-
-heading_sub('Stability diagnostics — chaos-appropriate, reported together')
-diags = [
-    'Maximum relative energy drift, max|ΔE/E₀|, over T = 100 yr.',
-    'Short-horizon position RMS within ~1 Lyapunov time.',
-    'Time-to-divergence (time at which position error exceeds a fixed threshold).',
-    'Bounded vs ejected status.',
-    ('Range of bound-pair separation [AU] — required for hierarchical systems; detects '
-     'sub-system unbinding invisible to global energy metrics.'),
-]
-for d in diags:
-    bullet(d)
-
-p = para(space_before=2, space_after=6)
-add_run(p, 'Method efficiency (force evaluations to reach equal accuracy) is compared only at matched '
-           'accuracy, by interpolating each method\'s Pareto cost–accuracy frontier within the measured '
-           'range. Wall-clock speed is noted only as a secondary observation.')
-
-# ══════════════════════════════════════════════════════════════════════════════
-# RESULTS
-# ══════════════════════════════════════════════════════════════════════════════
-
-heading('Results')
-
-# Finding 1
-p = para(space_before=4, space_after=2)
-add_run(p, 'Finding 1 — time-reversal symmetry governs energy drift', bold=True)
-add_run(p, ' (answers Q1).')
-body1 = (
-    'The reversible adaptive leapfrog (η = 0.05) stays energy-bounded across all test '
-    'systems at a single setting: max|ΔE/E₀| = 0.087%, 0.224%, and 0.003% on IC1, IC4, '
-    'and IC6 respectively. A fixed step with dt = 0.005 (eight times more force evaluations '
-    'per year) ejects the IC1 close-encounter system at 128% energy error. The heuristic '
-    'adaptive leapfrog also fails on close encounters (IC1: 1.24%; BS_0.05: 4905%, ejected); '
-    'only time-symmetric adaptation and IAS15 remain bounded across all regimes.'
-)
-para(body1, space_before=0, space_after=3)
-body1b = (
-    'The efficiency advantage is regime-dependent. On the energy metric, the time-symmetric '
-    'scheme is 1.5–3.6× cheaper in force evaluations on close-encounter (IC1) and '
-    'under-resolved (IC4) configurations. On near-regular IC3/IC6 the fixed step is already '
-    'cheap and the time-symmetric scheme uses 2–3× more evaluations for no accuracy gain. '
-    'The contribution is an operating map, not a universal speedup (Figure 1: cost vs '
-    'energy drift across all 9 configurations).'
-)
-para(body1b, space_before=0, space_after=6)
-
-# Finding 2
-p = para(space_before=4, space_after=2)
-add_run(p, 'Finding 2 — the energy-metric trap', bold=True)
-add_run(p, ' (answers Q2, first part).')
-body2 = (
-    'The real Sun–Earth–Moon system integrated with leapfrog at dt = 0.01 yr reports '
-    'max|ΔE/E₀| = 0.008% and bounded = True. Yet over 100 yr the Earth–Moon separation '
-    'grows from its true value of 0.00257 AU to a peak of 1.99 AU — 774× the true distance '
-    '— while IAS15, the time-symmetric scheme, and the heuristic-adaptive integrator all '
-    'hold it within [0.0024, 0.0027] AU. A global energy or ejection criterion thus certifies '
-    'a run whose internal hierarchical structure is destroyed. Only the pair-separation '
-    'diagnostic detects the failure (Figure 2).'
-)
-para(body2, space_before=0, space_after=6)
-
-# Finding 3
-p = para(space_before=4, space_after=2)
-add_run(p, 'Finding 3 — neural network corrections are null at equal compute', bold=True)
-add_run(p, ' (answers Q3).')
-body3a = 'Under the pre-registered equal-compute protocol on 27 held-out configurations:'
-para(body3a, space_before=0, space_after=2)
-bullet('A1 (per-step scalar): 0 of 27 configurations beat an equal-cost finer leapfrog step '
-       'on short-horizon position RMS — even when the network is charged zero cost (κ = 0).')
-bullet('A2 (encounter-triggered state residual): 2 of 27 at κ = 0, dropping to 1 of 27 once '
-       'compute is charged. Both correctors are null.')
-body3b = (
-    'A perfect oracle correction applied at every close encounter yields 0% improvement on '
-    'the binary–single system at every separation r_bin ∈ {0.05–0.40 AU}, confirming that '
-    'the failure is temporal under-resolution, not force-model error. No force or state '
-    'correction can repair a step-size problem; adaptive resolution (time-symmetric leapfrog '
-    'or IAS15) can and does (Figure 3). The A2 prototype demonstrates that encounter dynamics '
-    'contain learnable structure, but the learned model does not translate into a net gain at '
-    'equal computational cost.'
-)
-para(body3b, space_before=3, space_after=6)
-
-# Operating envelope table
-p = para(space_before=4, space_after=2)
-add_run(p, 'Operating envelope', bold=True)
-add_run(p, ' — three-regime summary:')
-
-oe_tbl = doc.add_table(rows=4, cols=4)
-oe_tbl.style = 'Table Grid'
-hdrs = ['Regime', 'Sufficient integrator', 'Example config', 'Cost (fe/yr)']
-rows_data = [
-    ['Regular / well-separated',     'Fixed leapfrog dt = 0.04',         'IC6: 0.0006% energy',      '25'],
-    ['Moderate scattering',           'Time-symmetric adaptive η = 0.05', 'IC1: 0.087%, IC4: 0.224%', '75–88'],
-    ['Tight binary (r_bin ≤ 0.05 AU)','IAS15',                           'BS_0.05: bounded',         '~31,600'],
-]
-for i, h in enumerate(hdrs):
-    cell_text(oe_tbl.cell(0, i), h, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER)
-for r, row in enumerate(rows_data):
-    for c, val in enumerate(row):
-        cell_text(oe_tbl.cell(r+1, c), val)
-
-doc.add_paragraph()
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CONCLUSIONS AND CONTRIBUTIONS
-# ══════════════════════════════════════════════════════════════════════════════
-
-heading('Conclusions and Contributions')
-
-conclusions = [
-    ('C1 — Operating envelope (answers Q1). ',
-     'Fixed-step leapfrog is necessary and sufficient for regular, well-separated systems. '
-     'The time-symmetric adaptive leapfrog is necessary and sufficient for moderate scattering: '
-     'it is the only method that stays bounded at a single control setting across this regime '
-     'and reaches accuracies that fixed leapfrog cannot attain. IAS15 is necessary for tight '
-     'binaries, where all fixed-step and heuristic methods eject the binary and the '
-     'time-symmetric scheme, while bounded, is 65× slower in wall-clock time.'),
-    ('C2 — Stability diagnostics (answers Q2). ',
-     'For chaotic three-body work, stability cannot be judged from energy drift or ejection '
-     'status alone. The full required set is: (a) max|ΔE/E₀| over the full integration time; '
-     '(b) short-horizon position RMS within one Lyapunov time; (c) bounded/ejected status; '
-     '(d) bound-pair separation range for hierarchical systems. Finding 2 demonstrates '
-     'concretely on a real system that (a)–(c) all pass while the Moon\'s orbit is destroyed; '
-     'only (d) detects the failure.'),
-    ('C3 — Neural network corrections do not beat equal-cost refinement (answers Q3). ',
-     'Under a pre-registered protocol, neither corrector outperforms an equal-cost finer '
-     'classical step on the short-horizon metric. The oracle analysis localises the failure '
-     'to temporal resolution. The A2 prototype shows that encounter dynamics have learnable '
-     'structure, but learning alone does not overcome the timestep problem; adaptive '
-     'resolution does.'),
-]
-for label, body in conclusions:
-    p = para(space_before=4, space_after=3)
-    add_run(p, label, bold=True)
-    add_run(p, body)
-
-p = para(space_before=6, space_after=3)
-add_run(p, 'Novelty. ', bold=True)
-add_run(p, 'The time-symmetric adaptive leapfrog is the method of Hut, Makino & McMillan '
-           '(1995) [6]. The original contributions of this work are: the controlled '
-           'characterisation of this method across dynamical regimes on a common test suite; '
-           'the demonstration that an energy criterion misclassifies a physically destroyed '
-           'real system and the identification of pair-separation as a necessary diagnostic; '
-           'and the pre-registered equal-compute null result on learned corrections with the '
-           'failure mechanism identified.')
+# Synthesis
+p = mixed_para(space_before=0, space_after=0)
+prun(p, "Together these results define an ")
+prun(p, "operating envelope", italic=True)
+prun(p, " — which integrator is necessary and sufficient in each dynamical regime — and establish "
+        "which stability diagnostics are required for chaotic three-body work.")
 
 # ── Keywords ──────────────────────────────────────────────────────────────────
-p = para(space_before=8, space_after=3)
-add_run(p, 'Keywords: ', bold=True)
-add_run(p, 'three-body problem; symplectic and time-symmetric integration; deterministic chaos; '
-           'computational celestial mechanics; neural network force corrections; operating envelope.')
+p = mixed_para(space_before=6, space_after=0)
+prun(p, 'Keywords', bold=True)
+prun(p, ': three-body problem; symplectic and time-symmetric integration; deterministic chaos; '
+        'computational celestial mechanics; neural network force corrections; operating envelope.')
 
 # ── References ────────────────────────────────────────────────────────────────
-heading('References')
+body_para('References', bold=True, space_before=6, space_after=0)
+
 refs = [
-    '[1] H. Poincaré (1890). Sur le problème des trois corps et les équations de la dynamique. Acta Mathematica, 13, 1–270.',
-    '[2] H. Yoshida (1990). Construction of higher order symplectic integrators. Physics Letters A, 150, 262–268.',
-    '[3] H. Rein & D. S. Spiegel (2015). IAS15: a fast, adaptive, high-order integrator for gravitational dynamics. MNRAS, 446, 1424–1437.',
-    '[4] H. Rein & S.-F. Liu (2012). REBOUND: an open-source multi-purpose N-body code for collisional dynamics. A&A, 537, A128.',
-    '[5] P. G. Breen, C. N. Foley, T. Boekholt & S. Portegies Zwart (2020). Newton versus the machine: solving the chaotic three-body problem using deep neural networks. MNRAS, 494, 2465–2470.',
-    '[6] P. Hut, J. Makino & S. McMillan (1995). Building a better leapfrog. ApJ Letters, 443, L93–L96.',
-    '[7] J. D. Giorgini et al. (1996). JPL\'s on-line Solar System data service (HORIZONS). BAAS, 28, 1158.',
+    ('[1] H. Poincaré (1890). Sur le problème des trois corps et les équations de la dynamique. '
+     'Acta Mathematica, 13, 1–270.'),
+    ('[2] H. Hut, J. Makino & S. McMillan (1995). Building a better leapfrog. '
+     'ApJ Letters, 443, L93–L96.'),
+    ('[3] H. Yoshida (1990). Construction of higher order symplectic integrators. '
+     'Physics Letters A, 150, 262–268.'),
+    ('[4] H. Rein & S.-F. Liu (2012). REBOUND: an open-source multi-purpose N-body code for '
+     'collisional dynamics. A&A, 537, A128.'),
+    ('[5] H. Rein & D. S. Spiegel (2015). IAS15: a fast, adaptive, high-order integrator for '
+     'gravitational dynamics. MNRAS, 446, 1424–1437.'),
+    ('[6] P. G. Breen et al. (2020). Newton versus the machine: solving the chaotic three-body '
+     'problem using deep neural networks. MNRAS, 494, 2465–2470.'),
+    ('[7] J. D. Giorgini et al. (1996). JPL’s on-line Solar System data service (HORIZONS). '
+     'BAAS, 28, 1158.'),
 ]
 for ref in refs:
-    p = para(space_before=0, space_after=2)
-    add_run(p, ref)
-
-p = para(space_before=6, space_after=0)
-add_run(p, '(Bibliographic details should be confirmed against the originals before final submission.)',
-        italic=True)
+    body_para(ref, space_before=0, space_after=0)
 
 # ── Save ──────────────────────────────────────────────────────────────────────
 out = 'abstract/Research_Outline_Aarush_Gupta.docx'
