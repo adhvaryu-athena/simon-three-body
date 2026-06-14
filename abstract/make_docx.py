@@ -224,22 +224,21 @@ for text in paras:
 
 # Three findings with italic lead-ins
 findings = [
-    ("First, ", "time-reversal symmetry, not brute-force resolution, governs long-term energy drift",
-     ": the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across all "
-     "dynamical regimes at a single control setting, whereas a fixed step using eight times as many "
-     "force evaluations ejects the same close-encounter system at 128% energy error. The efficiency "
-     "advantage is regime-dependent (1.5–3.6× cheaper on close-encounter and under-resolved "
-     "systems; slower on near-regular orbits), so the contribution is an operating map, not a "
-     "universal speedup."),
+    ("First, ", "time-symmetry, not brute-force resolution, governs long-term energy drift",
+     ": the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across every "
+     "dynamical regime at a single control setting, and reaches the accuracy of a much finer fixed "
+     "step at lower cost on close-encounter and under-resolved systems, with no advantage on "
+     "near-regular orbits — an operating map of where adaptivity pays, not a universal speedup."),
     ("Second, ", "energy conservation can actively mislead",
      ": a fixed-step integration conserves total energy to 0.008% and reports the Sun–Earth–Moon "
      "system as bound, yet the Earth–Moon separation grows to 774× its true value — a "
      "destroyed hierarchy detectable only by a pair-separation metric."),
     ("Third, ", "neural network force and state corrections do not beat equal-cost classical refinement",
      ": under a pre-registered equal-compute protocol on 27 held-out configurations, a per-step "
-     "scalar corrector wins 0  of 27 on short-horizon position RMS even when charged no "
-     "computational cost; a perfect oracle correction yields 0% improvement on under-resolved "
-     "binaries, localising the failure to temporal resolution rather than force accuracy."),
+     "scalar corrector wins just 1 of 25 bounded cases (and a state corrector at most 2 of 24) on "
+     "short-horizon position RMS even when charged no computational cost; a perfect oracle correction "
+     "yields 0% improvement on under-resolved binaries, localising the failure to temporal resolution "
+     "rather than force accuracy."),
 ]
 
 for prefix, italic_text, suffix in findings:
