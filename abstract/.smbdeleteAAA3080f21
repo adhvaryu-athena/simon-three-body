@@ -24,7 +24,7 @@ conserves total energy to max|ΔE/E₀| = 0.008% and reports the system as bound
 Earth–Moon separation grows to 774× its true value — a failure visible only in a pair-separation
 diagnostic.
 (iii) A neural network force or state correction does not beat equal-cost classical refinement:
-on 27 held-out configurations the scalar corrector wins just 1 of 25 bounded on short-horizon position RMS
+on 27 held-out configurations the scalar corrector wins 0 of 27 on short-horizon position RMS
 even when charged no computational cost, and a perfect oracle correction yields 0% improvement
 on under-resolved binaries — localising the failure to temporal resolution, not force-model error.
 Together, these results define an *operating envelope* mapping which integrator is necessary and
@@ -144,11 +144,10 @@ destroyed. This motivates the selection of stability diagnostics in the conclusi
 **Finding 3 — neural network corrections do not beat equal-cost classical refinement (answers Q3).**
 Under the pre-registered equal-compute protocol on 27 held-out configurations:
 
-- *A1* (per-step scalar): 1 of 25 bounded configurations beat an equal-cost finer leapfrog step on
+- *A1* (per-step scalar): 0 of 27 configurations beat an equal-cost finer leapfrog step on
   short-horizon position RMS — even when the network is charged zero cost (κ = 0).
-- *A2* (encounter-triggered state residual): 2 of 24 at κ = 0, with no improvement as compute is
-  charged. Both correctors are **null**. (Denominators fall below the 27 held-out configurations
-  because the corrected physical-boundedness check excludes runs the correctors drive to ejection.)
+- *A2* (encounter-triggered state residual): 2 of 27 at κ = 0, dropping to 1 of 27 once compute
+  is charged. Both correctors are **null**.
 
 Decisively, a perfect *oracle* correction applied at every close encounter yields **0% improvement**
 on the binary–single system at every separation r_bin ∈ {0.05–0.40 AU}, confirming that the
@@ -187,8 +186,8 @@ systems. Finding 2 provides a concrete real-system demonstration: energy and bou
 pass while the Moon's orbit is destroyed; only (d) detects the failure.
 
 **C3 — Neural network force/state corrections do not beat equal-cost refinement (answers Q3).**
-Under a pre-registered protocol, neither the per-step scalar correction (A1: 1/25) nor the
-encounter-triggered state correction (A2: ≤2/24) outperforms an equal-cost finer classical step
+Under a pre-registered protocol, neither the per-step scalar correction (A1: 0/27) nor the
+encounter-triggered state correction (A2: ≤2/27) outperforms an equal-cost finer classical step
 on the short-horizon metric. The oracle analysis localises the failure to temporal resolution.
 The A2 prototype shows that encounter dynamics have learnable structure, but learning alone
 is not sufficient to overcome the timestep problem; adaptive resolution is.

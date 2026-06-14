@@ -1,0 +1,75 @@
+SOFT vs NEWTON force-model diff — leapfrog-family rows. T=100 yr. vs IAS15 reference.
+soft = softened close pairs (Plummer eps=3e-4, only for separations < NN_THRESH=0.15 AU); newton = pure unsoftened Newtonian (the advocated method).
+Energy diagnostic matches the dynamics: soft uses eps=3e-4; newton uses eps=0 (true Newtonian invariant). bounded = max distance from COM < 10 AU.
+tsalf is reported under its comparison force model = SOFT; toy ICs also re-run in newton to answer the verdict. Binary tsalf-soft reused from phaseD (eps negligible at r_bin).
+Note: soft==newton EXACTLY whenever no pair ever closes below 0.15 AU (softening never triggers).
+==========================================================================================================================
+config   method                |dE/E0|max soft  |dE/E0|max newton  Δ (newton−soft)   bnd s→n    force-evals s/n
+--------------------------------------------------------------------------------------------------------------------------
+IC1      leapfrog dt=0.04               3.856%             3.238%       -0.6181 pp       ✓→✓               2501
+IC1      leapfrog dt=0.005              128.4%            0.1901%        -128.2 pp       ✗→✓              20001
+IC1      heuristic-adaptive              1.24%             1.225%      -0.01476 pp       ✓→✓               2504
+IC1      tsalf (eta=0.05)             0.08715%           0.08733%    +0.0001817 pp       ✓→✓          8752/8746
+--------------------------------------------------------------------------------------------------------------------------
+IC3      leapfrog dt=0.04              0.6718%            0.6719%    +8.021e-05 pp       ✓→✓               2501
+IC3      leapfrog dt=0.005           0.005842%          0.005893%     +5.17e-05 pp       ✓→✓              20001
+IC3      heuristic-adaptive            0.6718%            0.6719%    +8.021e-05 pp       ✓→✓               2501
+IC3      tsalf (eta=0.05)               0.042%           0.04206%    +6.025e-05 pp       ✓→✓              21067
+--------------------------------------------------------------------------------------------------------------------------
+IC4      leapfrog dt=0.04               13.77%             13.77%    +0.0006001 pp       ✓→✓               2501
+IC4      leapfrog dt=0.005             0.2592%            0.2599%    +0.0006898 pp       ✓→✓              20001
+IC4      heuristic-adaptive             13.77%             13.77%    +0.0006001 pp       ✓→✓               2501
+IC4      tsalf (eta=0.05)              0.2236%            0.2235%    -0.0001038 pp       ✓→✓               7534
+--------------------------------------------------------------------------------------------------------------------------
+IC6      leapfrog dt=0.04           0.0006202%         0.0006205%   ~0 (identical)       ✓→✓               2501
+IC6      leapfrog dt=0.005          9.477e-06%         9.776e-06%   ~0 (identical)       ✓→✓              20001
+IC6      heuristic-adaptive         0.0006202%         0.0006205%   ~0 (identical)       ✓→✓               2501
+IC6      tsalf (eta=0.05)            0.002961%          0.002961%   ~0 (identical)       ✓→✓               3337
+--------------------------------------------------------------------------------------------------------------------------
+BS_0.05  leapfrog dt=0.04           1.905e+04%         1.905e+04%        +1.357 pp       ✗→✗               2501
+BS_0.05  leapfrog dt=0.005                436%             436.1%      +0.02229 pp       ✗→✗              20001
+BS_0.05  heuristic-adaptive              4905%              4905%       +0.3367 pp       ✗→✗               2502
+BS_0.05  tsalf (eta=0.05)           0.0001692%          soft-only                —     ✓→n/a            4124125 (binary tsalf: soft from phaseD; eps negligible at r_bin)
+--------------------------------------------------------------------------------------------------------------------------
+BS_0.10  leapfrog dt=0.04                2535%              2535%      +0.04169 pp       ✗→✗               2501
+BS_0.10  leapfrog dt=0.005              157.9%             143.4%        -14.57 pp       ✗→✗              20001
+BS_0.10  heuristic-adaptive              2535%              2535%      +0.04169 pp       ✗→✗               2501
+BS_0.10  tsalf (eta=0.05)             0.00016%          soft-only                —     ✓→n/a            1458220 (binary tsalf: soft from phaseD; eps negligible at r_bin)
+--------------------------------------------------------------------------------------------------------------------------
+BS_0.20  leapfrog dt=0.04               434.8%             434.8%    -0.0007387 pp       ✗→✗               2501
+BS_0.20  leapfrog dt=0.005             0.6591%            0.6591%     +4.84e-05 pp       ✓→✓              20001
+BS_0.20  heuristic-adaptive             434.8%             434.8%    -0.0007387 pp       ✗→✗               2501
+BS_0.20  tsalf (eta=0.05)           0.0001722%          soft-only                —     ✓→n/a             515584 (binary tsalf: soft from phaseD; eps negligible at r_bin)
+--------------------------------------------------------------------------------------------------------------------------
+BS_0.40  leapfrog dt=0.04                 119%               119%     -2.92e-05 pp       ✗→✗               2501
+BS_0.40  leapfrog dt=0.005            0.01279%           0.01279%    +1.768e-06 pp       ✓→✓              20001
+BS_0.40  heuristic-adaptive               119%               119%     -2.92e-05 pp       ✗→✗               2501
+BS_0.40  tsalf (eta=0.05)           0.0003754%          soft-only                —     ✓→n/a             182323 (binary tsalf: soft from phaseD; eps negligible at r_bin)
+==========================================================================================================================
+VERDICT
+--------------------------------------------------------------------------------------------------------------------------
+Q1 — tsalf bounded across IC1/IC4/IC6 in NEWTON mode, and do drifts (soft 0.087/0.224/0.003%) change?
+     IC1: soft=0.08715% (anchor 0.087%)  newton=0.08733%  bounded soft→newton ✓→✓
+     IC4: soft=0.2236% (anchor 0.224%)  newton=0.2235%  bounded soft→newton ✓→✓
+     IC6: soft=0.002961% (anchor 0.003%)  newton=0.002961%  bounded soft→newton ✓→✓
+
+Q2 — Does fixed dt=0.005 on IC1 still eject in newton, and at what %? (soft was 128%)
+     IC1 leapfrog dt=0.005: soft=128.4% (bnd ✗)  newton=0.1901% (bnd ✓)
+
+Q3 — Do the matched-accuracy efficiency ratios (tsalf vs fixed leapfrog; soft was IC1 1.1–3.6×, IC4 1.5–2.9×, IC3/IC6 0.3–1.5×) move under newton?
+     config target |dE|  ratio SOFT  ratio NEWTON
+     IC1           0.3%          --         4.83x
+     IC1           0.1%          --            --
+     IC1          0.03%          --            --
+     IC3           0.3%       0.51x         0.51x
+     IC3           0.1%       0.45x         0.45x
+     IC3          0.03%       0.36x         0.36x
+     IC4           0.3%       2.53x         2.58x
+     IC4           0.1%       2.92x         2.94x
+     IC4          0.03%          --            --
+     IC6           0.3%       3.05x         3.05x
+     IC6           0.1%       3.05x         3.05x
+     IC6          0.03%       3.05x         3.05x
+
+FLAG FOR ABSTRACT: any row above where Δ is large or bounded flips soft→newton, or where a ratio moves materially, needs the abstract number updating.
+[wall 30s]

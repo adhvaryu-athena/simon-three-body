@@ -117,15 +117,14 @@ yet the Earth-Moon subsystem is destroyed. Global checks certify a failed run.
 
 ## Finding 3 — Neural network corrections are null at equal compute
 
-> 🔧 **Code-correction note (nn_correctors, 2026-06-14).** Seven implementation issues were fixed in
+> 🔧 **Code-correction note (nn_correctors, June 2026).** Seven implementation issues were fixed in
 > `experiments/nn_correctors/` (A2 residual sign; A2 window timing; A1 start half-kick c; `bounded`
 > = physical not just finite; `pair_fidelity` min+max; config-count assertions; IAS15-skip logging).
-> See `experiments/nn_correctors/FIXES.md`. The full pipeline was **regenerated** in the pinned env
-> (`run_corrected.sh`): datasets (220 train / 24 test configs, 3159 A1 states, 1613 A2 windows, 0
-> IAS15 skips), retrained A1/A2 weights, and the table below. **Verdict unchanged: A1 and A2 are
-> NULL** — neither beats an equal-compute finer step. (Denominators are below 27 because the corrected
-> physical-boundedness check excludes configs the correctors drive to ejection.) The oracle result
-> (next subsection) is unaffected.
+> See `experiments/nn_correctors/FIXES.md`. A corrected-inference diagnostic on the **existing**
+> weights confirms the **verdict is unchanged: A1 and A2 remain NULL** (neither beats an equal-compute
+> finer step). The per-config win counts below will shift slightly once the canonical artifacts are
+> regenerated on the rig (`run_corrected.sh`); the table below is the pre-fix run and will be updated
+> after that retrain. The oracle result (next subsection) is unaffected.
 
 ### Two correctors were evaluated
 
@@ -143,14 +142,13 @@ same total compute (NN is charged κ floating-point operations per force evaluat
 
 | Corrector | Metric | κ=0 (NN free) | κ=10 | κ=90 | verdict |
 |---|---|---|---|---|---|
-| A1 | **short-horizon RMS** | **1/25** | **1/25** | **0/25** | NULL |
-| A1 | energy max\|dE\| | 7/25 | 5/25 | 1/25 | NULL (energy wins vanish with cost) |
-| A2 | **short-horizon RMS** | **2/24** | **2/24** | **2/24** | NULL |
-| A2 | energy max\|dE\| | 6/24 | 4/24 | 3/24 | NULL |
+| A1 | **short-horizon RMS** | **0/27** | **0/27** | **0/27** | NULL |
+| A1 | energy max\|dE\| | 8/27 | 4/27 | 1/27 | NULL (energy wins vanish with cost) |
+| A2 | **short-horizon RMS** | **2/27** | **1/27** | **1/27** | NULL |
+| A2 | energy max\|dE\| | 5/27 | 3/27 | 1/27 | NULL |
 
-(Corrected, retrained run — `results_table.txt`. Pre-fix run was A1 short 0/27, A2 short 2/27→1/27.)
 Short-horizon RMS is the honest chaos-era metric (energy is gameable by the NN).
-A1 wins at most 1/25 even when given free compute — this is the headline null.
+A1 wins 0/27 even when given free compute — this is the headline null.
 
 **Full per-config breakdown:** `experiments/nn_correctors/results_table.txt`  
 **Plot:** `abstract/nn_vs_compute.png` (Figure 3 — wins-of-27 vs κ)

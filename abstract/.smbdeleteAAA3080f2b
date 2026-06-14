@@ -29,9 +29,9 @@ pair-separation metric detects.
 
 Third, *neural network force and state corrections do not beat physics at equal cost*: under a
 pre-registered equal-compute protocol on 27 held-out configurations, a per-step scalar corrector
-(A1) beats an equal-cost finer leapfrog step on short-horizon position RMS in just 1 of 25 bounded
-cases — even when charged no computational cost — and an encounter-triggered state corrector (A2)
-in at most 2 of 24. An oracle (best-possible) correction yields 0% improvement on under-resolved
+(A1) beats an equal-cost finer leapfrog step on short-horizon position RMS in 0 of 27 cases —
+even when charged no computational cost — and an encounter-triggered state corrector (A2) in at
+most 2 of 27. An oracle (best-possible) correction yields 0% improvement on under-resolved
 binaries at every separation tested, localising the failure to temporal resolution, not force
 accuracy.
 

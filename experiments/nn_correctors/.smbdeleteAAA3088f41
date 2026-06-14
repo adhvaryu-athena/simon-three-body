@@ -59,25 +59,22 @@ exception type, and records the total in `gen_meta.json`.
 
 ---
 
-## Result (canonical retrain, `run_corrected.sh`, 2026-06-14)
+## Diagnostic result (corrected inference, existing weights)
 
 Short-horizon RMS is the decisive chaos-era metric. Wins = configs where the corrector beats the
-equal-compute plain-leapfrog frontier by >10%. κ = NN cost per force-eval. Denominators are below 27
-because the corrected physical-boundedness check excludes configs the corrector drives to ejection.
+equal-compute plain-leapfrog frontier by >10%. κ = NN cost per force-eval.
 
 | Corrector | Metric | κ=0 | κ=10 | κ=90 | verdict |
 |---|---|---|---|---|---|
-| A1 | short-horizon RMS | 1/25 | 1/25 | 0/25 | **NULL** |
-| A1 | energy max\|dE\| | 7/25 | 5/25 | 1/25 | NULL |
-| A2 | short-horizon RMS | 2/24 | 2/24 | 2/24 | **NULL** |
-| A2 | energy max\|dE\| | 6/24 | 4/24 | 3/24 | NULL |
+| A1 | short-horizon RMS | 4/24 | 1/24 | 0/24 | **NULL** |
+| A1 | energy max\|dE\| | 5/24 | 5/24 | 1/24 | NULL |
+| A2 | short-horizon RMS | 4/22 | 4/22 | 2/22 | **NULL** |
+| A2 | energy max\|dE\| | 6/22 | 5/22 | 3/22 | NULL |
 
-Head-to-head (short-horizon RMS): A1 better than A2 on 16/27. (Pre-fix run: A1 short 0/27, A2 short
-2/27 → 1/27.) The verdict — both correctors NULL, beaten by an equal-compute finer symplectic step —
-is unchanged by the fixes. Several TEST configs show the correctors actively ejecting the system
-(e.g. A2 on TEST00/06/18/23), now correctly flagged by the fixed `bounded` check. A pre-retrain
-diagnostic on the existing weights (negating the A2 prediction, equivalent to retraining on the
-flipped target) gave the same verdict, confirming the conclusion is not an artifact of the retrain.
+(Pre-fix run for comparison: A1 short 0/27 at all κ; A2 short 2/27 → 1/27.) The verdict — both
+correctors NULL, beaten by an equal-compute finer symplectic step — is robust to the fixes. Several
+TEST configs show the correctors actively ejecting the system (A2 unbounded on TEST04/08/18/21/22),
+now correctly flagged by the fixed `bounded` check.
 
 ## To regenerate canonical artifacts (on the rig)
 ```

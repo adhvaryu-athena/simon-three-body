@@ -1,0 +1,13 @@
+{
+  "n_train": 220,
+  "n_test": 24,
+  "n_a1_states": 3159,
+  "n_a2_windows": 1613,
+  "skip_ias15": 0,
+  "DT": 0.04,
+  "T": 30.0,
+  "W": 12,
+  "GATE": 0.15,
+  "N_TRAIN": 220,
+  "N_TEST": 24
+}
