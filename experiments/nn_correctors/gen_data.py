@@ -23,11 +23,17 @@ def make_configs(n):
     while len(out)<n:
         tried+=1; c=cl.gen_config(rng)
         if c is not None and cl.trainable(*c): out.append(c)
-        if tried>30*n: break
+        if tried>30*n:
+            log(f"[gen] WARNING make_configs hit trial cap (tried={tried}); got {len(out)}/{n}")
+            break
     return out
 
 log("[gen] building configs ...")
 train_cfgs = make_configs(N_TRAIN); test_cfgs = make_configs(N_TEST)
+log(f"[gen] configs built: train={len(train_cfgs)}/{N_TRAIN}  test={len(test_cfgs)}/{N_TEST}")
+# Issue 6: fail loudly rather than silently training/evaluating on fewer configs than intended.
+assert len(train_cfgs)==N_TRAIN, f"train configs short: {len(train_cfgs)}<{N_TRAIN} (raise trial cap or loosen the trainable() filter)"
+assert len(test_cfgs)==N_TEST,  f"test configs short: {len(test_cfgs)}<{N_TEST} (raise trial cap or loosen the trainable() filter)"
 heldout = {ic: sc.get_ic(ic) for ic in ["IC1","IC4","IC6"]}
 
 # ---- A1 dataset: per-step c_opt ----
@@ -49,7 +55,7 @@ log(f"[gen] A1 dataset {Xc.shape}  log(c): mean={Yc.mean():.4f} std={Yc.std():.4
 
 # ---- A2 dataset: per-window exit residual (leapfrog vs ias15 from common start) ----
 log("[gen] A2 residual dataset ...")
-Xr=[]; Yr=[]
+Xr=[]; Yr=[]; skip_ias15=0   # Issue 7: count IAS15 window failures instead of swallowing them
 def leap_W(m,x,v,steps):
     P=cl.prep(m); a=cl.acc_full(x,*P); x=x.copy(); v=v.copy()
     for _ in range(steps):
@@ -65,17 +71,22 @@ for ci,(m,x0,v0) in enumerate(train_cfgs):
             xl,vl=leap_W(m,x,v,W)
             try:
                 _,pi,vi,_=cl.ias15_truth(m,x,v,W*DT,2)   # 2 samples: start + exit
-                resid=np.concatenate([(xl-pi[-1]).ravel(),(vl-vi[-1]).ravel()])
+                # Issue 1 (sign): target = IAS15_exit - leapfrog_exit = the correction to ADD
+                # to the leapfrog state to reach the truth. Inference applies x += resid, so the
+                # saved target must point FROM leapfrog TOWARD IAS15 (was leapfrog-IAS15 before).
+                resid=np.concatenate([(pi[-1]-xl).ravel(),(vi[-1]-vl).ravel()])
                 if np.all(np.isfinite(resid)) and np.linalg.norm(resid)<1e3:
                     Xr.append(feat); Yr.append(resid.astype(np.float32))
                 x,v=xl,vl; s+=W; continue
-            except Exception: pass
+            except Exception as e:
+                skip_ias15+=1   # Issue 7: log instead of silently swallowing
+                if skip_ias15<=5: log(f"   [A2 skip] IAS15 window failed: {type(e).__name__}: {e}")
         # advance one step
         a=cl.acc_full(x,*P); vh=v+0.5*DT*a; x=x+DT*vh; a=cl.acc_full(x,*P); v=vh+0.5*DT*a; s+=1
         if not np.all(np.isfinite(x)): break
     if ci%40==0: log(f"   A2 cfg {ci}/{N_TRAIN}  windows={len(Xr)}  [{time.time()-t0:.0f}s]")
 Xr=np.array(Xr,np.float32); Yr=np.array(Yr,np.float32)
-log(f"[gen] A2 dataset {Xr.shape}")
+log(f"[gen] A2 dataset {Xr.shape}  (IAS15 windows skipped: {skip_ias15})")
 
 # ---- held-out eval set: configs + ias15 truth (T) + measured lambda ----
 log("[gen] held-out eval truth + lambda ...")
@@ -96,5 +107,11 @@ np.savez(OUT+"/datasets.npz", Xc=Xc,Yc=Yc,Xr=Xr,Yr=Yr,
          Yr_mu=Yr.mean(0) if len(Yr) else np.zeros(18),Yr_sd=(Yr.std(0)+1e-6) if len(Yr) else np.ones(18))
 json.dump(dict(DT=DT,T=T,W=W,NS_EVAL=NS_EVAL,eval_set=eval_set),
           open(OUT+"/eval_set.json","w"), default=str)
-log(f"[gen] saved datasets.npz + eval_set.json  [{time.time()-t0:.0f}s]")
+# Issue 6: record the actual generated counts for auditability.
+json.dump(dict(n_train=len(train_cfgs),n_test=len(test_cfgs),
+               n_a1_states=int(Xc.shape[0]),n_a2_windows=int(Xr.shape[0]),
+               skip_ias15=int(skip_ias15),DT=DT,T=T,W=W,GATE=float(GATE),
+               N_TRAIN=N_TRAIN,N_TEST=N_TEST),
+          open(OUT+"/gen_meta.json","w"), indent=2)
+log(f"[gen] saved datasets.npz + eval_set.json + gen_meta.json  [{time.time()-t0:.0f}s]")
 print("GEN_DONE")

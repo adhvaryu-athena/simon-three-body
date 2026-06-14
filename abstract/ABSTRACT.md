@@ -20,13 +20,7 @@ diagnostics: maximum relative energy drift, short-horizon position RMS within on
 bounded/ejected status, and — critically for hierarchical systems — the preserved separation of
 bound pairs.
 
-Three findings result. First, *time-reversal symmetry, not brute-force resolution, governs
-long-term energy drift*: the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across
-all dynamical regimes at a single control setting, whereas a fixed step using eight times as many
-force evaluations ejects the same close-encounter system at 128% energy error. The efficiency
-advantage is regime-dependent — the scheme is 1.5–3.6× cheaper in force evaluations on
-close-encounter and under-resolved systems but slower on near-regular orbits — so the contribution
-is an operating map, not a universal speedup.
+Three findings result. First, *a time-symmetric, reversible adaptive integrator gives regime-independent stability from a single control setting*: the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across every tested regime without per-regime tuning, and reaches the accuracy of a much finer fixed step at lower cost on close-encounter and under-resolved systems, with no advantage on near-regular orbits. The contribution is an operating map of where adaptivity pays, not a universal speedup.
 
 Second, *energy conservation can actively mislead*: a fixed-step Sun–Earth–Moon integration
 conserves total energy to max|ΔE/E₀| = 0.008% and reports the system as bound, yet the

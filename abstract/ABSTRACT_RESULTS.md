@@ -4,6 +4,8 @@
 
 > Scope note: framing, subject category (Physics vs CS), and venue are **not decided here** — flagged for Ninaad + Sushant. Numbers below are reproduced from the existing result files and confirmed against the prior anchors. One prior anchor — the "~1.05–2.1× speed" figure — was **checked directly and corrected**: the real matched-accuracy result is two-sided and regime-dependent (see §1.6 / ledger).
 
+> ⚠️ **Finding 1 correction — pure-Newton re-run (`soft_vs_newton_diff.txt`).** The Finding-1 numbers below (notably the IC1 fixed-step dt=0.005 "128.4% ejection" in §1.1 and the per-regime speed multipliers in §1.6) were computed in **softened** mode and are **superseded**. In pure Newtonian (the advocated, unsoftened method) that IC1 run is **bounded at 0.19%** — the 128% was a switching-discontinuity artifact, not the dynamics. `tsalf` is mode-independent (IC1 0.087 / IC4 0.224 / IC6 0.003%). The published 2-page abstract/outline now state Finding 1 **qualitatively** ("lower cost on close-encounter/under-resolved systems, no advantage on near-regular orbits"); exact pure-Newton multipliers are deferred to the full (Aug) paper. **Findings 2 and 3 are unaffected** (already Newtonian). Do not quote §1.1's 128% or §1.6's multipliers as live results.
+
 ---
 
 ## 1. Locked headline numbers

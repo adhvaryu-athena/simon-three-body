@@ -18,10 +18,7 @@ of taking a finer step, so an apparent gain may reflect only extra computation.
 I compare five integrator methods and two neural network correctors across three test systems —
 analytic three-body configurations of varying chaoticity, binary–single scattering encounters, and
 the real Sun–Earth–Moon system initialised from JPL Horizons — and find three results.
-(i) Time-reversal symmetry, not brute-force resolution, controls long-term energy drift: the
-reversible adaptive leapfrog (tuning parameter η = 0.05) stays energy-bounded across all dynamical
-regimes, whereas a fixed step using eight times as many force evaluations ejects the same
-close-encounter system at 128% energy error.
+(i) A time-symmetric, reversible adaptive integrator gives regime-independent stability from a single control setting: the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across every tested regime without per-regime tuning, and reaches the accuracy of a much finer fixed step at lower cost on close-encounter and under-resolved systems, with no advantage on near-regular orbits.
 (ii) Energy conservation can certify a physically destroyed system: a fixed-step integration
 conserves total energy to max|ΔE/E₀| = 0.008% and reports the system as bound, yet the
 Earth–Moon separation grows to 774× its true value — a failure visible only in a pair-separation
@@ -90,6 +87,8 @@ control, an apparent gain may be nothing more than extra computation.
 5. *IAS15* [3,4]: fifteenth-order Gauss–Radau adaptive scheme; used as the high-accuracy reference
    throughout (not compared as a "choice" in the operating envelope but as the reliability standard).
 
+**Force model.** All methods use the exact (unsoftened) Newtonian pairwise force; the numerical stiffness of close encounters is handled by adaptive sub-stepping, not by softening the potential (softening introduces a switching discontinuity at the close-pair boundary and is not used).
+
 **Neural network correctors.** Two correctors are trained on close-encounter data and applied to
 the leapfrog baseline:
 
@@ -130,20 +129,9 @@ Wall-clock speed is noted only as a secondary observation.
 ## 4. Results
 
 **Finding 1 — time-reversal symmetry governs long-term energy drift (answers Q1).**
-The reversible adaptive leapfrog (η = 0.05) stays energy-bounded across all test systems at a
-single setting: max|ΔE/E₀| = 0.087%, 0.224%, and 0.003% on IC1, IC4, and IC6 respectively.
-By contrast, a fixed step with dt = 0.005 (eight times more force evaluations per year) ejects
-the IC1 close-encounter system at 128% energy error. The heuristic adaptive leapfrog also fails
-on close encounters (IC1: 1.24%; BS_0.05: 4905%, ejected); only time-symmetric adaptation and
-IAS15 remain bounded across all regimes.
+The reversible adaptive leapfrog (η = 0.05) stays energy-bounded across all test systems at a single setting: max|ΔE/E₀| = 0.087%, 0.224%, and 0.003% on IC1, IC4, and IC6 respectively, and these values are independent of the force model. A fixed step with dt = 0.005 (eight times more force evaluations per year) is also bounded on IC1 (0.19% in pure Newtonian) but at far higher cost; the heuristic adaptive leapfrog is bounded on IC1 (1.24%) yet ejects on tight binaries (BS_0.05: 4905%, ejected). Only time-symmetric adaptation and IAS15 remain bounded across every regime at a single setting.
 
-The efficiency advantage is regime-dependent. On the energy metric, the time-symmetric scheme
-reaches accuracies that fixed leapfrog cannot attain reliably (IC1 ejection band at intermediate
-dt makes its frontier non-monotone) and is 1.5–3.6× cheaper in force evaluations on
-close-encounter (IC1) and under-resolved (IC4) configurations. On near-regular IC3/IC6 the
-fixed step is already cheap and the time-symmetric scheme uses 2–3× more evaluations for no
-accuracy gain. The contribution is therefore an operating map — not a universal speedup
-(**Figure 1**: cost vs energy drift across all 9 configurations).
+The efficiency advantage is regime-dependent: the time-symmetric scheme reaches matched accuracy at lower cost on close-encounter (IC1) and under-resolved (IC4) configurations, while on near-regular IC3/IC6 the fixed step is already cheap and the time-symmetric scheme uses more evaluations for no accuracy gain. The contribution is therefore an operating map, not a universal speedup (**Figure 1**: cost vs energy drift across all 9 configurations).
 
 **Finding 2 — energy conservation can actively mislead (answers Q2, first part).**
 The real Sun–Earth–Moon system integrated with leapfrog at dt = 0.01 yr reports max|ΔE/E₀| =
@@ -186,7 +174,7 @@ comparison:
 **C1 — Operating envelope (answers Q1).** Fixed-step leapfrog is necessary and sufficient for
 regular, well-separated systems. The time-symmetric adaptive leapfrog is necessary and sufficient
 for moderate scattering: it is the only method that stays bounded at a single control setting
-across this regime and reaches accuracies that fixed leapfrog cannot attain. IAS15 is necessary
+across this regime and matches the accuracy of a much finer fixed step at lower cost. IAS15 is necessary
 for tight binaries, where all fixed-step and heuristic methods eject the binary and the
 time-symmetric scheme, while bounded, is 65× slower in wall-clock time.
 

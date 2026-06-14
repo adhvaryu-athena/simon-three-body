@@ -106,26 +106,34 @@ def leapfrog(m,x0,v0,dt,T,NS,c_predict=None,res_predict=None,res_feat_norm=None,
     def accc(xx, c=1.0):
         fe[0]+=1; af,ac,nc=acc_split(xx,ii,jj,Gmimj,inv_mi,inv_mj); return af+c*ac, nc
     a,_=accc(x); pos[0]=x; vel[0]=v; si=0
-    in_window=0; res_pending=None
+    steps_remaining=-1; res_pending=None      # Issue 2: -1 means no correction pending
     for step in range(min(n_steps,max_steps)):
         c=1.0
         if c_predict is not None:
             af,ac,nc=acc_split(x,ii,jj,Gmimj,inv_mi,inv_mj)
-            if nc>0: nn[0]+=1; c=float(np.clip(c_predict(features(x,v,m,P)),0.2,5.0))
+            if nc>0:
+                nn[0]+=1; c=float(np.clip(c_predict(features(x,v,m,P)),0.2,5.0))
+                # Issue 3: apply the current c to the START half-kick as well. Reuse the
+                # split already computed above for gating (no extra force evaluation); the
+                # same c is used for both half-kicks of this step.
+                a=af+c*ac
         vh=v+0.5*dt*a; x=x+dt*vh; a,_=accc(x,c); v=vh+0.5*dt*a
-        # residual corrector: at window exits, add predicted residual
+        # residual corrector (A2): schedule at encounter entry, then apply the predicted
+        # residual after EXACTLY `window` future leapfrog steps, so deployment timing
+        # matches the W-step training target (Issue 2). Target sign is IAS15-leapfrog, so
+        # we add it (Issue 1, set in gen_data.py).
         if res_predict is not None:
             rmin=float(np.min(np.sqrt(np.einsum('ij,ij->i',x[jj]-x[ii],x[jj]-x[ii])+1e-30)))
-            if in_window==0 and rmin<gate:
-                in_window=1; nn[0]+=1; feat=features(x,v,m,P)
+            if steps_remaining<0 and rmin<gate:
+                nn[0]+=1; feat=features(x,v,m,P)
                 res_pending=res_predict(feat)*(res_feat_norm if res_feat_norm else 1.0)
-            elif in_window>0:
-                in_window+=1
-                if in_window>=window:
-                    if res_pending is not None:
-                        x=x+res_pending[:N*3].reshape(N,3); v=v+res_pending[N*3:].reshape(N,3)
-                        a,_=accc(x)
-                    in_window=0; res_pending=None
+                steps_remaining=window
+            elif steps_remaining>0:
+                steps_remaining-=1
+                if steps_remaining==0:
+                    x=x+res_pending[:N*3].reshape(N,3); v=v+res_pending[N*3:].reshape(N,3)
+                    a,_=accc(x)
+                    res_pending=None; steps_remaining=-1
         t_cur=(step+1)*dt
         while si<NS-1 and times[si+1]<=t_cur+1e-9: si+=1; pos[si]=x; vel[si]=v
         if not np.all(np.isfinite(x)): break
@@ -171,10 +179,14 @@ def time_to_diverge(pos,pref,t,thresh=0.1):
     d=rms_sep(pos,pref); idx=np.where(d>thresh)[0]
     return float(t[idx[0]]) if len(idx) else float(t[-1])
 def pair_fidelity(pos,pref,m):
-    """max over pairs of |range(model)-range(ref)| in min/max separation (bound-pair drift)."""
+    """max over pairs of the worse normalized drift in BOTH min and max bound-pair
+    separation (closest-approach and widest-excursion fidelity). Issue 5: the min term
+    was named in the docstring but never compared; both are now included."""
     worst=0.0
     for i in range(len(m)):
         for j in range(i+1,len(m)):
             dm=np.linalg.norm(pos[:,i]-pos[:,j],axis=1); dr=np.linalg.norm(pref[:,i]-pref[:,j],axis=1)
-            worst=max(worst, abs(dm.max()-dr.max())/(dr.max()+1e-9))
+            worst=max(worst,
+                      abs(dm.max()-dr.max())/(dr.max()+1e-9),
+                      abs(dm.min()-dr.min())/(dr.min()+1e-9))
     return float(worst)

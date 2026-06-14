@@ -27,6 +27,14 @@ if have_a2:
     def res_predict(f): return (fwd2(w2,f)*w2["ysd"]+w2["ymu"]).astype(np.float64)
 def c_predict(f): return float(np.exp(fwd2(w1,f)[0]))
 
+def is_bounded(p,m,thresh=30.0):
+    """Issue 4: physical boundedness, not just finiteness. Require all positions finite
+    AND no body straying beyond `thresh` from the centre of mass (matches the rejection
+    rule in corr_lib.trainable). 'finite' is reported separately for transparency."""
+    if not np.all(np.isfinite(p)): return False
+    m=np.asarray(m); com=(p*m[None,:,None]).sum(1,keepdims=True)/m.sum()
+    return bool(np.max(np.linalg.norm(p-com,axis=2))<=thresh)
+
 def run_methods(name,m,x0,v0,pref,lam):
     res={}
     # B + C frontier
@@ -35,20 +43,20 @@ def run_methods(name,m,x0,v0,pref,lam):
         res[("LF",dt)]=dict(fe=info["fe"],nn=0,
             maxdE=cl.maxdE(p,v,m), short=cl.short_horizon_rms(p,pref,np.linspace(0,T,NS),lam),
             ttd=cl.time_to_diverge(p,pref,np.linspace(0,T,NS)), pair=cl.pair_fidelity(p,pref,m),
-            bounded=bool(np.all(np.isfinite(p))))
+            bounded=is_bounded(p,m),finite=bool(np.all(np.isfinite(p))))
     # A1
     _,p,v,info=cl.leapfrog(m,x0,v0,DT,T,NS,c_predict=c_predict)
     res["A1"]=dict(fe=info["fe"],nn=info["nn_calls"],maxdE=cl.maxdE(p,v,m),
         short=cl.short_horizon_rms(p,pref,np.linspace(0,T,NS),lam),
         ttd=cl.time_to_diverge(p,pref,np.linspace(0,T,NS)),pair=cl.pair_fidelity(p,pref,m),
-        bounded=bool(np.all(np.isfinite(p))))
+        bounded=is_bounded(p,m),finite=bool(np.all(np.isfinite(p))))
     # A2
     if have_a2:
         _,p,v,info=cl.leapfrog(m,x0,v0,DT,T,NS,res_predict=res_predict,window=W,gate=cl.NN_THRESH)
         res["A2"]=dict(fe=info["fe"],nn=info["nn_calls"],maxdE=cl.maxdE(p,v,m),
             short=cl.short_horizon_rms(p,pref,np.linspace(0,T,NS),lam),
             ttd=cl.time_to_diverge(p,pref,np.linspace(0,T,NS)),pair=cl.pair_fidelity(p,pref,m),
-            bounded=bool(np.all(np.isfinite(p))))
+            bounded=is_bounded(p,m),finite=bool(np.all(np.isfinite(p))))
     return res
 
 def frontier_at(fe_target, metric, res):

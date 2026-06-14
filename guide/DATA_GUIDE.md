@@ -41,7 +41,11 @@ These are the full-SIMON (NN + adaptive) runs at the operational dt = 0.04.
 | BS_0.05 (tight binary) | **0.00017%** | 41,241 | yes |
 | SEM (Sun-Earth-Moon) | **0.000024%** | 5,038 | yes |
 
-### Core claim: fixed-step dt=0.005 ejects IC1 at 128% energy error
+### Core claim: fixed-step dt=0.005 ejects IC1 at 128% energy error  ⚠️ SOFTENED-MODE — SUPERSEDED
+
+> Superseded by the pure-Newton correction note above: in the advocated unsoftened method this
+> run is **bounded at 0.19%**, not ejected. The 128% below is the softened-mode artifact, retained
+> only for traceability. Do not quote it as a live result.
 
 **Source:** `abstract/frontier_table.txt` row `IC1 | leapfrog dt=0.005`
 
@@ -56,6 +60,12 @@ Only tsalf and IAS15 survive all regimes.
 **Plot:** `abstract/frontier.png` (Figure 1 — cost vs energy drift, all 9 configurations)
 
 ### Claim: efficiency advantage is regime-dependent (not a universal speedup)
+
+> ⚠️ The per-regime multipliers below are **softened-mode** and partly rest on the IC1 "ejection
+> band" artifact (see the pure-Newton correction note above). The direction of the claim holds
+> (regime-dependent; no universal factor), which is why the published abstract/outline keep only
+> the **qualitative** "lower cost on close-encounter/under-resolved systems" statement and drop the
+> specific multiplier. Exact pure-Newton multipliers are deferred to the full (Aug) paper.
 
 **Source:** `abstract/speed_table.txt`
 
@@ -106,6 +116,15 @@ yet the Earth-Moon subsystem is destroyed. Global checks certify a failed run.
 ---
 
 ## Finding 3 — Neural network corrections are null at equal compute
+
+> 🔧 **Code-correction note (nn_correctors, June 2026).** Seven implementation issues were fixed in
+> `experiments/nn_correctors/` (A2 residual sign; A2 window timing; A1 start half-kick c; `bounded`
+> = physical not just finite; `pair_fidelity` min+max; config-count assertions; IAS15-skip logging).
+> See `experiments/nn_correctors/FIXES.md`. A corrected-inference diagnostic on the **existing**
+> weights confirms the **verdict is unchanged: A1 and A2 remain NULL** (neither beats an equal-compute
+> finer step). The per-config win counts below will shift slightly once the canonical artifacts are
+> regenerated on the rig (`run_corrected.sh`); the table below is the pre-fix run and will be updated
+> after that retrain. The oracle result (next subsection) is unaffected.
 
 ### Two correctors were evaluated
 
