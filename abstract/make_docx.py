@@ -157,10 +157,10 @@ for row, (lbl, val) in enumerate(zip(labels1, values1), start=1):
     cell_fmt(t1.cell(row, 2), '')
     cell_fmt(t1.cell(row, 3), '')
 
-# Row 4: Registration No. — merge cols 1-3
+# Row 4: Registration No. (merge cols 1-3)
 cell_fmt(t1.cell(4, 0), 'Registration No.')
 t1.cell(4, 1).merge(t1.cell(4, 3))
-cell_fmt(t1.cell(4, 1), '[Physics-0XX — assigned at registration]')
+cell_fmt(t1.cell(4, 1), '[Physics-0XX, assigned at registration]')
 
 doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
@@ -200,7 +200,7 @@ body_para('Abstract', bold=True, align=WD_ALIGN_PARAGRAPH.CENTER,
           space_before=0, space_after=0)
 
 # ── Abstract text ─────────────────────────────────────────────────────────────
-# ~290 words — condensed to fit 2 pages at 1.5 line spacing.
+# ~290 words, condensed to fit 2 pages at 1.5 line spacing.
 
 paras = [
     # Background
@@ -228,10 +228,10 @@ findings = [
      ": the reversible adaptive leapfrog (η = 0.05) stays energy-bounded across every "
      "dynamical regime at a single control setting, and reaches the accuracy of a much finer fixed "
      "step at lower cost on close-encounter and under-resolved systems, with no advantage on "
-     "near-regular orbits — an operating map of where adaptivity pays, not a universal speedup."),
+     "near-regular orbits. The contribution is an operating map of where adaptivity pays, not a universal speedup."),
     ("Second, ", "energy conservation can actively mislead",
      ": a fixed-step integration conserves total energy to 0.008% and reports the Sun–Earth–Moon "
-     "system as bound, yet the Earth–Moon separation grows to 774× its true value — a "
+     "system as bound, yet the Earth–Moon separation grows to 774× its true value, a "
      "destroyed hierarchy detectable only by a pair-separation metric."),
     ("Third, ", "neural network force and state corrections do not beat equal-cost classical refinement",
      ": under a pre-registered equal-compute protocol on 27 held-out configurations, a per-step "
@@ -251,7 +251,7 @@ for prefix, italic_text, suffix in findings:
 p = mixed_para(space_before=0, space_after=0)
 prun(p, "Together these results define an ")
 prun(p, "operating envelope", italic=True)
-prun(p, " — which integrator is necessary and sufficient in each dynamical regime — and establish "
+prun(p, ", identifying which integrator is necessary and sufficient in each dynamical regime, and establish "
         "which stability diagnostics are required for chaotic three-body work.")
 
 # ── Keywords ──────────────────────────────────────────────────────────────────
